@@ -1,0 +1,27 @@
+{
+  "mejores_parametros": {
+    "tweedie_variance_power": 1.4718697811026082,
+    "learning_rate": 0.08636882174255439,
+    "num_leaves": 288,
+    "min_data_in_leaf": 261,
+    "feature_fraction": 0.547189668253018,
+    "bagging_fraction": 0.6991199746635981,
+    "lambda_l2": 0.00459397119185565
+  },
+  "wrmsse_busqueda": 1.010946853736908,
+  "validacion_fold3": [
+    {
+      "configuración": "Configuración original",
+      "árboles": 72,
+      "WRMSSE": 0.9788068652847999,
+      "MAE": 1.0040868520736694
+    },
+    {
+      "configuración": "Configuración afinada",
+      "árboles": 55,
+      "WRMSSE": 0.9789970773005936,
+      "MAE": 0.990053653717041
+    }
+  ],
+  "mejora_pct": -0.019433048800528926
+}

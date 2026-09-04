@@ -1,0 +1,72 @@
+cargando el almacén…
+  30,490 series x 1,913 días  [131s]
+
+  días válidos            : 46,088,402
+  días con venta cero     : 27,716,020  (60.1%)
+  ceros sospechosos       : 538,771  (1.9% de los ceros)
+
+==========================================================================
+PRUEBA · ¿Los ceros sospechosos se agrupan como una rotura, o son ruido?
+==========================================================================
+longitud_racha  observado_%  esperado_si_azar_%  exceso
+     >= 1 días       100.00              100.00    0.00
+     >= 2 días        26.37                8.11   18.26
+     >= 3 días        11.66                0.99   10.67
+     >= 4 días         6.78                0.15    6.63
+     >= 5 días         4.88                0.02    4.85
+
+  media de la racha observada 1.71 días  ·  simulada 1.09
+  → HAY exceso de rachas largas: es compatible con rotura de stock, no con ruido.
+
+==========================================================================
+COTAS DE LA DEMANDA NO OBSERVADA
+==========================================================================
+  unidades vendidas registradas: 64,960,726
+
+                                 escenario  unidades_no_vistas  % sobre lo vendido  margen_perdido_USD
+    cota inferior (solo ceros sospechosos)           3109659.5                 4.8           1814592.4
+cota superior (todos los ceros ponderados)           9636611.0                14.8           9496796.0
+
+==========================================================================
+QUÉ LE HACE ESTO A LA CIFRA DE LA TAREA 4
+==========================================================================
+  Margen perdido medido en la simulación (28 días) : 161.353 USD
+  Margen que la censura oculta, cota inferior      :     22,325 USD
+  Margen que la censura oculta, cota superior      :    174,024 USD
+  ------------------------------------------------------------------
+  Coste real de la rotura, entre                   :    183,678 y 335,377 USD
+
+  Frente a los 11.527 USD de coste de mantenimiento, la proporción de catorce a uno pasa a
+  estar entre 16 y 29 a uno.
+
+=== DÓNDE SE CONCENTRA LA CENSURA ===
+segmento  series  unidades_vendidas  ocultas_cota_inf  % oculto
+      CX       9            26634.0           3882.12     14.58
+      BX     642          2292619.0         152585.31      6.66
+      CY    2242          2507257.0         139030.03      5.55
+      AZ     251           291204.0          15030.85      5.16
+      BZ    1881          1464427.0          71543.61      4.89
+      AX    5634         35064283.0        1700584.25      4.85
+      AY    5141          9275893.0         432847.06      4.67
+      BY    6686          9400385.0         402768.16      4.28
+      CZ    8004          4638024.0         191388.22      4.13
+
+CÓMO ESCRIBIRLO EN LA MEMORIA
+-----------------------------
+Esto no es una corrección, es una **cota**, y hay que presentarlo así. Sin datos de inventario
+no se puede saber qué ceros fueron rotura; sí se puede decir cuántos son incompatibles con
+demanda nula y acotar lo que ocultan.
+
+Las tres frases que valen:
+
+  1. «Las ventas no son la demanda: un cero puede ser ausencia de demanda o ausencia de
+     producto, y con estos datos no se distinguen.»
+  2. «El sesgo tiene dirección conocida: el modelo predice por debajo y la simulación
+     infravalora el coste de la rotura. Nuestras cifras son conservadoras.»
+  3. «El dato que cerraría esta incertidumbre es el inventario diario por tienda, y es la
+     segunda recomendación de este trabajo después de medir la merma.»
+
+Y en §7.7.3, la limitación pasa de la posición 1 —"no se dispone del inventario real"— a
+llevar su magnitud acotada, que es bastante más sólido.
+
+guardado en /Users/juanceruso/Desktop/PROYECTO/avanzado/resultados  ·  total 133s

@@ -1,0 +1,6 @@
+longitud_racha,observado_%,esperado_si_azar_%,exceso
+>= 1 días,100.0,100.0,0.0
+>= 2 días,26.37,8.11,18.26
+>= 3 días,11.66,0.99,10.67
+>= 4 días,6.78,0.15,6.63
+>= 5 días,4.88,0.02,4.85

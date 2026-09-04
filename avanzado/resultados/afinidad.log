@@ -1,0 +1,75 @@
+tiendas: ['BOS_1', 'NYC_1']  ·  200 productos por tienda
+
+  BOS_1: 200 productos x 1913 días  ·  26 controles  [0s]
+  NYC_1: 200 productos x 1913 días  ·  26 controles  [0s]
+
+==========================================================================
+PASO 1 · ¿Cuánto del co-movimiento era solo calendario?
+==========================================================================
+  correlación media SIN residualizar : +0.0414
+  correlación media residualizada    : +0.0009
+  parejas con r > 0,30 antes         :   5.17%
+  parejas con r > 0,30 después       :   2.55%
+
+  Si el 'antes' es alto y el 'después' se derrumba, ahí está la respuesta a por qué
+  una correlación directa habría dado que todo se compra con todo.
+
+==========================================================================
+PASO 2 · Nulo entre tiendas (parejas que NO pueden compartir cesta)
+==========================================================================
+  14,280 parejas entre tiendas distintas
+    media +0.0005 · p95 +0.2039 · p99 +0.3875
+  parejas de la MISMA tienda por encima del p99 del nulo: 253  (1.27%)
+
+  Por azar se esperaría un 1,00%. Observado: 1.27%.
+  → NO hay exceso apreciable: la afinidad no se distingue del ruido.
+
+==========================================================================
+PASO 3 · Nitidez temporal (¿es del mismo día o es tendencia compartida?)
+==========================================================================
+         producto_a          producto_b  r_mismo_dia  r_desplazado  nitidez  r_entrenamiento  r_prueba  sobrevive
+  SUPERMARKET_3_455   SUPERMARKET_3_607        0.853         0.749    0.104            0.866     0.684       True
+  SUPERMARKET_3_090   SUPERMARKET_3_723        0.845         0.746    0.099            0.829     0.887       True
+  SUPERMARKET_3_245   SUPERMARKET_3_607        0.818         0.735    0.083            0.895     0.579       True
+  SUPERMARKET_3_093   SUPERMARKET_3_800        0.802         0.761    0.042            0.488     0.896      False
+  SUPERMARKET_3_093   SUPERMARKET_3_664        0.794         0.748    0.046            0.500     0.906      False
+HOME_&_GARDEN_1_334 HOME_&_GARDEN_1_459        0.784         0.650    0.134            0.839     0.495       True
+  SUPERMARKET_3_150   SUPERMARKET_3_800        0.781         0.741    0.040            0.409     0.937      False
+  SUPERMARKET_3_245   SUPERMARKET_3_455        0.780         0.707    0.073            0.853     0.501       True
+HOME_&_GARDEN_1_110 HOME_&_GARDEN_1_514        0.777         0.666    0.111            0.824     0.559       True
+  SUPERMARKET_3_664   SUPERMARKET_3_800        0.761         0.733    0.028            0.392     0.911      False
+  SUPERMARKET_3_093   SUPERMARKET_3_150        0.753         0.707    0.046            0.379     0.902      False
+  SUPERMARKET_3_282   SUPERMARKET_3_499        0.752         0.682    0.070            0.861    -0.014      False
+  SUPERMARKET_3_288   SUPERMARKET_3_739        0.749         0.686    0.062            0.823     0.509       True
+  SUPERMARKET_3_136   SUPERMARKET_3_202        0.748         0.681    0.066            0.724     0.794       True
+  SUPERMARKET_3_093   SUPERMARKET_3_117        0.747         0.663    0.084            0.557     0.722       True
+  SUPERMARKET_3_150   SUPERMARKET_3_664        0.744         0.708    0.035            0.365     0.917      False
+  SUPERMARKET_3_389   SUPERMARKET_3_499        0.742         0.672    0.070            0.673     0.329      False
+HOME_&_GARDEN_1_096 HOME_&_GARDEN_1_110        0.736         0.630    0.106            0.766     0.543       True
+  SUPERMARKET_3_263   SUPERMARKET_3_572        0.732         0.681    0.051            0.388     0.859       True
+HOME_&_GARDEN_1_096 HOME_&_GARDEN_1_514        0.719         0.593    0.127            0.776     0.491       True
+
+  nitidez mediana de las 40 mejores parejas: +0.063
+  parejas nítidas y estables fuera de muestra: 17 de 40
+
+  ATENCIÓN al leer este número: la nitidez NO separa señal de ruido por sí sola. Dos series
+  independientes también tienen correlación cero al desplazarlas un día, así que una pareja
+  elegida por azar entre 20.000 pasa esta prueba con facilidad. Esta tabla dice CÓMO son las
+  mejores parejas; quien decide si existen es el nulo entre tiendas del paso 2.
+
+==========================================================================
+VEREDICTO
+==========================================================================
+  NO HAY SEÑAL. Las parejas de la misma tienda no superan el nivel de ruido medido
+  entre tiendas distintas, que es la única prueba que puede distinguir afinidad de azar.
+  Que 17 de las 40 mejores parejas parezcan nítidas no lo contradice: con 20.000
+  parejas, las mejores por azar siempre lo parecen.
+
+  Es un resultado, no un fracaso, y ocupa un párrafo en las conclusiones: se evaluó la
+  posibilidad de derivar recomendaciones de venta cruzada y se comprobó que el co-movimiento
+  aparente entre productos se explica por el calendario y el tráfico de la tienda.
+
+  Se recomienda incorporar el identificador de ticket al registro de ventas: es el dato que
+  permitiría un análisis de cesta de verdad, y hoy no existe.
+
+guardado en /Users/juanceruso/Desktop/PROYECTO/avanzado/resultados  ·  total 0s

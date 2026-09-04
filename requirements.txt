@@ -1,0 +1,27 @@
+# Alternativa con pip. En macOS hace falta además:  brew install libomp
+# (lightgbm y xgboost necesitan OpenMP, que el sistema no trae).
+#
+# Recomendado: Python 3.12. Con 3.13 o 3.14 varios paquetes no tienen rueda.
+pandas
+numpy
+scipy
+duckdb
+pyarrow
+lightgbm
+xgboost
+scikit-learn
+statsmodels
+prophet
+matplotlib
+seaborn
+altair
+jupyter
+ipykernel
+nbformat
+nbclient
+streamlit
+fastapi
+uvicorn[standard]
+# capa de lenguaje, opcional
+openai
+anthropic

@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan de la Memoria DSMarket</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --papel:#f7f8fa;
+  --superficie:#ffffff;
+  --superficie-2:#eef0f5;
+  --tinta:#171c28;
+  --tinta-2:#5a6274;
+  --tinta-3:#858c9c;
+  --linea:#e0e3ea;
+  --linea-fuerte:#c8cdd8;
+  --acento:#8c3a4a;
+  --acento-tenue:#f6ecee;
+  --verde:#3f6b52;
+  --ambar:#8a6420;
+  --sombra:0 1px 3px rgba(23,28,40,.07);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --papel:#11141b;
+    --superficie:#181c26;
+    --superficie-2:#1f2531;
+    --tinta:#e9ebf1;
+    --tinta-2:#9aa2b4;
+    --tinta-3:#767e90;
+    --linea:#262c3a;
+    --linea-fuerte:#39404f;
+    --acento:#d98b98;
+    --acento-tenue:#2a1c20;
+    --verde:#7fb094;
+    --ambar:#d3a656;
+    --sombra:0 1px 3px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --papel:#11141b;
+  --superficie:#181c26;
+  --superficie-2:#1f2531;
+  --tinta:#e9ebf1;
+  --tinta-2:#9aa2b4;
+  --tinta-3:#767e90;
+  --linea:#262c3a;
+  --linea-fuerte:#39404f;
+  --acento:#d98b98;
+  --acento-tenue:#2a1c20;
+  --verde:#7fb094;
+  --ambar:#d3a656;
+  --sombra:0 1px 3px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--papel);color:var(--tinta);
+  font-family:"Source Sans 3",system-ui,sans-serif;font-size:16.5px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.pagina{max-width:1120px;margin:0 auto;padding:0 24px 88px}
+
+/* cabecera */
+header.top{padding:60px 0 34px;border-bottom:2px solid var(--tinta);margin-bottom:14px}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--acento);margin:0 0 16px}
+h1{font-family:Newsreader,Georgia,serif;font-weight:500;font-size:clamp(32px,5.4vw,50px);
+  line-height:1.06;letter-spacing:-.015em;margin:0 0 16px;text-wrap:balance}
+.sub{font-size:18.5px;color:var(--tinta-2);max-width:64ch;margin:0}
+.meta-top{display:flex;gap:26px;flex-wrap:wrap;padding:14px 0 0;
+  font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--tinta-3)}
+.meta-top b{color:var(--tinta);font-weight:500}
+
+/* aviso */
+.aviso{background:var(--acento-tenue);border-left:3px solid var(--acento);
+  padding:18px 22px;border-radius:0 6px 6px 0;margin:34px 0 44px}
+.aviso h2{font-family:"Source Sans 3",sans-serif;font-size:15px;font-weight:700;margin:0 0 8px;
+  letter-spacing:.01em}
+.aviso p{margin:0 0 10px;font-size:16px;color:var(--tinta-2)}
+.aviso p:last-child{margin:0}
+.aviso strong{color:var(--tinta)}
+
+h2.seccion{font-family:Newsreader,Georgia,serif;font-weight:500;font-size:30px;
+  letter-spacing:-.01em;margin:56px 0 6px;text-wrap:balance}
+.seccion-nota{color:var(--tinta-2);margin:0 0 26px;max-width:66ch}
+
+/* esqueleto */
+.esqueleto{display:grid;gap:2px;background:var(--linea);border:1px solid var(--linea);
+  border-radius:8px;overflow:hidden;margin-bottom:16px}
+.fila{display:grid;grid-template-columns:38px 1fr 96px;gap:16px;align-items:baseline;
+  background:var(--superficie);padding:13px 18px}
+.fila .n{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--tinta-3)}
+.fila .t{font-weight:600;font-size:16px}
+.fila .t span{display:block;font-weight:400;font-size:14.5px;color:var(--tinta-2);margin-top:2px}
+.fila .p{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--tinta-3);
+  text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fila.destacada{background:var(--superficie-2)}
+.fila.destacada .t{color:var(--acento)}
+
+/* capitulos */
+.capitulos{display:flex;flex-direction:column;gap:18px}
+.cap{background:var(--superficie);border:1px solid var(--linea);border-radius:8px;
+  box-shadow:var(--sombra);overflow:hidden}
+.cap-cab{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;
+  padding:18px 22px 12px;border-bottom:1px solid var(--linea)}
+.cap-num{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--acento);
+  letter-spacing:.08em;flex:0 0 auto}
+.cap-tit{font-family:Newsreader,Georgia,serif;font-size:22px;font-weight:500;margin:0;
+  letter-spacing:-.01em;flex:1 1 auto;min-width:200px}
+.cap-fuente{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--tinta-3);
+  flex:0 0 auto}
+.cap-cuerpo{padding:16px 22px 20px;display:grid;gap:14px}
+.pregunta-guia{font-family:Newsreader,Georgia,serif;font-style:italic;font-size:18px;
+  color:var(--acento);margin:0;line-height:1.4}
+.cap-cuerpo p{margin:0;color:var(--tinta-2)}
+.cap-cuerpo p strong{color:var(--tinta);font-weight:600}
+.cifras{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 0}
+.cifra{font-family:"JetBrains Mono",monospace;font-size:12px;background:var(--superficie-2);
+  border:1px solid var(--linea);border-radius:20px;padding:4px 11px;color:var(--tinta-2);
+  font-variant-numeric:tabular-nums}
+.cifra b{color:var(--tinta);font-weight:500}
+
+/* tablas */
+.tabla-env{overflow-x:auto;margin:0 0 20px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th{text-align:left;font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--tinta-3);font-weight:600;padding:0 16px 9px 0;border-bottom:1px solid var(--linea-fuerte)}
+td{padding:10px 16px 10px 0;border-bottom:1px solid var(--linea);vertical-align:top;color:var(--tinta-2)}
+td:first-child{color:var(--tinta);font-weight:500}
+td.num,th.num{text-align:right;padding-right:0;font-family:"JetBrains Mono",monospace;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* hilo conductor */
+.hilo{display:grid;gap:14px;margin-bottom:20px}
+.hilo-item{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;
+  background:var(--superficie);border:1px solid var(--linea);border-radius:8px;padding:16px 20px;
+  box-shadow:var(--sombra)}
+.hilo-marca{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--acento);
+  border:1px solid var(--acento);border-radius:4px;padding:3px 8px;white-space:nowrap;
+  margin-top:2px}
+.hilo-item h3{margin:0 0 5px;font-size:16.5px;font-weight:600}
+.hilo-item p{margin:0;color:var(--tinta-2);font-size:15.5px}
+
+.dos-col{display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:820px){.dos-col{grid-template-columns:1fr 1fr}}
+.bloque{background:var(--superficie);border:1px solid var(--linea);border-radius:8px;
+  padding:18px 22px;box-shadow:var(--sombra)}
+.bloque h3{margin:0 0 10px;font-size:16px;font-weight:600}
+.bloque ul{margin:0;padding-left:18px;color:var(--tinta-2)}
+.bloque li{margin-bottom:7px}
+.bloque li:last-child{margin-bottom:0}
+
+.cierre{border-top:2px solid var(--tinta);margin-top:56px;padding-top:22px;
+  font-size:15px;color:var(--tinta-2)}
+.cierre strong{color:var(--tinta)}
+code{font-family:"JetBrains Mono",monospace;font-size:.87em;background:var(--superficie-2);
+  padding:.1em .36em;border-radius:3px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="pagina">
+
+<header class="top">
+  <p class="kicker">TFM · Máster en Data Science &amp; IA · Nuclio</p>
+  <h1>Plan de la memoria</h1>
+  <p class="sub">Estructura, contenidos y reparto de trabajo para el documento final del caso DSMarket. Organizado por la narrativa del negocio, dentro del esqueleto que exige la guía del máster.</p>
+  <div class="meta-top">
+    <span>Entrega <b>22 oct 2026</b></span>
+    <span>Extensión estimada <b>62 páginas</b></span>
+    <span>Ponderación <b>70% memoria · 30% defensa</b></span>
+  </div>
+</header>
+
+<div class="aviso">
+  <h2>La decisión de estructura, y su límite</h2>
+  <p>La guía del máster fija las secciones: <strong>Portada, Índice, Introducción, Justificación y Contextualización, Objetivos, Metodología, Resultados y Conclusiones, y Referencias en APA</strong>. Eso no se negocia.</p>
+  <p>Lo que sí se elige es cómo se organiza <em>dentro</em>. En vez de cuatro capítulos llamados «Tarea 1» a «Tarea 4», la memoria se ordena como una <strong>investigación encadenada</strong>: cada pregunta nace de la respuesta anterior. Un tribunal lee eso como un proyecto con criterio; lo otro, como una lista de deberes entregados.</p>
+  <p>Para que no haya duplicación, <strong>Metodología</strong> reúne una sola vez el aparato común (datos, validación, métricas, arquitectura) y <strong>Resultados</strong> lleva la narrativa completa. Así el lector pasa la mayor parte del tiempo en la historia, no en el método repetido seis veces.</p>
+</div>
+
+<h2 class="seccion">El esqueleto</h2>
+<p class="seccion-nota">Secciones obligatorias, con la extensión orientativa de cada una. Las dos sombreadas son las que sostienen el peso del documento.</p>
+
+<div class="esqueleto">
+  <div class="fila"><span class="n">§1</span><span class="t">Portada</span><span class="p">1 p.</span></div>
+  <div class="fila"><span class="n">§2</span><span class="t">Índice</span><span class="p">2 p.</span></div>
+  <div class="fila"><span class="n">§3</span><span class="t">Introducción<span>El caso, el encargo y qué encontrará el lector</span></span><span class="p">2 p.</span></div>
+  <div class="fila"><span class="n">§4</span><span class="t">Justificación y contextualización<span>Situación de DSMarket y estado del arte — aquí viven las citas APA</span></span><span class="p">6 p.</span></div>
+  <div class="fila"><span class="n">§5</span><span class="t">Objetivos<span>General y específicos, uno por pregunta de investigación</span></span><span class="p">2 p.</span></div>
+  <div class="fila destacada"><span class="n">§6</span><span class="t">Metodología<span>El aparato común: datos, calidad, validación, métricas y arquitectura</span></span><span class="p">14 p.</span></div>
+  <div class="fila destacada"><span class="n">§7</span><span class="t">Resultados y conclusiones<span>Los seis capítulos de la narrativa, más las conclusiones transversales</span></span><span class="p">30 p.</span></div>
+  <div class="fila"><span class="n">§8</span><span class="t">Referencias<span>Formato APA</span></span><span class="p">2 p.</span></div>
+  <div class="fila"><span class="n">§9</span><span class="t">Anexos<span>Notebooks, guía de PowerBI, documentación del lakehouse y de la API</span></span><span class="p">3 p.</span></div>
+</div>
+
+<h2 class="seccion">Los seis capítulos de resultados</h2>
+<p class="seccion-nota">Cada uno arranca con la pregunta de negocio que lo motiva y termina abriendo la siguiente. Ese encadenamiento es lo que convierte el documento en una investigación.</p>
+
+<div class="capitulos">
+
+  <article class="cap">
+    <div class="cap-cab">
+      <span class="cap-num">7.1</span>
+      <h3 class="cap-tit">Qué está pasando en las tiendas</h3>
+      <span class="cap-fuente">01_EDA · dashboard</span>
+    </div>
+    <div class="cap-cuerpo">
+      <p class="pregunta-guia">«Mirá en profundidad cómo se está vendiendo» — Michelle Huggins, CDO</p>
+      <p>El punto de partida: qué se vende, dónde y cuándo. Sostiene el capítulo el hallazgo de que <strong>el mix de productos no es uniforme ni siquiera dentro de una misma ciudad</strong>, con Filadelfia como caso extremo. Y el resultado contraintuitivo de precios: la categoría con más dispersión entre tiendas no es la de artículos caros sino SUPERMARKET.</p>
+      <p>Cierra con la decisión metodológica que abre el capítulo siguiente: si el comportamiento varía tanto entre tiendas y productos, hace falta agruparlos antes de modelar nada.</p>
+      <div class="cifras">
+        <span class="cifra">solo <b>5 de 15</b> productos top comunes a las 3 ciudades</span>
+        <span class="cifra">Filadelfia <b>4/15</b> vs Boston <b>10/15</b></span>
+        <span class="cifra">dispersión SUPERMARKET <b>2,75%</b></span>
+        <span class="cifra">Labor Day, SuperBowl, Easter <b>+15-22%</b></span>
+      </div>
+    </div>
+  </article>
+
+  <article class="cap">
+    <div class="cap-cab">
+      <span class="cap-num">7.2</span>
+      <h3 class="cap-tit">Cómo se comportan los productos y las tiendas</h3>
+      <span class="cap-fuente">02_Clustering</span>
+    </div>
+    <div class="cap-cuerpo">
+      <p class="pregunta-guia">«Agrupá productos que se comporten parecido, para evaluar campañas» — Joelle, Marketing</p>
+      <p>Cinco arquetipos de producto y tres grupos de tienda. El hallazgo que más rinde en la defensa es que <strong>el perfil de demanda no respeta las fronteras de ciudad</strong>: Tribeca se comporta como una tienda de Boston. Y se sostiene: en la validación <em>leave-one-out</em> ese grupo se mantiene unido en las diez iteraciones.</p>
+      <p>La segmentación fina revela dos micro-segmentos que la gruesa disuelve, y ambos reaparecen en todos los capítulos siguientes.</p>
+      <div class="cifras">
+        <span class="cifra">K=5 arquetipos · K=10 campañas</span>
+        <span class="cifra">grupo Boston+Tribeca estable <b>100%</b></span>
+        <span class="cifra">segmento navideño <b>×2,29</b> en diciembre</span>
+        <span class="cifra">segmento de eventos <b>×1,99</b></span>
+      </div>
+    </div>
+  </article>
+
+  <article class="cap">
+    <div class="cap-cab">
+      <span class="cap-num">7.3</span>
+      <h3 class="cap-tit">Cuánto vamos a vender</h3>
+      <span class="cap-fuente">03_Forecasting</span>
+    </div>
+    <div class="cap-cuerpo">
+      <p class="pregunta-guia">«¿Sigue siendo válido sumar las predicciones para obtener los agregados?» — Paul Rogers, CFO</p>
+      <p>El capítulo más técnico y el que más honestidad exige. Se comparan baselines, LightGBM, XGBoost, Prophet y SARIMA con validación <em>walk-forward</em>. La conclusión incómoda que hay que contar: <strong>con la estrategia ingenua los modelos no le ganan a una media móvil</strong>, y solo la organización por bloques semanales abre una ventaja real.</p>
+      <p>La respuesta a Paul se da en dos niveles: sumar es mejor que modelar cada nivel por separado, y <strong>reconciliar con MinT es mejor que sumar</strong> — y además garantiza que todos los informes cierren entre sí.</p>
+      <div class="cifras">
+        <span class="cifra">WRMSSE <b>1,0414</b></span>
+        <span class="cifra"><code>rmean_28</code> explica el <b>71,7%</b></span>
+        <span class="cifra">MinT mejora <b>9,3%</b> sobre bottom-up</span>
+        <span class="cifra">cobertura p90 real <b>90,0%</b></span>
+      </div>
+    </div>
+  </article>
+
+  <article class="cap">
+    <div class="cap-cab">
+      <span class="cap-num">7.4</span>
+      <h3 class="cap-tit">Cuánto hay que pedir</h3>
+      <span class="cap-fuente">04_Abastecimiento</span>
+    </div>
+    <div class="cap-cuerpo">
+      <p class="pregunta-guia">Una predicción no repone nada: alguien tiene que decidir cuántas unidades pedir</p>
+      <p>Del <em>newsvendor</em> a una política simulada sobre las 30.490 series con demanda real. El número que abre el capítulo: la política actual <strong>pierde 161.353 dólares en margen por faltantes y solo 11.527 en coste de mantener stock</strong>. No es cara por inmovilizar capital, es cara porque deja de vender.</p>
+      <p>Y el hallazgo que hay que contar aunque nos contradiga: <strong>la simulación refutó nuestra propia conclusión del capítulo anterior</strong> sobre dónde aporta el modelo.</p>
+      <div class="cifras">
+        <span class="cifra">servicio <b>86,3% → 96,0%</b></span>
+        <span class="cifra">coste <b>−61%</b></span>
+        <span class="cifra">del 68% al 90% de servicio: <b>+127%</b> de stock</span>
+        <span class="cifra">el óptimo lo decide <b>la merma</b>, no el margen</span>
+      </div>
+    </div>
+  </article>
+
+  <article class="cap">
+    <div class="cap-cab">
+      <span class="cap-num">7.5</span>
+      <h3 class="cap-tit">¿Se puede mover el precio?</h3>
+      <span class="cap-fuente">05_Elasticidad</span>
+    </div>
+    <div class="cap-cuerpo">
+      <p class="pregunta-guia">«Nuestras acciones de marketing tendrían que explotar esas diferencias de precio» — Michelle</p>
+      <p>El capítulo más corto y probablemente el más valioso. Un panel con efectos fijos da una elasticidad de −0,40 con un patrón perfectamente creíble. <strong>Una prueba de falsación lo refuta</strong>: el precio de la semana siguiente predice las ventas igual de bien que el actual.</p>
+      <p>Con identificación correcta el efecto desaparece. La conclusión es que <strong>con estos datos no se puede responder la pregunta</strong> — y se propone el experimento que sí podría, con su cálculo de potencia.</p>
+      <div class="cifras">
+        <span class="cifra">niveles <b>−0,395</b> · placebo <b>−0,398</b></span>
+        <span class="cifra">en diferencias <b>+0,02</b></span>
+        <span class="cifra">solo el <b>1,1%</b> de las semanas cambia de precio</span>
+        <span class="cifra">experimento: <b>451 series</b> × 8 semanas</span>
+      </div>
+    </div>
+  </article>
+
+  <article class="cap">
+    <div class="cap-cab">
+      <span class="cap-num">7.6</span>
+      <h3 class="cap-tit">Cómo se sostiene esto en el tiempo</h3>
+      <span class="cap-fuente">lakehouse · api · app</span>
+    </div>
+    <div class="cap-cuerpo">
+      <p class="pregunta-guia">«Migrar todas las fuentes y procesos de datos a la nube» — plan de cinco años de DSMarket</p>
+      <p>El capítulo de ingeniería, y el que responde al contexto que plantea el propio enunciado. Cuatro notebooks que leían archivos sueltos se convierten en un sistema: <strong>lakehouse medallón, predicciones que vuelven al almacén, API de reposición y panel interactivo</strong>, todos leyendo la misma fuente.</p>
+      <p>Incluye la justificación de no montar sobre Fabric y la ruta de migración, que es el argumento que un arquitecto de datos espera oír.</p>
+      <div class="cifras">
+        <span class="cifra"><b>490,9 MB → 22,1 MB</b></span>
+        <span class="cifra"><b>58.327.370</b> filas en 4 s</span>
+        <span class="cifra">API con <b>12 pruebas</b> en verde</span>
+        <span class="cifra">reconstrucción completa <b>~20 s</b></span>
+      </div>
+    </div>
+  </article>
+
+</div>
+
+<h2 class="seccion">El hilo conductor de las conclusiones</h2>
+<p class="seccion-nota">Tres momentos del proyecto en que sometimos una conclusión propia a una prueba que podía refutarla, y la prueba la refutó. Es el argumento más fuerte que tiene la memoria, y conviene que sea explícito en las conclusiones en vez de quedar disperso.</p>
+
+<div class="hilo">
+  <div class="hilo-item">
+    <span class="hilo-marca">EDA</span>
+    <div>
+      <h3>Un hallazgo que hubo que aprender a no publicar</h3>
+      <p>Black Friday no mostraba el pico esperado. Era tentador presentarlo como una oportunidad comercial desaprovechada; el dato no daba para sostenerlo y se descartó como evento del calendario.</p>
+    </div>
+  </div>
+  <div class="hilo-item">
+    <span class="hilo-marca">T3 → T4</span>
+    <div>
+      <h3>Una métrica de error no es una métrica de negocio</h3>
+      <p>Concluimos que el modelo servía en el núcleo estable y no en la cola larga. La simulación de la política demostró lo contrario: aporta un 19,3% en la cola larga y pierde un 7,9% en el núcleo. Elegir la política por el RMSSE nos habría llevado a la decisión opuesta en dos segmentos.</p>
+    </div>
+  </div>
+  <div class="hilo-item">
+    <span class="hilo-marca">Elasticidad</span>
+    <div>
+      <h3>Un coeficiente significativo no es una identificación creíble</h3>
+      <p>Una elasticidad de −0,40 con un estadístico t de −19 y un patrón por arquetipo perfectamente razonable. El placebo temporal la tiró abajo. Sin esa prueba, la memoria habría construido una recomendación de precios sobre una correlación espuria.</p>
+    </div>
+  </div>
+</div>
+
+<h2 class="seccion">Reparto entre las cuatro personas</h2>
+<p class="seccion-nota">Los capítulos de resultados son independientes entre sí, así que se pueden escribir en paralelo. Lo que no se puede paralelizar es la voz: conviene que una sola persona haga la pasada final de estilo sobre todo el documento.</p>
+
+<div class="tabla-env">
+<table>
+  <thead><tr><th>Bloque</th><th>Secciones</th><th class="num">Páginas</th><th>Depende de</th></tr></thead>
+  <tbody>
+    <tr><td>Persona A</td><td>§3 Introducción · §4 Justificación y estado del arte · §8 Referencias</td><td class="num">10</td><td>Nada — puede empezar ya</td></tr>
+    <tr><td>Persona B</td><td>§5 Objetivos · §6 Metodología · §7.6 Ingeniería</td><td class="num">22</td><td>Documentación del lakehouse y la API</td></tr>
+    <tr><td>Persona C</td><td>§7.1 Tiendas · §7.2 Comportamiento · dashboard</td><td class="num">14</td><td>Que el .pbix esté armado</td></tr>
+    <tr><td>Persona D</td><td>§7.3 Predicción · §7.4 Reposición · §7.5 Precio</td><td class="num">22</td><td>Nada — los notebooks están cerrados</td></tr>
+    <tr><td>En conjunto</td><td>Conclusiones transversales · pasada de estilo · maquetación</td><td class="num">6</td><td>Todo lo anterior</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="dos-col">
+  <div class="bloque">
+    <h3>Decisiones de forma que conviene cerrar ya</h3>
+    <ul>
+      <li><strong>Registro académico, no la voz de Nicole.</strong> Los notebooks están escritos como si Nicole le hablara a Michelle y a Paul; eso funciona ahí y no en la memoria. Tercera persona, pasado, sin apelaciones al lector. Esto resuelve la duda que quedó abierta sobre hacer dos versiones del notebook de EDA: no hacen falta — el notebook conserva su voz y la memoria tiene la suya.</li>
+      <li><strong>Las cifras se escriben una vez.</strong> Cada número aparece con su intervalo o su significación la primera vez y se referencia después. Nada de repetir «WRMSSE 1,0414» en cinco sitios con distintos decimales.</li>
+      <li><strong>Las figuras salen de los notebooks</strong>, exportadas a 200 ppp, con pie numerado y fuente.</li>
+      <li><strong>Los anexos no son relleno:</strong> se referencian desde el cuerpo o no van.</li>
+    </ul>
+  </div>
+  <div class="bloque">
+    <h3>Referencias que hacen falta buscar</h3>
+    <ul>
+      <li><strong>Predicción de demanda en retail:</strong> la competición M5 y sus conclusiones sobre modelos de árboles frente a redes neuronales.</li>
+      <li><strong>Reconciliación jerárquica:</strong> el método MinT y sus antecedentes en previsión jerárquica.</li>
+      <li><strong>Teoría de inventarios:</strong> el modelo del <em>newsvendor</em>, políticas de revisión periódica y clasificación ABC/XYZ.</li>
+      <li><strong>Demanda intermitente:</strong> métodos específicos para series con muchos ceros.</li>
+      <li><strong>Elasticidad e identificación:</strong> paneles con efectos fijos y el problema de endogeneidad en precios.</li>
+      <li><strong>Arquitectura de datos:</strong> la arquitectura medallón y la separación almacenamiento/cómputo.</li>
+    </ul>
+  </div>
+</div>
+
+<p class="cierre">La memoria tiene una ventaja poco común: <strong>no hay que inventar la historia, ya ocurrió.</strong> Cada capítulo tiene su pregunta de negocio real, su método, su resultado y su límite reconocido, y tres de ellos tienen además el momento en que la evidencia nos contradijo. Escribirla es ordenar lo que ya está, no fabricar una narrativa por encima de unos resultados sueltos.</p>
+
+</div>
+
+</body>
+</html>

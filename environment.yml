@@ -1,0 +1,41 @@
+# Entorno del proyecto DSMarket.
+#     conda env create -f environment.yml
+#     conda activate dsmarket
+#
+# Se usa conda-forge y no pip para lightgbm y xgboost porque arrastra llvm-openmp:
+# en macOS eso evita el error «Library not loaded: @rpath/libomp.dylib» sin Homebrew.
+name: dsmarket
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  # datos
+  - pandas
+  - numpy
+  - scipy
+  - duckdb
+  - pyarrow
+  # modelos
+  - lightgbm
+  - xgboost
+  - scikit-learn
+  - statsmodels
+  - prophet
+  # gráficos
+  - matplotlib
+  - seaborn
+  - altair
+  # cuadernos
+  - jupyter
+  - ipykernel
+  - nbformat
+  - nbclient
+  # lo que no está en conda-forge
+  - pip
+  - pip:
+      - streamlit
+      - fastapi
+      - "uvicorn[standard]"
+      # capa de lenguaje, opcional: uno u otro según el proveedor
+      - openai
+      - anthropic

@@ -1,0 +1,66 @@
+# =============================================================================
+#  DSMarket — qué NO va al repositorio
+#
+#  Criterio: fuera todo lo que sea (a) demasiado grande para GitHub, (b) dato de
+#  origen que no nos corresponde redistribuir, o (c) regenerable con un comando.
+#  El README explica cómo reconstruir cada cosa ignorada.
+# =============================================================================
+
+# ---------- datos de origen (los aporta la escuela; 469 MB) ----------
+data_dsmarket/
+data_dsmarket.zip
+DSMarket_dataset_dashboard.xlsx
+
+# ---------- el almacén: regenerable en ~20 s con pipeline.py all ----------
+lakehouse/bronze/
+lakehouse/silver/
+lakehouse/gold/
+
+# ---------- caché de modelos: regenerable, y V_ventas.npy son 112 MB ----------
+cache_forecast/
+
+# ---------- resultados de experimentos: se conservan los pequeños ----------
+avanzado/resultados/surtido_indice_completo.csv
+
+# ---------- entornos e instaladores ----------
+.venv/
+.venv_*/
+venv/
+env/
+Miniforge3-*.sh
+Miniconda3-*.sh
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# ---------- copias que dejan los parches ----------
+*.bak
+*.bak_*
+*.tmp
+
+# ---------- secretos: nunca, bajo ningún concepto ----------
+.env
+.env.*
+*.key
+*.pem
+secrets*
+
+# ---------- sistema ----------
+.DS_Store
+Thumbs.db
+
+# =============================================================================
+#  Decisiones opcionales — quitá la almohadilla si preferís incluirlos
+# =============================================================================
+
+# Documentos de la escuela: son suyos, no nuestros.
+Enunciado*.pdf
+Guía*.pdf
+
+# Cuadernos de trabajo y duplicados que no forman parte de la entrega.
+first_steps_dsmarket.ipynb
+01_EDA_DSMarket_fixed.ipynb
+01_EDA_DSMarket_vscode_fixed.ipynb

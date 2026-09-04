@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Teoría Detrás de DSMarket</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500&family=Fira+Sans:wght@400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  --papel:#f7f8f7;--superficie:#ffffff;--superficie-2:#eceeed;
+  --tinta:#1b1f1e;--tinta-2:#565f5b;--tinta-3:#818a86;
+  --linea:#dde1df;--linea-fuerte:#c2c9c5;
+  --acento:#2c5545;--acento-tenue:#e6efea;
+  --sombra:0 1px 2px rgba(27,31,30,.06);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --papel:#101312;--superficie:#171b1a;--superficie-2:#1f2523;
+  --tinta:#e7eae8;--tinta-2:#a0aaa5;--tinta-3:#7b8580;
+  --linea:#262d2a;--linea-fuerte:#36403c;
+  --acento:#6fb494;--acento-tenue:#152621;
+  --sombra:0 1px 2px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{
+  --papel:#101312;--superficie:#171b1a;--superficie-2:#1f2523;
+  --tinta:#e7eae8;--tinta-2:#a0aaa5;--tinta-3:#7b8580;
+  --linea:#262d2a;--linea-fuerte:#36403c;
+  --acento:#6fb494;--acento-tenue:#152621;
+  --sombra:0 1px 2px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);
+  font-family:Spectral,Georgia,serif;font-size:17.5px;line-height:1.7;
+  -webkit-font-smoothing:antialiased}
+.env{max-width:1160px;margin:0 auto;padding:0 24px 96px;display:grid;gap:0 54px;
+  grid-template-columns:1fr}
+@media(min-width:1060px){
+  .env{grid-template-columns:200px minmax(0,1fr)}
+  .top{grid-column:1/-1}.nav{grid-column:1}.cuerpo{grid-column:2}
+}
+.top{padding:60px 0 34px;border-bottom:1px solid var(--linea);margin-bottom:44px}
+.eyebrow{font-family:"Fira Mono",monospace;font-size:11.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--acento);margin:0 0 16px}
+h1{font-family:"Fira Sans",system-ui,sans-serif;font-weight:700;
+  font-size:clamp(31px,5vw,47px);line-height:1.08;letter-spacing:-.02em;margin:0 0 16px;
+  text-wrap:balance}
+.sub{font-size:19px;color:var(--tinta-2);margin:0;max-width:62ch}
+
+.nav{font-family:"Fira Sans",sans-serif;font-size:14px;margin-bottom:44px}
+@media(min-width:1060px){.nav{position:sticky;top:30px;align-self:start;margin-bottom:0}}
+.nav p{font-family:"Fira Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--tinta-3);margin:0 0 12px}
+.nav ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.nav a{color:var(--tinta-2);text-decoration:none;line-height:1.35;display:block}
+.nav a:hover{color:var(--acento)}
+.nav a:focus-visible{outline:2px solid var(--acento);outline-offset:3px;border-radius:2px}
+
+.cuerpo{max-width:70ch}
+section{margin-bottom:66px;scroll-margin-top:22px}
+h2{font-family:"Fira Sans",sans-serif;font-weight:600;font-size:28px;line-height:1.2;
+  letter-spacing:-.015em;margin:0 0 6px;text-wrap:balance}
+h3{font-family:"Fira Sans",sans-serif;font-weight:600;font-size:18.5px;margin:34px 0 8px;
+  letter-spacing:-.005em}
+.num{font-family:"Fira Mono",monospace;font-size:12px;color:var(--acento);display:block;
+  margin-bottom:6px;letter-spacing:.1em}
+p{margin:0 0 18px}
+strong{font-weight:600}
+em{font-style:italic;color:var(--tinta-2)}
+code{font-family:"Fira Mono",monospace;font-size:.85em;background:var(--superficie-2);
+  padding:.1em .36em;border-radius:3px}
+
+.formula{background:var(--superficie);border:1px solid var(--linea);border-left:3px solid var(--acento);
+  border-radius:0 7px 7px 0;padding:16px 20px;margin:0 0 20px;overflow-x:auto;
+  font-family:"Fira Mono",monospace;font-size:15px;line-height:1.9;color:var(--tinta);
+  box-shadow:var(--sombra)}
+.formula .expl{display:block;font-family:Spectral,serif;font-size:14.5px;color:var(--tinta-2);
+  margin-top:10px;line-height:1.6;white-space:normal}
+
+.clave{background:var(--acento-tenue);border-radius:7px;padding:16px 20px;margin:0 0 20px}
+.clave p{margin:0;font-size:16.5px}
+.clave p+p{margin-top:10px}
+.clave strong{color:var(--tinta)}
+
+.porque{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  padding:16px 0;margin:0 0 20px}
+.porque h4{font-family:"Fira Sans",sans-serif;font-size:12px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--tinta-3);margin:0 0 8px;font-weight:600}
+.porque p{margin:0;font-size:16.5px;color:var(--tinta-2)}
+
+.tabla-env{overflow-x:auto;margin:0 0 22px}
+table{border-collapse:collapse;width:100%;font-size:15px;font-family:"Fira Sans",sans-serif}
+th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--tinta-3);font-weight:600;padding:0 14px 8px 0;border-bottom:1px solid var(--linea-fuerte)}
+td{padding:9px 14px 9px 0;border-bottom:1px solid var(--linea);vertical-align:top;color:var(--tinta-2)}
+td:first-child{color:var(--tinta);font-weight:500}
+td.n,th.n{text-align:right;padding-right:0;font-family:"Fira Mono",monospace;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.cierre{border-top:2px solid var(--tinta);margin-top:60px;padding-top:24px;
+  font-size:16.5px;color:var(--tinta-2)}
+.cierre strong{color:var(--tinta)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="env">
+
+<header class="top">
+  <p class="eyebrow">DSMarket · TFM · Fundamentos</p>
+  <h1>La teoría detrás de cada decisión</h1>
+  <p class="sub">Qué método se usó en cada etapa, qué dice la teoría que hay debajo, y por qué ese y no otro. Pensado para responder la pregunta «¿por qué hiciste eso?» sin recurrir a «porque es lo que se usa».</p>
+</header>
+
+<nav class="nav" aria-label="Índice">
+  <p>Contenido</p>
+  <ol>
+    <li><a href="#similitud">1 · Medir parecido</a></li>
+    <li><a href="#clustering">2 · Agrupar sin etiquetas</a></li>
+    <li><a href="#global">3 · Un modelo para todo</a></li>
+    <li><a href="#tweedie">4 · Datos con muchos ceros</a></li>
+    <li><a href="#horizonte">5 · Predecir a 28 días</a></li>
+    <li><a href="#metricas">6 · Medir el error</a></li>
+    <li><a href="#cuantiles">7 · Predecir un rango</a></li>
+    <li><a href="#jerarquia">8 · Niveles que deben cuadrar</a></li>
+    <li><a href="#inventario">9 · Cuánto pedir</a></li>
+    <li><a href="#identificacion">10 · Causa y correlación</a></li>
+  </ol>
+</nav>
+
+<main class="cuerpo">
+
+<section id="similitud">
+  <span class="num">01</span>
+  <h2>Medir cuánto se parecen dos tiendas</h2>
+  <p>La primera pregunta de Michelle era si los productos más vendidos varían entre tiendas. Contar cuántos productos del top 15 coinciden es una respuesta, pero es tosca: depende del corte arbitrario en 15 y no dice nada sobre el resto del catálogo.</p>
+  <p>La medida correcta para comparar dos conjuntos es el <strong>índice de Jaccard</strong>: el tamaño de la intersección dividido por el de la unión.</p>
+  <div class="formula">J(A, B) = |A ∩ B| / |A ∪ B|
+    <span class="expl">Vale 1 si las dos tiendas venden exactamente los mismos productos y 0 si no comparten ninguno. Al dividir por la unión, penaliza que una tienda tenga muchos productos que la otra no: no basta con que coincidan unos pocos.</span>
+  </div>
+  <p>Aplicado a los 50 productos más vendidos de cada tienda, produce una matriz de 10×10 que se lee de un vistazo como mapa de calor. Ahí apareció el primer hallazgo estructural: las tiendas de una misma ciudad se parecen más entre sí, salvo Filadelfia, cuyas tres tiendas venden combinaciones distintas.</p>
+  <div class="porque">
+    <h4>Por qué no una correlación</h4>
+    <p>La correlación compara <em>cantidades</em> y aquí interesaba comparar <em>presencia</em>: qué productos están en el top de cada tienda. Jaccard es la medida natural para conjuntos, y además no se ve arrastrada por un producto que vende muchísimo en las dos.</p>
+  </div>
+</section>
+
+<section id="clustering">
+  <span class="num">02</span>
+  <h2>Agrupar cuando no hay etiquetas</h2>
+  <p>Joelle pidió grupos de productos que se comporten parecido. No hay una respuesta correcta contra la que comparar: es <strong>aprendizaje no supervisado</strong>, y eso cambia cómo se valida.</p>
+
+  <h3>Qué minimiza K-Means</h3>
+  <p>K-Means busca los centros que minimizan la suma de distancias al cuadrado de cada punto a su centro más cercano:</p>
+  <div class="formula">min  Σ<sub>k</sub> Σ<sub>x ∈ C<sub>k</sub></sub>  ‖x − μ<sub>k</sub>‖²
+    <span class="expl">El algoritmo alterna dos pasos hasta que nada cambia: asignar cada punto a su centro más cercano, y recalcular cada centro como la media de sus puntos. Converge siempre, pero a un mínimo local — por eso se corre varias veces con distintos arranques (<code>n_init=10</code>) y se queda con el mejor.</span>
+  </div>
+
+  <h3>Por qué hay que estandarizar</h3>
+  <p>La distancia euclídea suma las diferencias de todas las variables. Si una está en dólares (precio, de 0 a 40) y otra es un ratio (de 0 a 2), la primera domina el resultado por su escala, no por su relevancia. Estandarizar —restar la media y dividir por el desvío— pone todas en la misma unidad: desvíos estándar.</p>
+
+  <h3>Cómo se valida algo sin respuesta correcta</h3>
+  <p>Se usan medidas internas, que evalúan la forma de los grupos en vez de compararlos con una verdad conocida. Usamos tres porque cada una mira algo distinto y conviene no depender de un solo número:</p>
+  <div class="tabla-env">
+  <table>
+    <thead><tr><th>Medida</th><th>Qué mira</th><th>Mejor</th></tr></thead>
+    <tbody>
+      <tr><td>Silhouette</td><td>Para cada punto, cuánto más cerca está de su grupo que del grupo vecino</td><td>Alto</td></tr>
+      <tr><td>Davies-Bouldin</td><td>Dispersión interna dividida por separación entre grupos</td><td>Bajo</td></tr>
+      <tr><td>Calinski-Harabasz</td><td>Varianza entre grupos sobre varianza dentro de los grupos</td><td>Alto</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="clave">
+    <p><strong>El silhouette salió 0,158, que suena bajo.</strong> Y lo es, en términos absolutos. Pero en datos de comportamiento de venta los grupos no son islas separadas sino zonas de un continuo: no existe una frontera nítida entre un producto «de fin de semana» y uno «de rutina». Lo que se busca es una partición <em>útil</em>, no una geométricamente perfecta.</p>
+  </div>
+
+  <h3>Por qué jerárquico para las tiendas</h3>
+  <p>Con 3.049 productos, K-Means es lo natural. Con <strong>10 tiendas</strong>, no: pedirle 5, 10 o 20 grupos a 10 puntos no tiene sentido. El clustering jerárquico construye el árbol completo de fusiones —empieza con cada tienda sola y va uniendo las más parecidas— y el dendrograma se lee directamente sin decidir el número de grupos de antemano.</p>
+  <p>Usamos enlace de <strong>Ward</strong>, que en cada paso fusiona el par que menos aumenta la varianza interna total. Es el criterio más coherente con lo que hace K-Means, y por eso ambos dieron exactamente la misma partición.</p>
+
+  <h3>Por qué el GMM perdió</h3>
+  <p>Un modelo de mezcla de gaussianas es más flexible: permite grupos elípticos, de distinto tamaño y orientación, y asigna probabilidades en vez de pertenencias duras. Sobre el papel debería ir mejor. Fue peor en las tres métricas, y la razón es instructiva: <strong>más flexibilidad no ayuda cuando lo que falta es señal, no capacidad</strong>. Con grupos que no están realmente separados, la libertad extra se gasta en ajustar ruido.</p>
+</section>
+
+<section id="global">
+  <span class="num">03</span>
+  <h2>Un modelo para 30.490 series, no 30.490 modelos</h2>
+  <p>La decisión más importante del capítulo de predicción, y la que más conviene poder justificar.</p>
+  <p>El enfoque clásico de series temporales ajusta <strong>un modelo por serie</strong>: cada producto en cada tienda tiene su propio ARIMA con sus propios parámetros. Con 30.490 series eso significa 30.490 modelos, y cada uno aprende únicamente de su propia historia.</p>
+  <p>El enfoque <strong>global</strong> entrena un solo modelo sobre todas las series a la vez, con la identidad de la serie como variable de entrada. Cada observación es una fila: «este producto, en esta tienda, este día, con estos rezagos y este precio, vendió tanto».</p>
+  <div class="porque">
+    <h4>Por qué global gana en este problema</h4>
+    <p>Porque la mayoría de las series son cortas y ruidosas. Un producto que vende dos unidades por día con 66% de días en cero no tiene suficiente historia propia para estimar nada estable. Pero <em>hay miles de productos parecidos</em>, y un modelo global aprende de todos ellos el patrón compartido —el efecto del fin de semana, el de diciembre, el del precio— y lo aplica a cada uno. Es transferencia de aprendizaje entre series.</p>
+  </div>
+  <p>Es también la razón por la que los clusters de la Tarea 2 entran como variables: le permiten al modelo tratar distinto a un producto de «cola larga» que a uno del «núcleo estable» sin tener que descubrirlo desde cero para cada uno de los 3.049.</p>
+</section>
+
+<section id="tweedie">
+  <span class="num">04</span>
+  <h2>Datos de conteo con muchos ceros</h2>
+  <p>El 30% de las combinaciones producto-día no registra ninguna venta. Eso rompe el supuesto implícito de la regresión habitual, que asume errores simétricos alrededor de la media.</p>
+  <p>La demanda de estos productos tiene una forma característica: <strong>una masa de probabilidad en el cero y una cola derecha larga</strong>. No puede ser negativa, no es simétrica, y la varianza crece con la media (los productos que venden más también varían más en términos absolutos).</p>
+  <p>La distribución <strong>Tweedie</strong> describe exactamente eso. Es una familia con un parámetro <em>p</em> que controla la relación entre media y varianza:</p>
+  <div class="formula">Var(Y) = φ · μ<sup>p</sup>
+    <span class="expl">Con p = 1 es Poisson (conteos). Con p = 2 es Gamma (positiva continua). Entre 1 y 2 es la Poisson compuesta: una masa en el cero más una cola continua positiva — justo la forma de la demanda intermitente. Usamos p = 1,1, cerca de Poisson pero con algo más de dispersión.</span>
+  </div>
+  <div class="porque">
+    <h4>Qué cambia en la práctica</h4>
+    <p>El objetivo Tweedie hace que el modelo penalice los errores de forma proporcional al nivel de venta, en vez de castigar igual equivocarse en una unidad sobre dos que sobre doscientas. Y garantiza predicciones no negativas, que con un error cuadrático común no está asegurado.</p>
+  </div>
+</section>
+
+<section id="horizonte">
+  <span class="num">05</span>
+  <h2>Predecir 28 días por delante</h2>
+  <p>Hay dos formas de llegar a un horizonte largo, y elegir bien resultó más importante que elegir el algoritmo.</p>
+
+  <h3>Recursiva</h3>
+  <p>Se entrena un modelo a un día vista y se lo aplica repetidamente, usando su propia predicción como entrada del paso siguiente. Es elegante, pero <strong>acumula error</strong>: la predicción del día 28 se apoya en 27 predicciones anteriores, cada una con su ruido.</p>
+
+  <h3>Directa</h3>
+  <p>Se entrena el modelo para predecir directamente a la distancia buscada, usando solo información que estará disponible en ese momento. No acumula error, pero desperdicia información: para predecir el día 1 se ve obligado a usar datos de hace 28 días, cuando en realidad tendría los de ayer.</p>
+
+  <h3>La solución: bloques semanales</h3>
+  <p>Cuatro modelos, uno por semana del horizonte. El de la primera semana puede mirar hasta hace 7 días, el de la segunda hasta hace 14, y así. Cada uno usa <strong>la información más fresca que realmente tendría disponible</strong> en el momento de predecir.</p>
+  <div class="clave">
+    <p><strong>Este cambio rindió veinte veces más que elegir la librería.</strong> LightGBM pasó de un WRMSSE de 1,0628 a 1,0414 solo por reorganizar el horizonte — un 2%. La diferencia entre LightGBM y XGBoost con la misma estrategia fue de 0,001, que es ruido.</p>
+    <p>Y hay un detalle que importa más de lo que parece: con la estrategia ingenua, <em>los modelos no le ganaban a una media móvil de 28 días</em>. La ventaja apareció solo al organizar bien el horizonte.</p>
+  </div>
+</section>
+
+<section id="metricas">
+  <span class="num">06</span>
+  <h2>Cómo se mide un error de predicción</h2>
+  <p>Con 30.490 series de escalas muy distintas —de dos unidades diarias a varios cientos— el error absoluto medio no se puede promediar entre series: quedaría dominado por las de alto volumen.</p>
+
+  <h3>Escalar por una referencia</h3>
+  <p>El <strong>RMSSE</strong> divide el error del modelo por el error que tendría la predicción más ingenua posible —«mañana se vende lo mismo que hoy»— calculada sobre el período de entrenamiento:</p>
+  <div class="formula">RMSSE = √[  media((y − ŷ)²)  /  media((y<sub>t</sub> − y<sub>t−1</sub>)²)  ]
+    <span class="expl">Al dividir por el error del naive, el resultado es adimensional y comparable entre series. Menor que 1 significa que el modelo aporta valor sobre esa referencia; mayor que 1, que es peor que no hacer nada.</span>
+  </div>
+  <p>Ese umbral en 1 es lo que permitió el hallazgo de la Tarea 3: el arquetipo de cola larga tiene RMSSE 1,29. No es que el modelo fuera flojo ahí — es que <strong>esas series no son predecibles a nivel individual</strong>, y ninguna cantidad de variables lo iba a cambiar.</p>
+
+  <h3>Ponderar por lo que importa</h3>
+  <p>El <strong>WRMSSE</strong> promedia los RMSSE ponderando cada serie por su facturación de los últimos 28 días. Equivocarse en el producto que más factura pesa más que equivocarse en uno marginal.</p>
+  <div class="porque">
+    <h4>Por qué esto generó una contradicción aparente</h4>
+    <p>La media móvil ganaba en MAE y perdía en WRMSSE. No es contradicción: el MAE trata igual a todos los productos y la mayoría son de baja rotación, donde el promedio reciente es casi imbatible. El WRMSSE mide dónde está el dinero. Para decidir, manda el WRMSSE — pero conviene saber que en volumen de unidades sueltas la ganancia del modelo es marginal.</p>
+  </div>
+</section>
+
+<section id="cuantiles">
+  <span class="num">07</span>
+  <h2>De un número a un rango</h2>
+  <p>Una predicción puntual no alcanza para decidir stock. Hace falta la distribución, o al menos un percentil alto de ella.</p>
+
+  <h3>Regresión cuantílica</h3>
+  <p>En vez de minimizar el error cuadrático —que estima la media— se minimiza la <strong>pérdida pinball</strong>, que estima un cuantil concreto:</p>
+  <div class="formula">L<sub>α</sub>(y, q) =  α · (y − q)      si y ≥ q
+             (α − 1) · (y − q)  si y &lt; q
+    <span class="expl">Con α = 0,9 la pérdida castiga nueve veces más quedarse corto que pasarse. El mínimo de esa pérdida es, exactamente, el percentil 90 de la distribución condicional. Es la misma idea que la mediana minimiza el error absoluto, generalizada a cualquier cuantil.</span>
+  </div>
+  <p>El modelo entrenado así dio una <strong>cobertura empírica del 90,0%</strong> frente al objetivo del 90%: la demanda real quedó por debajo del p90 predicho exactamente en nueve de cada diez casos.</p>
+  <div class="clave">
+    <p><strong>El número que esto reveló:</strong> la predicción media cubre solo el 67,8% de los casos. Stockear según el pronóstico deja faltante en una de cada tres combinaciones producto-día — y eso no es un defecto del modelo, es lo que significa predecir una media.</p>
+  </div>
+</section>
+
+<section id="jerarquia">
+  <span class="num">08</span>
+  <h2>Cuando los niveles tienen que cuadrar</h2>
+  <p>La pregunta de Paul: ¿sumar las predicciones individuales, o modelar cada agregado por separado? La teoría de <strong>previsión jerárquica</strong> la responde de forma más completa que el binario.</p>
+
+  <h3>El problema de la coherencia</h3>
+  <p>Si se predice cada nivel por separado, las predicciones son <em>incoherentes</em>: el total que predice Prophet no coincide con la suma de las predicciones individuales. En nuestros datos la diferencia llegaba a 2.199 unidades en un solo día. En la práctica eso significa que el número del comité de dirección y el del gerente de tienda no cierran, y alguien tiene que explicar la diferencia.</p>
+
+  <h3>La estructura</h3>
+  <p>Toda jerarquía se escribe con una <strong>matriz de suma</strong> S que expresa cada serie agregada como suma de las series base:</p>
+  <div class="formula">y = S · b
+    <span class="expl">b son las series del nivel más fino (tienda × departamento, 70 en nuestro caso) e y son las 94 series de todos los niveles. S tiene un 1 donde una serie base contribuye a un agregado. Cualquier predicción coherente tiene que poder escribirse en esta forma.</span>
+  </div>
+
+  <h3>Reconciliar</h3>
+  <p>La reconciliación toma las predicciones base incoherentes ŷ y las proyecta al espacio de las coherentes:</p>
+  <div class="formula">ỹ = S (S′W⁻¹S)⁻¹ S′W⁻¹ ŷ
+    <span class="expl">W es la matriz de covarianza de los errores de predicción. Con W = I se obtiene OLS, que trata todas las series por igual. Con W diagonal se pondera por la varianza de cada una. MinT (Minimum Trace) usa la covarianza completa con encogimiento, aprovechando también las correlaciones entre errores.</span>
+  </div>
+  <div class="clave">
+    <p><strong>MinT ganó en los seis niveles</strong>, bajando el error medio del 15,12% al 13,71% — un 9,3% de mejora sin entrenar un solo modelo nuevo, solo combinando mejor lo que ya teníamos. Y OLS fue el peor de todos (21,04%): tratar por igual al total de la compañía y a una serie de tienda-departamento, que difieren en tres órdenes de magnitud, destruye la reconciliación.</p>
+    <p>La respuesta completa a Paul, entonces, no es «sumá» ni «modelá cada nivel», sino <strong>«no hace falta elegir»</strong>.</p>
+  </div>
+</section>
+
+<section id="inventario">
+  <span class="num">09</span>
+  <h2>Cuánto pedir</h2>
+  <p>Aquí el proyecto cambia de disciplina: de aprendizaje automático a investigación operativa.</p>
+
+  <h3>El vendedor de diarios</h3>
+  <p>El problema fundacional de la teoría de inventarios. Hay que decidir cuánto pedir hoy sin saber la demanda de mañana, sabiendo que quedarse corto y quedarse largo cuestan cosas distintas. La solución no es pedir la demanda esperada sino un <strong>percentil</strong> de su distribución:</p>
+  <div class="formula">Nivel de servicio óptimo  =  C<sub>u</sub> / (C<sub>u</sub> + C<sub>o</sub>)
+    <span class="expl">C<sub>u</sub> es el coste de quedarse corto (el margen que se pierde por no vender) y C<sub>o</sub> el de pasarse (capital inmovilizado, espacio de góndola, merma). El cociente se llama razón crítica, y es el percentil al que hay que stockear.</span>
+  </div>
+  <p>Es el resultado que justifica retroactivamente todo el trabajo con cuantiles: <strong>stockear a la predicción media solo es óptimo si faltante y sobrante cuestan exactamente lo mismo</strong>, cosa que casi nunca ocurre.</p>
+
+  <h3>El hallazgo que salió de aplicarlo</h3>
+  <p>Con los supuestos base, C<sub>u</sub> = 1,06 USD y C<sub>o</sub> = 0,02 USD por unidad y ciclo. La razón crítica da un nivel óptimo del 98%. Pero eso asume que el sobrante conserva su valor, lo cual es falso para todo lo fresco.</p>
+  <div class="clave">
+    <p><strong>El nivel de servicio óptimo lo decide la merma, no el margen.</strong> Con 5% de merma el óptimo baja al 95%; con 10%, al 90%; con 20%, al 80%. En cambio mover el margen bruto entre el 10% y el 35% deja el óptimo donde estaba. La recomendación práctica para DSMarket no es discutir márgenes: es <em>ir a medir la tasa de merma por categoría</em>.</p>
+  </div>
+
+  <h3>La política de revisión periódica</h3>
+  <p>Cada R días se revisa el stock y se pide lo necesario para llevarlo a un nivel objetivo S, que tiene que cubrir todo el período en que la decisión queda comprometida: el ciclo de revisión más el plazo de entrega.</p>
+  <div class="formula">S = Σ μ<sub>i</sub>  +  z<sub>α</sub> · √( Σ σ<sub>i</sub>² )
+    <span class="expl">La primera parte es la demanda esperada del período; la segunda, el stock de seguridad. La raíz de la suma de varianzas asume independencia entre días — una simplificación que resultó importar, porque subestima la dispersión cuando hay autocorrelación.</span>
+  </div>
+  <p>Ese supuesto de independencia es la explicación técnica del resultado que nos contradijo: en las series estables, donde la autocorrelación es mayor, el percentil empírico del histórico resultó mejor estimador que nuestra fórmula.</p>
+
+  <h3>Segmentar antes de decidir</h3>
+  <p>Aplicar la misma política a 30.490 series sería un error. La clasificación <strong>ABC</strong> (por valor: A es el 80% de la facturación) cruzada con <strong>XYZ</strong> (por predictibilidad, medida con el coeficiente de variación) da nueve celdas, cada una con su nivel de servicio. Los dos ejes son independientes: un producto puede facturar mucho y ser impredecible.</p>
+</section>
+
+<section id="identificacion">
+  <span class="num">10</span>
+  <h2>La diferencia entre correlación y causa</h2>
+  <p>El capítulo de elasticidad es el que más teoría estadística exige, y el que terminó dando un resultado negativo bien fundamentado.</p>
+
+  <h3>Qué es una elasticidad</h3>
+  <p>El porcentaje en que cambia la cantidad vendida cuando el precio cambia un 1%. Se estima con una regresión en logaritmos, porque el coeficiente de un modelo log-log <em>es</em> directamente la elasticidad:</p>
+  <div class="formula">log q = β · log p + …        →        β = (∂q/q) / (∂p/p)
+    <span class="expl">Tomar logaritmos convierte una relación multiplicativa en aditiva, y hace que el coeficiente se lea como elasticidad sin transformaciones adicionales.</span>
+  </div>
+
+  <h3>El problema: el precio no es aleatorio</h3>
+  <p>No se puede comparar productos caros con baratos —son cosas distintas— ni semanas caras con baratas del mismo producto sin más, porque el precio no baja al azar: baja cuando el negocio decide una promoción, que suele coincidir con momentos particulares de demanda. <strong>El precio responde a la demanda tanto como la demanda al precio.</strong> Eso es endogeneidad.</p>
+
+  <h3>Efectos fijos y el teorema de Frisch-Waugh-Lovell</h3>
+  <p>La estrategia estándar es un panel con efectos fijos en dos vías: uno por serie, que absorbe todo lo permanente de ese producto en esa tienda, y uno por semana, que absorbe lo que le pasa a toda la cadena.</p>
+  <p>Con 30.490 series no se pueden crear 30.490 variables ficticias. El teorema de <strong>Frisch-Waugh-Lovell</strong> dice que el coeficiente es idéntico si en vez de estimar los efectos fijos se los <em>proyecta fuera</em>: restar iterativamente las medias de cada grupo hasta converger, y después regresar las variables ya desmediadas.</p>
+  <div class="formula">repetir hasta converger:
+    v ← v − media_por_serie(v)
+    v ← v − media_por_semana(v)
+    <span class="expl">Se llama proyecciones alternadas. Reduce un problema de 30.490 parámetros a una regresión simple, y cabe en memoria.</span>
+  </div>
+
+  <h3>La prueba que lo tiró abajo</h3>
+  <p>La estimación dio −0,395 con un estadístico t de −19,3, y un patrón por arquetipo perfectamente creíble. Antes de construir nada encima, la sometimos a un <strong>placebo temporal</strong>: usar el precio de la semana <em>siguiente</em> para explicar las ventas de esta semana.</p>
+  <div class="clave">
+    <p><strong>El placebo dio −0,398.</strong> Idéntico. Y el futuro no puede causar el pasado. Lo que medíamos no era una respuesta al precio sino una correlación entre el nivel de precio de un período y su volumen.</p>
+    <p>La causa está en los datos: cada serie tiene apenas 2,7 precios distintos en 274 semanas, y el 28% no cambia nunca. Con esa persistencia, «el precio de esta semana» y «el de la próxima» son casi la misma variable, y los efectos fijos no alcanzan a separarlas.</p>
+  </div>
+
+  <h3>Primeras diferencias</h3>
+  <p>Si el nivel arrastra información contaminada, se diferencia: relacionar el <em>cambio</em> de ventas con el <em>cambio</em> de precio elimina por construcción todo lo permanente. Ahí el efecto se desvaneció a +0,02, y en el segmento principal salió incluso positivo —un absurdo económico que es la firma clásica de la endogeneidad.</p>
+
+  <h3>Lo que sí se puede hacer: calcular el experimento</h3>
+  <p>Cuando los datos observacionales no pueden responder, la respuesta no es inventar un número sino decir qué haría falta. El tamaño mínimo detectable de un experimento depende del ruido de fondo:</p>
+  <div class="formula">n ≈ 2 · ( 2,8 · σ / efecto )² / T
+    <span class="expl">σ es el desvío del cambio semanal de log-ventas (0,706 en nuestros datos), T las semanas de duración, y el 2,8 recoge el 80% de potencia con 5% de significación. Para detectar una elasticidad de −0,5 con un cambio de precio del 10%: 451 series por brazo durante 8 semanas.</span>
+  </div>
+  <p>Como cada tienda tiene 3.049 productos, es un experimento perfectamente asumible.</p>
+</section>
+
+<p class="cierre">Si hay una idea que atraviesa las diez secciones, es esta: <strong>casi todas las decisiones importantes del proyecto se tomaron eligiendo cómo plantear el problema, no qué algoritmo usar.</strong> Organizar el horizonte en bloques rindió veinte veces más que elegir entre dos librerías de gradient boosting. Medir el error con una métrica ponderada cambió qué modelo ganaba. Y someter una elasticidad significativa a un placebo cambió la conclusión entera del capítulo. La teoría no está para justificar lo que uno ya hizo: está para saber qué preguntarle a los datos, y para reconocer cuándo la respuesta que dan no es la que parece.</p>
+
+</main>
+</div>
+
+</body>
+</html>

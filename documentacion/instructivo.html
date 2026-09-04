@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual de ejecución DSMarket</title>
+<style>:root{color-scheme:light dark}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Roboto+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --fondo:#f4f7f6;--superficie:#ffffff;--superficie-2:#e9efed;
+  --tinta:#14201f;--tinta-2:#4e615f;--tinta-3:#7d908d;
+  --linea:#dae3e0;--linea-fuerte:#bccac6;
+  --acento:#0d7d6e;--acento-tenue:#e2f1ee;
+  --alerta:#9d5f18;--alerta-tenue:#fbf1e4;
+  --ok:#3d7a37;
+  --term-fondo:#132220;--term-tinta:#d7e6e2;--term-tenue:#7fa39b;
+  --sombra:0 1px 2px rgba(20,32,31,.07);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --fondo:#0c1413;--superficie:#131e1d;--superficie-2:#1a2726;
+  --tinta:#e4ecea;--tinta-2:#9db0ac;--tinta-3:#778b87;
+  --linea:#243634;--linea-fuerte:#334744;
+  --acento:#4fbfaa;--acento-tenue:#12312c;
+  --alerta:#d69b52;--alerta-tenue:#2d2317;
+  --ok:#79b872;
+  --term-fondo:#0a1211;--term-tinta:#cfe0dc;--term-tenue:#6f918a;
+  --sombra:0 1px 2px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{
+  --fondo:#0c1413;--superficie:#131e1d;--superficie-2:#1a2726;
+  --tinta:#e4ecea;--tinta-2:#9db0ac;--tinta-3:#778b87;
+  --linea:#243634;--linea-fuerte:#334744;
+  --acento:#4fbfaa;--acento-tenue:#12312c;
+  --alerta:#d69b52;--alerta-tenue:#2d2317;
+  --ok:#79b872;
+  --term-fondo:#0a1211;--term-tinta:#cfe0dc;--term-tenue:#6f918a;
+  --sombra:0 1px 2px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);
+  font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:16.5px;line-height:1.6;
+  -webkit-font-smoothing:antialiased}
+.pag{max-width:900px;margin:0 auto;padding:0 22px 90px}
+header.top{padding:58px 0 26px}
+.eyebrow{font-family:"Roboto Mono",monospace;font-size:11.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--acento);margin:0 0 14px}
+h1{font-family:Archivo,system-ui,sans-serif;font-weight:700;font-size:clamp(30px,5.2vw,44px);
+  line-height:1.08;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance}
+.sub{font-size:18px;color:var(--tinta-2);margin:0;max-width:60ch}
+
+.resumen{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  background:var(--linea);border:1px solid var(--linea);border-radius:8px;overflow:hidden;
+  margin:30px 0 44px}
+.resumen div{background:var(--superficie);padding:14px 16px}
+.resumen dt{font-family:"Roboto Mono",monospace;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tinta-3);margin:0 0 4px}
+.resumen dd{margin:0;font-family:Archivo,sans-serif;font-weight:600;font-size:19px;
+  font-variant-numeric:tabular-nums}
+
+h2{font-family:Archivo,sans-serif;font-weight:600;font-size:25px;letter-spacing:-.01em;
+  margin:52px 0 6px;text-wrap:balance}
+.h2-nota{color:var(--tinta-2);margin:0 0 24px;max-width:64ch}
+
+.paso{background:var(--superficie);border:1px solid var(--linea);border-radius:9px;
+  margin-bottom:16px;box-shadow:var(--sombra);overflow:hidden}
+.paso-cab{display:flex;gap:14px;align-items:baseline;padding:16px 20px 10px;flex-wrap:wrap}
+.paso-n{font-family:"Roboto Mono",monospace;font-size:12px;font-weight:500;color:var(--acento);
+  background:var(--acento-tenue);border-radius:4px;padding:3px 9px;flex:0 0 auto}
+.paso-t{font-family:Archivo,sans-serif;font-weight:600;font-size:18.5px;margin:0;flex:1 1 auto;
+  min-width:180px;letter-spacing:-.008em}
+.paso-tiempo{font-family:"Roboto Mono",monospace;font-size:12px;color:var(--tinta-3);flex:0 0 auto}
+.paso-cuerpo{padding:0 20px 18px}
+.paso-cuerpo p{margin:0 0 12px;color:var(--tinta-2)}
+.paso-cuerpo p strong{color:var(--tinta);font-weight:700}
+.paso-cuerpo p:last-child{margin-bottom:0}
+
+pre{font-family:"Roboto Mono",ui-monospace,monospace;background:var(--term-fondo);
+  color:var(--term-tinta);border-radius:7px;padding:14px 16px;overflow-x:auto;
+  font-size:13.5px;line-height:1.65;margin:0 0 14px}
+pre .c{color:var(--term-tenue)}
+pre .p{color:var(--acento)}
+code{font-family:"Roboto Mono",monospace;font-size:.87em;background:var(--superficie-2);
+  padding:.1em .36em;border-radius:3px}
+.espera{background:var(--superficie-2);border-radius:6px;padding:11px 14px;margin:0 0 12px;
+  font-family:"Roboto Mono",monospace;font-size:12.5px;color:var(--tinta-2);
+  overflow-x:auto;white-space:pre;line-height:1.6}
+.espera b{color:var(--ok);font-weight:500}
+
+.aviso{border-left:3px solid var(--alerta);background:var(--alerta-tenue);
+  padding:14px 18px;border-radius:0 6px 6px 0;margin:0 0 14px}
+.aviso p{margin:0;color:var(--tinta-2);font-size:15.5px}
+.aviso strong{color:var(--tinta)}
+
+.tabla-env{overflow-x:auto;margin:0 0 20px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--tinta-3);font-weight:700;padding:0 14px 8px 0;border-bottom:1px solid var(--linea-fuerte);
+  font-family:Archivo,sans-serif}
+td{padding:9px 14px 9px 0;border-bottom:1px solid var(--linea);vertical-align:top;color:var(--tinta-2)}
+td:first-child{color:var(--tinta);font-weight:700}
+td code{font-weight:400}
+
+.mapa{font-family:"Roboto Mono",monospace;font-size:12.5px;line-height:1.75;white-space:pre;
+  background:var(--superficie);border:1px solid var(--linea);border-radius:8px;padding:20px;
+  overflow-x:auto;margin:0 0 24px;color:var(--tinta-2);box-shadow:var(--sombra)}
+.mapa b{color:var(--tinta);font-weight:500}
+.mapa i{color:var(--acento);font-style:normal}
+
+.cierre{border-top:1px solid var(--linea);margin-top:52px;padding-top:20px;
+  color:var(--tinta-2);font-size:15px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="pag">
+
+<header class="top">
+  <p class="eyebrow">DSMarket · TFM · Manual de ejecución</p>
+  <h1>Cómo correr todo, de principio a fin</h1>
+  <p class="sub">El orden exacto, qué produce cada paso, cuánto tarda y cómo verificar que salió bien. Escrito para ejecutar desde la carpeta <code>PROYECTO</code>.</p>
+</header>
+
+<dl class="resumen">
+  <div><dt>Primera vez</dt><dd>~35 min</dd></div>
+  <div><dt>Reejecución completa</dt><dd>~4 min</dd></div>
+  <div><dt>Solo actualizar datos</dt><dd>~45 s</dd></div>
+  <div><dt>RAM necesaria</dt><dd>8 GB</dd></div>
+</dl>
+
+<h2>El mapa de dependencias</h2>
+<p class="h2-nota">Lo que hay que entender antes de tocar nada: qué necesita qué. Las flechas se leen «alimenta a».</p>
+
+<div class="mapa">  <b>data_dsmarket/</b>  (los 3 CSV originales)
+        │
+        ▼
+  <b>lakehouse/</b>  bronze → silver → gold      <i>pipeline.py</i>
+        │
+        ├──────────────► <b>notebooks 01 · 02</b>   EDA y clustering
+        │                      │
+        │                      ▼
+        │                <i>clusters_*.csv</i>  ──► vuelve al gold
+        │
+        ├──────────────► <b>notebook 03</b>  forecasting
+        │                      │
+        │                      ▼
+        │                <i>cache_forecast/</i>  predicciones y p90
+        │                      │
+        │        ┌─────────────┼──────────────┐
+        │        ▼             ▼              ▼
+        │  <b>notebook 04</b>  <b>notebook 05</b>   <i>carga_predicciones.py</i>
+        │  abastecimiento  elasticidad             │
+        │                                          ▼
+        └──────────────────────────────────► <b>gold/fact_predicciones</b>
+                                             <b>gold/fact_reposicion</b>
+                                                   │
+                                    ┌──────────────┼──────────────┐
+                                    ▼              ▼              ▼
+                                <b>api/</b>          <b>app/</b>        <b>PowerBI</b></div>
+
+<div class="aviso">
+  <p><strong>El eslabón frágil, dicho de frente.</strong> El gold lee <code>cache_forecast/clusters_producto.csv</code> y <code>clusters_tienda.csv</code>, que hoy se generan a mano a partir de los resultados del notebook 02. Si reejecutás el clustering y cambian los grupos, <em>esos CSV no se regeneran solos</em> y el resto del sistema seguiría usando los viejos. El paso 4 explica cómo cerrar ese hueco.</p>
+</div>
+
+<h2>Primera vez</h2>
+<p class="h2-nota">Ocho pasos. Los tres primeros son obligatorios; del cuarto en adelante cada uno produce un entregable independiente.</p>
+
+<div class="paso">
+  <div class="paso-cab"><span class="paso-n">01</span><h3 class="paso-t">Entorno</h3><span class="paso-tiempo">~5 min</span></div>
+  <div class="paso-cuerpo">
+    <p><strong>Python 3.11 o 3.12.</strong> Evitá 3.13 y 3.14: son demasiado recientes y varios paquetes del proyecto todavía no tienen rueda compilada para ellas — Prophet el primero. Conviene un entorno virtual para no mezclar con lo que ya tengas instalado.</p>
+<pre><span class="c"># desde PROYECTO/</span>
+python3 -m venv .venv
+source .venv/bin/activate          <span class="c"># en Windows: .venv\Scripts\activate</span>
+
+pip install pandas numpy scipy scikit-learn matplotlib seaborn \
+            duckdb lightgbm xgboost statsmodels prophet \
+            jupyter nbformat nbclient ipykernel \
+            fastapi "uvicorn[standard]" streamlit altair</pre>
+    <p><strong>Prophet es el que más tarda</strong> porque compila su motor de inferencia. Si falla, el resto del proyecto funciona igual: solo se pierde una de las cinco familias de modelos comparadas en el notebook 03.</p>
+
+    <div class="aviso">
+      <p><strong>En macOS hace falta un paso más.</strong> LightGBM y XGBoost usan OpenMP y macOS no lo trae. Sin esto, el <code>import lightgbm</code> falla con <code>Library not loaded: @rpath/libomp.dylib</code> y el notebook 03 no arranca.</p>
+    </div>
+<pre>brew install libomp
+
+<span class="c"># comprobar que quedó donde LightGBM lo busca</span>
+ls -l /opt/homebrew/opt/libomp/lib/libomp.dylib
+python3 -c "import lightgbm, xgboost; print(lightgbm.__version__, xgboost.__version__)"</pre>
+    <p>Después de <code>brew install libomp</code> hay que <strong>reiniciar el kernel</strong> del notebook: no hace falta reinstalar LightGBM, el binario ya estaba bien.</p>
+
+    <p><strong>Si no tenés Homebrew</strong>, instalalo primero — y ejecutá las líneas que imprime bajo «Next steps», porque sin ellas <code>brew</code> sigue sin existir como comando:</p>
+<pre>xcode-select --install
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+<span class="c"># en Apple Silicon, lo que imprime al final suele ser esto</span>
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' &gt;&gt; ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"</pre>
+
+    <div class="aviso">
+      <p><strong>La alternativa sin Homebrew, que además resuelve la versión de Python.</strong> conda-forge trae <code>llvm-openmp</code> como dependencia de LightGBM y XGBoost, así que no hace falta libomp del sistema — y de paso fija Python 3.12 y evita compilar Prophet, que es donde más gente se atasca.</p>
+    </div>
+<pre>curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+bash "Miniforge3-$(uname)-$(uname -m).sh"
+<span class="c"># cerrar y reabrir la terminal</span>
+
+conda create -n dsmarket python=3.12
+conda activate dsmarket
+conda install -c conda-forge lightgbm xgboost duckdb pandas numpy scipy \
+    scikit-learn matplotlib seaborn statsmodels jupyter altair prophet
+pip install streamlit fastapi "uvicorn[standard]"</pre>
+    <p>Con este camino, en Jupyter hay que elegir el kernel <code>dsmarket</code> en vez del de <code>.venv</code>.</p>
+  </div>
+</div>
+
+<div class="paso">
+  <div class="paso-cab"><span class="paso-n">02</span><h3 class="paso-t">Verificar los datos de origen</h3><span class="paso-tiempo">10 s</span></div>
+  <div class="paso-cuerpo">
+    <p>Los tres CSV tienen que estar descomprimidos en su sitio. Si solo tenés el <code>.zip</code>, descomprimilo primero.</p>
+<pre>ls -la data_dsmarket/data_dsmarket/</pre>
+    <div class="espera">daily_calendar_with_events.csv      <b>54 KB</b>
+item_prices.csv                    <b>370 MB</b>
+item_sales.csv                     <b>121 MB</b></div>
+  </div>
+</div>
+
+<div class="paso">
+  <div class="paso-cab"><span class="paso-n">03</span><h3 class="paso-t">Construir el lakehouse</h3><span class="paso-tiempo">~40 s</span></div>
+  <div class="paso-cuerpo">
+    <p>Las tres capas de una vez. Es el paso del que depende todo lo demás.</p>
+<pre>python3 lakehouse/scripts/pipeline.py all</pre>
+    <div class="espera">BRONZE — ingesta sin transformación
+  item_sales                 30.490 filas    20,9 MB
+  item_prices             6.965.706 filas     1,2 MB
+SILVER — limpieza y normalización
+  ventas (formato largo) <b>58.327.370 filas</b>    30,8 MB
+  control de calidad: ventas&gt;0 sin precio = <b>0</b>
+GOLD — modelo dimensional
+  fact_ventas            58.327.370 filas    83,5 MB</div>
+    <p><strong>El número que hay que mirar es el control de calidad: tiene que dar cero.</strong> Si no da cero, el alineado de precios se rompió y todo lo que venga después estará mal.</p>
+  </div>
+</div>
+
+<div class="paso">
+  <div class="paso-cab"><span class="paso-n">04</span><h3 class="paso-t">Notebooks 01 y 02 · EDA y clustering</h3><span class="paso-tiempo">~2 min</span></div>
+  <div class="paso-cuerpo">
+    <p>Se abren y se ejecutan de arriba abajo. Producen los hallazgos descriptivos y los grupos de productos y tiendas.</p>
+<pre>jupyter notebook 01_EDA_DSMarket.ipynb
+jupyter notebook 02_Clustering_DSMarket.ipynb</pre>
+    <p><strong>Si cambiás algo del clustering</strong>, hay que regenerar los CSV de grupos que consume el gold. Añadí esta celda al final del notebook 02 y el hueco de reproducibilidad queda cerrado:</p>
+<pre><span class="c"># exporta los grupos para que los consuma el lakehouse</span>
+item_feat[['cluster_k5','cluster_k10']].rename_axis('item') \
+    .to_csv('cache_forecast/clusters_producto.csv')
+store_feat[['store','region','cluster_k3']].rename_axis('store_code') \
+    .to_csv('cache_forecast/clusters_tienda.csv')
+
+<span class="c"># y después, desde la terminal:</span>
+<span class="c"># python3 lakehouse/scripts/pipeline.py gold</span></pre>
+  </div>
+</div>
+
+<div class="paso">
+  <div class="paso-cab"><span class="paso-n">05</span><h3 class="paso-t">Notebook 03 · Forecasting</h3><span class="paso-tiempo">15 s o 20 min</span></div>
+  <div class="paso-cuerpo">
+    <p>Este es el que tiene truco. Si la carpeta <code>cache_forecast/</code> está poblada, el notebook <strong>carga los modelos ya entrenados y corre en 15 segundos</strong>. Si la borrás, reentrena todo desde cero: unos 20 minutos.</p>
+<pre>jupyter notebook 03_Forecasting_DSMarket.ipynb
+
+<span class="c"># para forzar el reentrenamiento completo:</span>
+<span class="c"># mv cache_forecast cache_forecast_viejo</span></pre>
+    <p>La caché no es una trampa: es el patrón normal de un proyecto con modelos caros. Está declarado en el propio notebook y el código de entrenamiento está a la vista.</p>
+  </div>
+</div>
+
+<div class="paso">
+  <div class="paso-cab"><span class="paso-n">06</span><h3 class="paso-t">Notebooks 04 y 05 · Abastecimiento y elasticidad</h3><span class="paso-tiempo">~1 min</span></div>
+  <div class="paso-cuerpo">
+    <p>Ambos leen del lakehouse y de la caché de predicciones. No entrenan nada: el 04 es simulación vectorizada y el 05 son regresiones con efectos fijos.</p>
+<pre>jupyter notebook 04_Abastecimiento_DSMarket.ipynb   <span class="c"># ~10 s</span>
+jupyter notebook 05_Elasticidad_DSMarket.ipynb     <span class="c"># ~31 s</span></pre>
+    <p>El 04 escribe además los dos CSV de entrega: <code>predicciones_28dias.csv</code> y <code>predicciones_28dias_p90.csv</code>.</p>
+  </div>
+</div>
+
+<div class="paso">
+  <div class="paso-cab"><span class="paso-n">07</span><h3 class="paso-t">Cerrar el círculo: predicciones al almacén</h3><span class="paso-tiempo">~5 s</span></div>
+  <div class="paso-cuerpo">
+    <p>Vuelca las salidas de los modelos al gold como tablas de hechos. <strong>Sin este paso, la API, el panel y PowerBI no ven las predicciones.</strong></p>
+<pre>python3 lakehouse/scripts/carga_predicciones.py</pre>
+    <div class="espera">predicciones de 2016-04-25 a 2016-05-22 para 30.490 series
+  fact_predicciones        <b>853.720 filas</b>   5,4 MB
+  fact_reposicion          <b>121.960 filas</b>   0,5 MB</div>
+  </div>
+</div>
+
+<div class="paso">
+  <div class="paso-cab"><span class="paso-n">08</span><h3 class="paso-t">API y panel</h3><span class="paso-tiempo">~30 s</span></div>
+  <div class="paso-cuerpo">
+    <p>Son dos procesos independientes: el panel <em>no</em> necesita que la API esté levantada, porque lee el lakehouse directamente y aplica la misma política.</p>
+<pre><span class="c"># comprobar que la API responde bien (12 pruebas)</span>
+python3 api/test_api.py
+
+<span class="c"># levantarla · documentación navegable en /docs</span>
+uvicorn api.main:app --reload
+
+<span class="c"># en otra terminal, el panel · abre en :8501</span>
+streamlit run app/inicio.py</pre>
+    <p>Para activar la capa de lenguaje natural del panel, antes de arrancarlo:</p>
+<pre>pip install anthropic
+export ANTHROPIC_API_KEY="tu-clave"</pre>
+    <p>Sin clave, el panel funciona completo con las explicaciones por reglas. Solo se desactiva la pestaña de consultas.</p>
+  </div>
+</div>
+
+<h2>Uso diario</h2>
+<p class="h2-nota">Una vez montado, esto es lo único que hay que correr según lo que cambie.</p>
+
+<div class="tabla-env">
+<table>
+  <thead><tr><th>Si cambió…</th><th>Corré</th><th>Tarda</th></tr></thead>
+  <tbody>
+    <tr><td>Los CSV de origen</td><td><code>pipeline.py all</code> → <code>carga_predicciones.py</code></td><td>45 s</td></tr>
+    <tr><td>Una regla de limpieza</td><td><code>pipeline.py silver</code> → <code>pipeline.py gold</code></td><td>35 s</td></tr>
+    <tr><td>El clustering</td><td>Exportar los CSV (paso 4) → <code>pipeline.py gold</code></td><td>15 s</td></tr>
+    <tr><td>Los modelos</td><td>Notebook 03 sin caché → <code>carga_predicciones.py</code></td><td>20 min</td></tr>
+    <tr><td>Solo el texto de un notebook</td><td><code>python3 build_notebook_0X.py</code></td><td>2 s</td></tr>
+    <tr><td>Nada, querés ver el dashboard</td><td>PowerBI → Actualizar</td><td>10 s</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="aviso">
+  <p><strong>Los notebooks no se editan a mano.</strong> Los cuatro se generan desde <code>build_notebook_0X.py</code>. Si editás el <code>.ipynb</code> directamente y después alguien regenera, tu cambio se pierde. Editá el script y volvé a correrlo.</p>
+</div>
+
+<h2>La forma corta: un solo comando</h2>
+<p class="h2-nota">Desde que existe <code>operacion/</code>, todo lo de arriba se puede lanzar de una vez. Los pasos manuales siguen valiendo y sirven para entender qué pasa; esto es lo que se usa el día a día.</p>
+
+<pre>python3 operacion/orquestador.py              <span class="c"># las nueve etapas, en orden</span>
+python3 operacion/orquestador.py --simular    <span class="c"># el plan, sin ejecutar nada</span>
+python3 operacion/orquestador.py --estado     <span class="c"># qué pasó en las últimas ejecuciones</span>
+python3 operacion/orquestador.py --desde predecir   <span class="c"># reanudar donde falló</span></pre>
+
+<p>Las etapas son: <code>bronce → plata → oro → contratos → entrenar → predecir → reposicion → contratos → monitor</code>. Se detiene ante el primer fallo bloqueante y no publica nada. Los contratos corren <strong>dos veces a propósito</strong>: la segunda pasada es la que impide que un modelo roto llegue a la API.</p>
+
+<div class="tabla-env">
+<table>
+  <thead><tr><th>Comando</th><th>Qué hace</th><th>Tarda</th></tr></thead>
+  <tbody>
+    <tr><td><code>operacion/contratos.py --detalle</code></td><td>Los 13 contratos de datos, uno por uno</td><td>~30 s</td></tr>
+    <tr><td><code>operacion/entrenar.py</code></td><td>Los 8 modelos y su alta en <code>dim_modelo</code></td><td>~20 min</td></tr>
+    <tr><td><code>operacion/predecir.py</code></td><td>Carga los modelos y predice 28 días</td><td>~3 min</td></tr>
+    <tr><td><code>operacion/reposicion.py</code></td><td>Niveles objetivo por serie</td><td>~10 s</td></tr>
+    <tr><td><code>operacion/monitor.py</code></td><td>Error realizado, deriva y umbrales</td><td>~1 min</td></tr>
+    <tr><td><code>operacion/modelos.py</code></td><td>Lista los modelos registrados</td><td>1 s</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="aviso">
+  <p><strong>Si te quedás sin memoria.</strong> El límite de DuckDB se ajusta por variable de entorno: <code>export DSMARKET_MEM=8GB</code> en un equipo holgado, <code>1GB</code> en uno justo. DuckDB vuelca a disco cuando lo necesita, así que un límite bajo cuesta tiempo, no errores.</p>
+</div>
+
+<p>Para que corra solo, una entrada de <code>cron</code> semanal basta a esta escala:</p>
+<pre>0 3 * * 1  cd /ruta/PROYECTO &amp;&amp; /usr/bin/python3 operacion/orquestador.py &gt;&gt; operacion/registro.log 2&gt;&amp;1</pre>
+
+<h2>Parches que hay que aplicar una vez</h2>
+<div class="tabla-env">
+<table>
+  <thead><tr><th>Parche</th><th>Qué arregla</th><th>Estado</th></tr></thead>
+  <tbody>
+    <tr><td><code>parches/aplicar_app.py</code></td><td>Añade la pestaña «Hoy en la tienda» y el registro de la decisión del encargado</td><td>Aplicado</td></tr>
+    <tr><td><code>parches/arreglar_cruce_cuantiles.py</code></td><td>25.296 filas donde el p90 quedaba por debajo de la media, que dejaban sin stock de seguridad al 22% de la celda CZ</td><td>Aplicado</td></tr>
+  </tbody>
+</table>
+</div>
+<p>Los dos son idempotentes: si ya están aplicados, avisan y no tocan nada. Ambos dejan copia de seguridad.</p>
+
+<h2>Cuando algo falla</h2>
+<div class="tabla-env">
+<table>
+  <thead><tr><th>Síntoma</th><th>Causa</th><th>Solución</th></tr></thead>
+  <tbody>
+    <tr><td>El control de calidad no da cero</td><td>El alineado de precios se rompió</td><td>Revisar que <code>item_prices.csv</code> esté completo. El desfase de 5 semanas se calcula solo.</td></tr>
+    <tr><td><code>Killed</code> o el kernel muere</td><td>Memoria</td><td>Cerrar otros notebooks. Nunca pasar un DataFrame a <code>lgb.Dataset</code>: lo convierte a float64.</td></tr>
+    <tr><td>DuckDB: <code>Could not remove file</code></td><td>Carpeta sincronizada que no permite borrar</td><td>Ya resuelto: el motor corre en memoria y los temporales van a <code>~/.duckdb_tmp</code>.</td></tr>
+    <tr><td>La API devuelve 404</td><td>Falta el paso 7</td><td><code>python3 lakehouse/scripts/carga_predicciones.py</code></td></tr>
+    <tr><td>PowerBI muestra fechas en blanco</td><td>Visual sin filtrar el horizonte</td><td>Filtrar <code>es_futuro = FALSE</code> en los visuales de ventas reales.</td></tr>
+    <tr><td>Prophet no instala</td><td>Compilación de cmdstanpy</td><td>Seguir sin él. Se pierde una familia de modelos del notebook 03, nada más. Si además usás Python 3.13 o 3.14, rehacé el entorno con 3.12.</td></tr>
+    <tr><td><code>Library not loaded: @rpath/libomp.dylib</code></td><td>macOS no trae OpenMP, y LightGBM y XGBoost lo necesitan</td><td><code>brew install libomp</code> y reiniciar el kernel. Afecta igual al notebook 03 y a <code>operacion/entrenar.py</code>.</td></tr>
+    <tr><td><code>brew: command not found</code></td><td>Homebrew no está instalado, o está pero no en el PATH</td><td>Instalarlo y ejecutar las líneas de «Next steps». O montar el entorno con Miniforge, que no lo necesita. Los dos caminos, en el paso 01.</td></tr>
+    <tr><td>Un paquete no tiene rueda y falla al compilar</td><td>Versión de Python demasiado nueva</td><td>Rehacer el entorno con Python 3.12: <code>rm -rf .venv &amp;&amp; python3.12 -m venv .venv</code></td></tr>
+    <tr><td>El orquestador se detiene en <code>contratos</code></td><td>Un contrato bloqueante falló</td><td>Correr <code>operacion/contratos.py --detalle</code> para ver cuál, arreglar, y reanudar con <code>--desde contratos</code>.</td></tr>
+    <tr><td><code>Killed</code> al correr los contratos</td><td>Límite de memoria de DuckDB</td><td><code>export DSMARKET_MEM=1GB</code> y volver a intentar.</td></tr>
+    <tr><td><code>predecir.py</code> dice que faltan días futuros</td><td><code>dim_calendario</code> no llega al horizonte</td><td>Reconstruir la capa oro: ya extiende 28 días con la bandera <code>es_futuro</code>.</td></tr>
+    <tr><td>La app no muestra «Hoy en la tienda»</td><td>El parche no se aplicó</td><td><code>python3 parches/aplicar_app.py</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Opcional: los experimentos avanzados</h2>
+<p class="h2-nota">No hacen falta para la entrega. Están en <code>avanzado/</code> con su propio README.</p>
+<pre><span class="c"># los tres baratos: corrélos primero, deciden si hay capítulo o hay párrafo</span>
+python3 avanzado/07_censura_cota.py          <span class="c"># ~5 min · el de mayor retorno</span>
+python3 avanzado/06_afinidad_sondeo.py       <span class="c"># ~2 min</span>
+python3 avanzado/09_surtido.py               <span class="c"># ~1 min</span>
+
+<span class="c"># los que cambian conclusiones</span>
+python3 avanzado/05_seleccion_por_coste.py   <span class="c"># ~45 min · elegir por coste, no por error</span>
+python3 avanzado/02_objetivo_agregado.py     <span class="c"># ~30 min</span>
+python3 avanzado/08_arranque_frio.py         <span class="c"># ~5 min</span>
+python3 avanzado/04_conformal.py             <span class="c"># ~10 min</span>
+
+pip install optuna
+python3 avanzado/01_tuning_optuna.py         <span class="c"># ~1 h · ganancia baja</span>
+
+pip install "neuralforecast&gt;=1.7" torch
+python3 avanzado/03_deep_learning.py         <span class="c"># ~1-2 h, usa la GPU del Mac</span></pre>
+
+<p class="cierre">Si tuvieras que dejar el proyecto y retomarlo en un mes, ahora es <strong>un solo comando</strong>: <code>python3 operacion/orquestador.py</code>. Reconstruye el almacén, comprueba los contratos, reentrena, predice, calcula los niveles objetivo y te dice si algo se está degradando. Y si falla, <code>--estado</code> te cuenta en qué etapa y por qué.</p>
+
+</div>
+
+</body>
+</html>

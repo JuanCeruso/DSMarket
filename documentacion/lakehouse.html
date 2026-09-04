@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El Lakehouse de DSMarket</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&display=swap">
+<style>
+:root{
+  --fondo:#f6f8fb;
+  --superficie:#ffffff;
+  --superficie-2:#eef2f8;
+  --tinta:#0a2a5c;
+  --tinta-suave:#55627a;
+  --tinta-tenue:#7b869b;
+  --linea:#dbe3ef;
+  --acento:#2a78d6;
+  --acento-suave:#e8f0fc;
+  --bronce:#a06a3c;
+  --plata:#71808f;
+  --oro:#b8860b;
+  --codigo-fondo:#eef2f8;
+  --sombra:0 1px 2px rgba(10,42,92,.06);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --fondo:#0d1420;
+    --superficie:#151d2b;
+    --superficie-2:#1c2637;
+    --tinta:#e7edf7;
+    --tinta-suave:#9aa8c0;
+    --tinta-tenue:#78859d;
+    --linea:#26324a;
+    --acento:#6da7ec;
+    --acento-suave:#1a2740;
+    --bronce:#c99361;
+    --plata:#9aa8b8;
+    --oro:#e0a92e;
+    --codigo-fondo:#111a28;
+    --sombra:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --fondo:#0d1420;
+  --superficie:#151d2b;
+  --superficie-2:#1c2637;
+  --tinta:#e7edf7;
+  --tinta-suave:#9aa8c0;
+  --tinta-tenue:#78859d;
+  --linea:#26324a;
+  --acento:#6da7ec;
+  --acento-suave:#1a2740;
+  --bronce:#c99361;
+  --plata:#9aa8b8;
+  --oro:#e0a92e;
+  --codigo-fondo:#111a28;
+  --sombra:0 1px 2px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--fondo);
+  color:var(--tinta);
+  font-family:"IBM Plex Serif",Georgia,serif;
+  font-size:17px;
+  line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+}
+.envoltorio{
+  max-width:1180px;
+  margin:0 auto;
+  padding:0 24px 96px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0 56px;
+}
+@media (min-width:1080px){
+  .envoltorio{grid-template-columns:210px minmax(0,1fr);}
+  .indice{grid-column:1;grid-row:2;}
+  .contenido{grid-column:2;grid-row:2;}
+  .cabecera{grid-column:1 / -1;grid-row:1;}
+}
+
+/* ---------- cabecera ---------- */
+.cabecera{padding:64px 0 40px;border-bottom:1px solid var(--linea);margin-bottom:48px}
+.marca{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--tinta-tenue);margin:0 0 18px;
+}
+h1{
+  font-family:"IBM Plex Sans",system-ui,sans-serif;
+  font-weight:700;font-size:clamp(30px,5vw,46px);line-height:1.1;
+  letter-spacing:-.02em;margin:0 0 18px;text-wrap:balance;color:var(--tinta);
+}
+.bajada{
+  font-size:19px;color:var(--tinta-suave);margin:0;max-width:62ch;
+}
+.bajada strong{color:var(--tinta);font-weight:500}
+
+/* ---------- índice ---------- */
+.indice{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;margin-bottom:48px}
+@media (min-width:1080px){
+  .indice{position:sticky;top:32px;align-self:start;margin-bottom:0}
+}
+.indice p{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--tinta-tenue);margin:0 0 12px;
+}
+.indice ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.indice a{color:var(--tinta-suave);text-decoration:none;display:block;line-height:1.35}
+.indice a:hover{color:var(--acento)}
+.indice a:focus-visible{outline:2px solid var(--acento);outline-offset:3px;border-radius:2px}
+
+/* ---------- contenido ---------- */
+.contenido{max-width:68ch}
+section{margin-bottom:64px;scroll-margin-top:24px}
+h2{
+  font-family:"IBM Plex Sans",system-ui,sans-serif;
+  font-weight:600;font-size:27px;line-height:1.2;letter-spacing:-.015em;
+  margin:0 0 8px;text-wrap:balance;color:var(--tinta);
+}
+h3{
+  font-family:"IBM Plex Sans",system-ui,sans-serif;
+  font-weight:600;font-size:18px;margin:36px 0 10px;letter-spacing:-.008em;color:var(--tinta);
+}
+.numero{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--acento);
+  display:block;margin-bottom:6px;letter-spacing:.1em;
+}
+p{margin:0 0 18px}
+a{color:var(--acento)}
+strong{font-weight:600}
+em{font-style:italic;color:var(--tinta-suave)}
+code{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.87em;
+  background:var(--codigo-fondo);padding:.12em .38em;border-radius:3px;
+  color:var(--tinta);
+}
+pre{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  background:var(--codigo-fondo);border:1px solid var(--linea);border-radius:6px;
+  padding:16px 18px;overflow-x:auto;font-size:13.5px;line-height:1.6;margin:0 0 20px;
+}
+pre code{background:none;padding:0;font-size:inherit}
+.comentario{color:var(--tinta-tenue)}
+
+/* ---------- capas ---------- */
+.capa{
+  border-left:3px solid var(--borde-capa,var(--linea));
+  padding:2px 0 2px 22px;margin:0 0 28px;
+}
+.capa.bronce{--borde-capa:var(--bronce)}
+.capa.plata{--borde-capa:var(--plata)}
+.capa.oro{--borde-capa:var(--oro)}
+.capa h3{margin-top:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.etiqueta-capa{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--borde-capa);font-weight:500;
+}
+
+/* ---------- tablas ---------- */
+.tabla-envoltorio{overflow-x:auto;margin:0 0 22px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;
+  font-family:"IBM Plex Sans",system-ui,sans-serif}
+th{
+  text-align:left;font-weight:600;font-size:11.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--tinta-tenue);
+  padding:0 14px 8px 0;border-bottom:1px solid var(--linea);white-space:nowrap;
+}
+td{padding:9px 14px 9px 0;border-bottom:1px solid var(--linea);vertical-align:top;color:var(--tinta-suave)}
+td:first-child{color:var(--tinta)}
+td.cifra,th.cifra{text-align:right;font-variant-numeric:tabular-nums;
+  font-family:"IBM Plex Mono",monospace;padding-right:0}
+
+/* ---------- destacados ---------- */
+.dato{
+  display:flex;gap:28px;flex-wrap:wrap;margin:0 0 24px;padding:18px 22px;
+  background:var(--superficie);border:1px solid var(--linea);border-radius:8px;
+  box-shadow:var(--sombra);
+}
+.dato div{display:flex;flex-direction:column;gap:2px}
+.dato dt{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--tinta-tenue);margin:0;
+}
+.dato dd{
+  margin:0;font-family:"IBM Plex Sans",sans-serif;font-weight:600;font-size:22px;
+  color:var(--tinta);font-variant-numeric:tabular-nums;line-height:1.2;
+}
+.dato dd small{font-weight:400;font-size:13px;color:var(--tinta-suave);display:block}
+
+.nota{
+  background:var(--acento-suave);border-radius:6px;padding:16px 20px;margin:0 0 22px;
+  font-size:16px;
+}
+.nota p:last-child{margin-bottom:0}
+
+/* ---------- preguntas ---------- */
+.pregunta{border-top:1px solid var(--linea);padding:22px 0 4px}
+.pregunta:first-of-type{border-top:none;padding-top:4px}
+.pregunta h3{
+  font-size:17px;margin:0 0 10px;color:var(--tinta);
+}
+.pregunta h3::before{
+  content:"P";font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--acento);
+  margin-right:9px;vertical-align:2px;
+}
+.pregunta p{color:var(--tinta-suave);font-size:16.5px}
+.pregunta p:last-child{margin-bottom:0}
+
+/* ---------- diagrama ---------- */
+.diagrama{
+  font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.75;
+  background:var(--superficie);border:1px solid var(--linea);border-radius:8px;
+  padding:22px;overflow-x:auto;margin:0 0 24px;box-shadow:var(--sombra);
+  white-space:pre;color:var(--tinta-suave);
+}
+.diagrama b{color:var(--tinta);font-weight:600}
+
+hr{border:none;border-top:1px solid var(--linea);margin:56px 0}
+.cierre{
+  font-size:15px;color:var(--tinta-tenue);font-family:"IBM Plex Sans",sans-serif;
+  border-top:1px solid var(--linea);padding-top:24px;
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="envoltorio">
+
+<header class="cabecera">
+  <p class="marca">DSMarket · TFM · Nota técnica</p>
+  <h1>El lakehouse, explicado para defenderlo</h1>
+  <p class="bajada">Qué se construyó, con qué herramientas, en qué orden y por qué esas decisiones y no otras. Escrito para que puedas <strong>explicarlo con tus palabras</strong> ante el tribunal, no para consultarlo mientras programás.</p>
+</header>
+
+<nav class="indice" aria-label="Índice">
+  <p>Contenido</p>
+  <ol>
+    <li><a href="#problema">1 · El problema que resuelve</a></li>
+    <li><a href="#vocabulario">2 · Las cinco palabras</a></li>
+    <li><a href="#capas">3 · Las tres capas</a></li>
+    <li><a href="#pasos">4 · Cómo se construyó</a></li>
+    <li><a href="#estrella">5 · El modelo en estrella</a></li>
+    <li><a href="#decisiones">6 · Las decisiones</a></li>
+    <li><a href="#tribunal">7 · Preguntas del tribunal</a></li>
+    <li><a href="#correrlo">8 · Cómo lo corrés</a></li>
+  </ol>
+</nav>
+
+<main class="contenido">
+
+<section id="problema">
+  <span class="numero">01</span>
+  <h2>El problema que resuelve</h2>
+  <p>Hasta la Tarea 4 el proyecto eran cuatro notebooks. Cada uno abría los mismos tres CSV, aplicaba sus propias limpiezas y guardaba resultados en archivos sueltos. Funciona para investigar, pero tiene tres problemas que un tribunal puede señalar:</p>
+  <p><strong>Las reglas de limpieza vivían dentro de los notebooks.</strong> El desfase de cinco semanas del archivo de precios se descubrió en la Tarea 3 y quedó escrito ahí. Si alguien abría el notebook de la Tarea 1, tenía los precios mal alineados y no se enteraba.</p>
+  <p><strong>Cada consumidor leía de un sitio distinto.</strong> El dashboard leía un Excel exportado a mano, los modelos leían los CSV, la simulación leía unos <code>.pkl</code>. Tres versiones de la verdad que se desincronizan en cuanto alguien reejecuta algo.</p>
+  <p><strong>Las predicciones no volvían a ningún lado.</strong> Salían del modelo a un CSV y ahí morían. Nadie podía cruzarlas con las ventas reales sin volver a programar.</p>
+  <p>El lakehouse resuelve las tres: una limpieza, un sitio, y las salidas de los modelos vuelven al almacén como tablas más.</p>
+</section>
+
+<section id="vocabulario">
+  <span class="numero">02</span>
+  <h2>Las cinco palabras que tenés que poder explicar</h2>
+
+  <h3>Parquet</h3>
+  <p>Un formato de archivo para datos tabulares. La diferencia con el CSV es que <strong>guarda por columnas y no por filas</strong>. Eso permite dos cosas: comprimir muchísimo mejor (los valores de una columna se parecen entre sí, así que se repiten patrones) y leer solo las columnas que la consulta necesita, sin tocar el resto del archivo.</p>
+  <div class="dato">
+    <div><dt>CSV original</dt><dd>490,9 MB</dd></div>
+    <div><dt>Mismos datos en Parquet</dt><dd>22,1 MB<small>22 veces más chico</small></dd></div>
+  </div>
+  <p>Es el mismo formato que usan por debajo Fabric, BigQuery, Snowflake y Databricks. No es una elección de juguete: es el estándar de facto del almacenamiento analítico.</p>
+
+  <h3>DuckDB</h3>
+  <p>Una base de datos analítica que corre <em>dentro</em> de tu proceso de Python, sin servidor que instalar ni administrar. Se suele describir como «el SQLite de la analítica». Lee Parquet directamente, sin importar nada, y ejecuta SQL estándar sobre archivos que están en el disco.</p>
+  <p>La comparación útil para el tribunal: <strong>pandas carga todo en memoria y se muere con 58 millones de filas en una máquina normal; DuckDB procesa por bloques y vuelca a disco cuando hace falta.</strong> El unpivot de las 1.913 columnas de día a formato largo —esas 58 millones de filas— tarda cuatro segundos.</p>
+
+  <h3>Arquitectura medallón</h3>
+  <p>Organizar el almacén en tres capas sucesivas, cada una más refinada que la anterior: <em>bronze</em> (crudo), <em>silver</em> (limpio) y <em>gold</em> (listo para consumir). El nombre viene de las medallas y lo popularizó Databricks, pero la idea es vieja: separar «lo que llegó» de «lo que entendimos» de «lo que publicamos».</p>
+
+  <h3>Modelo en estrella</h3>
+  <p>Una forma de organizar las tablas del gold: una tabla de <strong>hechos</strong> en el centro con lo que pasó (una venta, una predicción) y varias tablas de <strong>dimensiones</strong> alrededor con el contexto (qué producto, qué tienda, qué día). Se llama estrella porque el diagrama de relaciones tiene esa forma. Es el modelo que espera cualquier herramienta de BI, PowerBI incluida.</p>
+
+  <h3>Motor sin estado</h3>
+  <p>En nuestro montaje <strong>el almacén son los archivos Parquet, no una base de datos</strong>. DuckDB se levanta, registra vistas sobre esos archivos, responde la consulta y se apaga. No guarda nada propio.</p>
+  <p>Esto es la separación entre almacenamiento y cómputo, y es exactamente el principio de Fabric (OneLake), BigQuery y Snowflake. La consecuencia práctica: migrar a la nube es cambiar el motor y la ruta de los archivos, no reescribir los datos ni las transformaciones.</p>
+</section>
+
+<section id="capas">
+  <span class="numero">03</span>
+  <h2>Las tres capas, y qué vive en cada una</h2>
+
+  <div class="capa bronce">
+    <h3><span class="etiqueta-capa">Bronze</span> Copia fiel, sin tocar nada</h3>
+    <p>Los tres CSV convertidos a Parquet, sin una sola transformación. Ni tipos, ni nombres, ni filtros. Su única función es la <strong>trazabilidad</strong>: si mañana alguien discute un número, se puede reconstruir todo desde acá y demostrar de dónde salió.</p>
+    <p>La regla de oro: <em>bronze nunca se modifica</em>. Si la fuente cambia, se recarga entera.</p>
+  </div>
+
+  <div class="capa plata">
+    <h3><span class="etiqueta-capa">Silver</span> Limpio, tipado y en formato largo</h3>
+    <p>Acá viven las reglas de negocio que descubrimos en el EDA y en la Tarea 3. Son tres, y conviene que las tengas presentes porque cada una es un hallazgo del proyecto convertido en código:</p>
+    <p><strong>El alineado de precios.</strong> El archivo de precios arranca cinco semanas antes que el de ventas. La transformación calcula ese desfase anclando el rango de semanas al final, y deja un control de calidad automático: <em>ventas mayores que cero sin precio debe dar cero</em>. Da cero.</p>
+    <p><strong>Los eventos derivados.</strong> Christmas y Labor Day no venían en el calendario original y se calculan por regla de fecha. Black Friday se evaluó y se descartó porque no mostraba ningún patrón.</p>
+    <p><strong>La marca de días de cierre.</strong> Navidad y Thanksgiving llevan una columna <code>es_dia_cierre</code>. Esto resuelve <em>por diseño</em> el error que encontramos en la Tarea 3, cuando el modelo predijo 36.704 unidades para un 25 de diciembre en que la realidad fueron 14: ahora el dato de que la tienda cierra está en el modelo de datos y no depende de que ningún algoritmo lo adivine.</p>
+    <p>También es donde las ventas pasan de 1.913 columnas de día a formato largo: una fila por producto, tienda y día.</p>
+  </div>
+
+  <div class="capa oro">
+    <h3><span class="etiqueta-capa">Gold</span> Modelo dimensional, listo para consumir</h3>
+    <p>Las dimensiones, las tablas de hechos y dos <em>marts</em> pre-agregados para el dashboard. Es lo único que tocan PowerBI, la API y el panel.</p>
+    <p>Y acá está la pieza que cierra el círculo: <code>fact_predicciones</code> y <code>fact_reposicion</code>. Las salidas de los modelos <strong>vuelven al almacén como tablas de hechos</strong>, con las mismas claves que las ventas reales. Por eso se puede comparar previsión contra realidad en una sola consulta, y por eso el dashboard, la API y el panel muestran exactamente los mismos números.</p>
+  </div>
+
+  <div class="dato">
+    <div><dt>Bronze</dt><dd>22,1 MB<small>3 archivos</small></dd></div>
+    <div><dt>Silver</dt><dd>44,7 MB<small>3 archivos</small></dd></div>
+    <div><dt>Gold</dt><dd>91,0 MB<small>9 archivos</small></dd></div>
+  </div>
+</section>
+
+<section id="pasos">
+  <span class="numero">04</span>
+  <h2>Cómo se construyó, en orden</h2>
+  <p>Esta sección sí es una secuencia: cada paso necesita el anterior. Todo está en <code>lakehouse/scripts/pipeline.py</code>.</p>
+
+  <h3>Paso 1 · Ingesta a bronze</h3>
+  <p>Leer los tres CSV y escribirlos como Parquet con compresión ZSTD. DuckDB lee el CSV e infiere los tipos, y se vuelca directo:</p>
+<pre><code>COPY (SELECT * FROM read_csv_auto('item_sales.csv'))
+TO 'bronze/item_sales.parquet' (FORMAT PARQUET, COMPRESSION ZSTD)</code></pre>
+  <p>Seis segundos para los tres. De 490,9 MB a 22,1 MB.</p>
+
+  <h3>Paso 2 · Calendario a silver</h3>
+  <p>Se construye primero porque las otras dos tablas lo necesitan para traducir los identificadores de día (<code>d_1</code>, <code>d_2</code>…) a fechas reales. Es donde se añaden los eventos derivados y la marca de cierre.</p>
+
+  <h3>Paso 3 · Ventas a formato largo</h3>
+  <p>El paso que más impresiona y el más simple de explicar. Las ventas vienen con una columna por día: 30.490 filas × 1.913 columnas. Hay que darlas vuelta a una fila por producto-tienda-día. En pandas eso es un <code>melt</code> que revienta la memoria; en DuckDB es esto:</p>
+<pre><code>UNPIVOT (SELECT * FROM 'bronze/item_sales.parquet')
+ON COLUMNS('^d_[0-9]+$') INTO NAME d VALUE unidades</code></pre>
+  <div class="dato">
+    <div><dt>Resultado</dt><dd>58.327.370 filas</dd></div>
+    <div><dt>Tiempo</dt><dd>4 segundos</dd></div>
+    <div><dt>Tamaño</dt><dd>30,8 MB</dd></div>
+  </div>
+
+  <h3>Paso 4 · Precios alineados</h3>
+  <p>Se descartan las filas sin etiqueta de semana, se calcula el desfase de cinco semanas y se expande el precio semanal a precio diario. Al final corre el control de calidad que verifica que no quede ninguna venta sin precio.</p>
+
+  <h3>Paso 5 · Dimensiones del gold</h3>
+  <p>Calendario, producto, tienda y serie. Las dos primeras incorporan los resultados de la Tarea 2: cada producto lleva su arquetipo y cada tienda su grupo de comportamiento. <code>dim_serie</code> calcula la clasificación ABC/XYZ en SQL, con funciones de ventana.</p>
+
+  <h3>Paso 6 · Tabla de hechos y marts</h3>
+  <p><code>fact_ventas</code> al grano atómico, valorizada con el precio. Y dos marts pre-agregados para el dashboard, porque PowerBI no necesita 58 millones de filas para mostrarle un gráfico a un director financiero.</p>
+
+  <h3>Paso 7 · Retroalimentación</h3>
+  <p>Un script aparte, <code>carga_predicciones.py</code>, toma las salidas de los modelos y las escribe como <code>fact_predicciones</code> (853.720 filas) y <code>fact_reposicion</code> (121.960 filas, con el nivel objetivo y el stock de seguridad de cada serie).</p>
+</section>
+
+<section id="estrella">
+  <span class="numero">05</span>
+  <h2>El modelo en estrella</h2>
+  <p>Así queda el gold. Las flechas van de la dimensión al hecho, que es la dirección en que se propagan los filtros:</p>
+  <div class="diagrama">                    <b>dim_calendario</b>
+                          │
+        ┌─────────────────┼─────────────────┐
+        ▼                 ▼                 ▼
+  <b>fact_ventas</b>    <b>fact_predicciones</b>  <b>fact_reposicion</b>
+        ▲                 ▲                 ▲
+        │                 └────────┬────────┘
+        │                          │
+        │                     <b>dim_serie</b>
+        │                     ABC / XYZ
+        │                      ▲     ▲
+        └──── <b>dim_producto</b> ─┘     └─ <b>dim_tienda</b>
+              arquetipo (T2)        grupo (T2)</div>
+  <p><code>dim_serie</code> tiene una columna <code>serie_id</code> que concatena producto y tienda. Existe por una razón muy concreta: <strong>PowerBI no admite relaciones por clave compuesta</strong>, así que hay que darle una clave sustituta única.</p>
+
+  <h3>La trampa del fan-out</h3>
+  <p>Es el error que conviene que sepas explicar, porque delata si entendiste el modelo. <code>fact_ventas</code> tiene grano diario y <code>fact_reposicion</code> grano semanal. Si se unen directamente, cada fila de reposición se repite una vez por cada día de ventas, y las métricas de reposición quedan multiplicadas por siete.</p>
+  <p>Me pasó en la primera consulta de prueba: el stock de seguridad daba 2,6 millones de unidades en vez de 29.000. La solución es agregar cada hecho en su propio grano y unir después:</p>
+<pre><code><span class="comentario">-- mal: multiplica las métricas de reposición</span>
+SELECT sum(r.stock_seguridad)
+FROM fact_ventas v JOIN fact_reposicion r USING (item, store_code)
+
+<span class="comentario">-- bien: cada hecho se agrega por separado</span>
+WITH ventas AS (SELECT item, store_code, sum(importe) f
+                FROM fact_ventas GROUP BY 1,2),
+     repo   AS (SELECT item, store_code, sum(stock_seguridad) s
+                FROM fact_reposicion GROUP BY 1,2)
+SELECT * FROM ventas JOIN repo USING (item, store_code)</code></pre>
+</section>
+
+<section id="decisiones">
+  <span class="numero">06</span>
+  <h2>Las decisiones, y por qué</h2>
+
+  <h3>Por qué DuckDB y no pandas</h3>
+  <p>Porque el dataset en formato largo son 58 millones de filas y pandas carga todo en memoria. DuckDB procesa por bloques, vuelca a disco cuando hace falta y ejecuta SQL, que es más fácil de auditar que una cadena de transformaciones de pandas. Además el SQL es portable: el mismo código corre en otro motor.</p>
+
+  <h3>Por qué DuckDB y no PostgreSQL</h3>
+  <p>Porque Postgres está optimizado para transacciones (muchas escrituras pequeñas, muchos usuarios concurrentes) y esto es analítica pura: pocas escrituras, consultas que barren millones de filas. DuckDB es columnar y vectorizado, que es lo que ese perfil de carga necesita. Y no hay servidor que administrar.</p>
+
+  <h3>Por qué no Spark</h3>
+  <p>Porque Spark tiene sentido cuando los datos no entran en una máquina. Los nuestros son 490 MB. Levantar un clúster para esto sería usar una excavadora para plantar un rosal — y además añade una capa de complejidad operativa que nadie del equipo iba a mantener.</p>
+
+  <h3>Por qué no Microsoft Fabric directamente</h3>
+  <p>Tres razones concretas, y conviene decirlas en ese orden:</p>
+  <p><strong>Riesgo de calendario.</strong> El período de prueba de Fabric son 60 días y vencería justo alrededor de la defensa. Quedarse sin demo el día de la presentación es un riesgo que no vale la pena correr.</p>
+  <p><strong>Escala.</strong> 490 MB no justifican una capacidad reservada en la nube. Sería una decisión difícil de defender técnicamente.</p>
+  <p><strong>Complejidad de depuración.</strong> Es la plataforma más nueva de Microsoft y cambia rápido. Un problema de permisos o de capacidad puede costar una semana que no teníamos.</p>
+  <p>La alternativa que elegimos —<em>local pero portable</em>— da lo mismo sin el riesgo: mismas capas, mismo modelo, mismo SQL. Y si querés una prueba real en la nube para la defensa, <strong>BigQuery</strong> es más seguro que Fabric: su capa gratuita no expira nunca y PowerBI se conecta de forma nativa.</p>
+
+  <h3>Por qué tres capas y no una</h3>
+  <p>Porque separan tres responsabilidades distintas. Si mañana cambia una regla de limpieza, se toca silver y se reconstruye gold, sin volver a las fuentes. Si aparece una fuente nueva, entra por bronze sin tocar lo demás. Y si el dashboard necesita otra agregación, se añade un mart en gold sin recalcular nada. Con una sola capa, cualquier cambio obliga a rehacerlo todo.</p>
+</section>
+
+<section id="tribunal">
+  <span class="numero">07</span>
+  <h2>Preguntas que puede hacer el tribunal</h2>
+
+  <div class="pregunta">
+    <h3>¿Esto es un data lake o un data warehouse?</h3>
+    <p>Es un <em>lakehouse</em>, que combina los dos. Del data lake toma el almacenamiento en archivos abiertos y baratos (Parquet en un sistema de archivos). Del warehouse toma el modelo dimensional y el SQL. La diferencia con un warehouse clásico es que no hay una base de datos propietaria: los datos son archivos que cualquier motor puede leer.</p>
+  </div>
+
+  <div class="pregunta">
+    <h3>¿Por qué guardan 58 millones de filas si el dashboard no las usa?</h3>
+    <p>Porque una tabla de hechos debe estar al grano atómico: es lo que permite responder preguntas que hoy no sabemos que vamos a hacer. Los marts pre-agregados salen de ahí. Si solo guardáramos los agregados y mañana alguien pregunta por un producto concreto en una tienda concreta, habría que volver a las fuentes.</p>
+  </div>
+
+  <div class="pregunta">
+    <h3>¿Cómo garantizan la calidad de los datos?</h3>
+    <p>Con controles automáticos dentro del pipeline. El principal verifica que no exista ninguna venta registrada en un día en que ese producto no tenía precio en esa tienda — si el alineado de precios se rompiera, ese número dejaría de ser cero y saltaría. También se verifica la integridad referencial: que toda predicción y toda sugerencia de reposición tengan su serie en <code>dim_serie</code>, y que toda fecha exista en <code>dim_calendario</code>.</p>
+  </div>
+
+  <div class="pregunta">
+    <h3>¿Cuánto tarda en reconstruirse todo?</h3>
+    <p>Unos veinte segundos las tres capas, y unos tres segundos la carga de predicciones. El cuello de botella real no es el pipeline sino el reentrenamiento de los modelos, que son unos dos minutos.</p>
+  </div>
+
+  <div class="pregunta">
+    <h3>¿Y si DSMarket crece a mil tiendas?</h3>
+    <p>El diseño escala en dos sentidos. El SQL no cambia: es el mismo sobre un motor distribuido. Y el modelo es global, así que multiplicar las series multiplica el volumen pero no la complejidad. Lo que sí habría que cambiar es el motor —a BigQuery, Fabric o Snowflake— y particionar los Parquet por fecha y región. Esa migración es un cambio de conexión, no una reescritura, y esa es justamente la razón de haberlo montado así.</p>
+  </div>
+
+  <div class="pregunta">
+    <h3>¿Por qué el motor no guarda estado?</h3>
+    <p>Porque el estado son los archivos. DuckDB se levanta, registra las vistas sobre los Parquet y se apaga. Eso hace que dos personas puedan consultar el mismo almacén a la vez sin pisarse, que no haya nada que respaldar más allá de los archivos, y que cambiar de motor no implique migrar ninguna base.</p>
+  </div>
+</section>
+
+<section id="correrlo">
+  <span class="numero">08</span>
+  <h2>Cómo lo corrés vos</h2>
+  <p>Desde la carpeta <code>PROYECTO</code>:</p>
+<pre><code>pip install duckdb
+
+<span class="comentario"># reconstruye las tres capas (~20 segundos)</span>
+python3 lakehouse/scripts/pipeline.py all
+
+<span class="comentario"># vuelca las salidas de los modelos al gold (~3 segundos)</span>
+python3 lakehouse/scripts/carga_predicciones.py</code></pre>
+  <p>Y para consultarlo desde Python, sin importar nada ni cargar nada en memoria:</p>
+<pre><code>import sys; sys.path.insert(0, 'lakehouse/scripts')
+from pipeline import conectar
+
+con = conectar()          <span class="comentario"># registra todas las vistas solo</span>
+con.execute("""
+    SELECT t.ciudad, p.arquetipo, sum(v.importe) AS facturacion
+    FROM fact_ventas v
+    JOIN dim_tienda t USING (store_code)
+    JOIN dim_producto p USING (item)
+    WHERE v.fecha >= DATE '2016-01-01'
+    GROUP BY 1, 2 ORDER BY 3 DESC
+""").df()</code></pre>
+  <p>Podés escribir cualquier consulta sobre las nueve tablas del gold. Los nombres están en <code>lakehouse/README.md</code>.</p>
+</section>
+
+<p class="cierre">Si tuvieras que resumir el capítulo en una frase para la defensa: <em>convertimos cuatro notebooks que leían archivos sueltos en un almacén con una sola limpieza, un modelo dimensional y las predicciones de vuelta adentro, montado sobre formatos abiertos para que migrar a la nube sea cambiar la conexión y no reescribir el proyecto.</em></p>
+
+</main>
+</div>
+
+</body>
+</html>
