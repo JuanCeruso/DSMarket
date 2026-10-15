@@ -774,6 +774,17 @@ for nombre, matriz in [('predicciones_28dias.csv', pred_futuro), ('predicciones_
 """)
 
 md("<<<CIERRE3>>>")
+# --- Sección de actualización (octubre 2026): segmentación actual de la Tarea 2 -------------------
+# Las celdas se definen en actualizar_notebooks.py y sus textos en textos_actualizacion.py.
+import actualizar_notebooks as _act
+_textos = {}
+exec(open('textos_actualizacion.py', encoding='utf-8').read(), {'textos': _textos})
+CELLS.insert(1, ('md', _act.NOTA_03.strip()))
+for _tipo, _src in [('md', _act.MD_03_INTRO), ('code', _act.CODE_03_A), ('code', _act.CODE_03_B),
+                    ('md', _textos['HALLAZGO_03']), ('md', _act.MD_03_GRUPOS), ('code', _act.CODE_03_C),
+                    ('md', _textos['HALLAZGO_03_GRUPOS'])]:
+    CELLS.append((_tipo, _src.strip()))
+
 NARRATIVA = {}
 
 NARRATIVA['<<<HALLAZGO_MODELOS>>>'] = """
@@ -990,7 +1001,8 @@ nb['cells'] = [nbf.v4.new_markdown_cell(s.strip()) if k == 'md' else nbf.v4.new_
 nb['metadata'] = {'kernelspec': {'display_name': 'Python 3', 'language': 'python', 'name': 'python3'},
                   'language_info': {'name': 'python', 'version': '3.10.12'}}
 import os
-out = os.path.join(os.path.expanduser('~'), 'mnt', 'PROYECTO', '03_Forecasting_DSMarket.ipynb')
+import sys
+out = sys.argv[1] if len(sys.argv) > 1 else '03_Forecasting_DSMarket.ipynb'
 nbf.write(nb, out)
 print(f"escrito: {out} ({len(CELLS)} celdas: {sum(1 for k,_ in CELLS if k=='md')} md / "
       f"{sum(1 for k,_ in CELLS if k=='code')} código)")

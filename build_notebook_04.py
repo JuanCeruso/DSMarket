@@ -562,6 +562,14 @@ La fase 1 no es opcional: **la merma real es el parámetro que decide la políti
 
 md("<<<CIERRE4>>>")
 
+# --- Sección de actualización (octubre 2026): grupos de producto actuales de la Tarea 2 -----------
+import actualizar_notebooks as _act
+_textos = {}
+exec(open('textos_actualizacion.py', encoding='utf-8').read(), {'textos': _textos})
+for _tipo, _src in [('md', _act.MD_04_INTRO), ('code', open('celda04.py', encoding='utf-8').read()),
+                    ('md', _textos['HALLAZGO_04'])]:
+    CELLS.append((_tipo, _src.strip()))
+
 NARRATIVA = {}
 
 NARRATIVA['<<<HALLAZGO_SEGMENTACION>>>'] = """
@@ -703,7 +711,8 @@ nb['cells'] = [nbf.v4.new_markdown_cell(s.strip()) if k == 'md' else nbf.v4.new_
 nb['metadata'] = {'kernelspec': {'display_name': 'Python 3', 'language': 'python', 'name': 'python3'},
                   'language_info': {'name': 'python', 'version': '3.10.12'}}
 import os
-out = os.path.join(os.path.expanduser('~'), 'mnt', 'PROYECTO', '04_Abastecimiento_DSMarket.ipynb')
+import sys
+out = sys.argv[1] if len(sys.argv) > 1 else '04_Abastecimiento_DSMarket.ipynb'
 nbf.write(nb, out)
 print(f"escrito: {out} ({len(CELLS)} celdas: {sum(1 for k,_ in CELLS if k=='md')} md / "
       f"{sum(1 for k,_ in CELLS if k=='code')} código)")
