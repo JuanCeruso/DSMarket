@@ -34,13 +34,15 @@ variable, y se estima $\beta$ sobre los residuos.
 
 La estimación arroja una elasticidad de **−0,395** con un estadístico $t$ de **−19,3**. El signo
 es el correcto, la magnitud es plausible para bienes de alimentación, la significación
-estadística es abrumadora y la descomposición por arquetipo de producto tiene sentido: los
-grupos de rotación estable resultan menos elásticos que los de compra ocasional.
+estadística es abrumadora y la descomposición por grupo de producto de §7.2 tiene sentido: la
+alimentación de consumo diario, barata y de compra frecuente, es la más sensible (−0,62); los
+accesorios y hogar de precio alto, de los menos (−0,26); y la compra ocasional y la Navidad, que
+se compran por la fecha, no reaccionan.
 
 Es exactamente el tipo de resultado que una memoria presentaría como hallazgo principal y sobre
 el que construiría una recomendación de política de precios.
 
-> **[FIGURA 7.19]** *Elasticidad estimada por arquetipo de producto.*
+> **[FIGURA 7.19]** *Elasticidad estimada por grupo de producto.*
 > `Fuente: Cuaderno 05. Puntos con su intervalo de confianza.`
 
 ### 7.5.3. La prueba que lo derriba
@@ -90,8 +92,15 @@ mueven, que es exactamente el problema que impide identificar el efecto con dato
 
 El cálculo de potencia, realizado sobre la variabilidad observada en el propio panel, determina
 el tamaño necesario: **451 series por brazo durante ocho semanas** para detectar una elasticidad
-de −0,4 con una potencia del 80% y un nivel de significación del 5%. Es un experimento
+de −0,5 con una potencia del 80% y un nivel de significación del 5%. Es un experimento
 perfectamente asumible para una cadena de diez tiendas.
+
+Dos precisiones sobre el diseño. La primera: el precio se cambiaría por tienda, y las series de
+una misma tienda comparten clientes, días y clima, de modo que no son independientes. La muestra
+efectiva se acerca más al número de tiendas que al de series, y el análisis debe usar errores
+agrupados por tienda; las 451 series son, por tanto, un mínimo. La segunda: para reducir la
+varianza, cada tienda tratada se empareja con la tienda que más se le parece (§7.2.4) y no con
+otra de su ciudad, porque el parecido entre tiendas no respeta las fronteras de ciudad.
 
 > **[FIGURA 7.21]** *Curva de potencia frente al tamaño de muestra por brazo.*
 > `Fuente: Cuaderno 05. Marcar el punto de 451 series y potencia 0,80.`

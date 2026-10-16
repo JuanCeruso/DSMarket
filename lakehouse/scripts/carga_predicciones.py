@@ -16,15 +16,23 @@ from scipy.stats import norm
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from pipeline import conectar, GOLD, CACHE, RAIZ, log
 
-MODELO, VERSION = "lightgbm_bloques_tweedie", "v1"
+MODELO, VERSION = "lightgbm_400d_eventos_semanales", "v2"
 R, L = 7, 2                       # ciclo de revisión y plazo de entrega
-NIVEL_POR_CELDA = {'AX':.98,'AY':.95,'AZ':.90,'BX':.95,'BY':.90,'BZ':.85,'CX':.90,'CY':.85,'CZ':.80}
+# Nivel de servicio objetivo (Tarea 4, secciones 5.1 y 7): lo decide la merma, no el segmento.
+# Lo fresco (SUPERMARKET) se queda en el 90%; lo no perecedero, cuyo sobrante se vende la semana
+# siguiente, al 95%. Son parámetros de negocio: cuando DSMarket mida la merma real se ajustan aquí.
+NIVEL_POR_CATEGORIA = {'SUPERMARKET': .90, 'ACCESORIES': .95, 'HOME_&_GARDEN': .95}
+
+
+def nivel_servicio(item: str) -> float:
+    return NIVEL_POR_CATEGORIA['SUPERMARKET'] if item.startswith('SUPERMARKET') else .95
 
 def cargar(con):
     meta = pd.read_csv(f"{CACHE}/meta.csv")
-    media = np.load(f"{CACHE}/pred_futuro.npy")
-    p90 = np.load(f"{CACHE}/p90_final.npy")
-    ultima = con.execute("SELECT max(fecha) FROM dim_calendario").fetchone()[0]
+    # modelo final de la Tarea 3 (notebook 03, sección 16.6): 400 días + eventos semanales
+    media = np.load(f"{CACHE}/final_futuro_media.npy")
+    p90 = np.maximum(np.load(f"{CACHE}/final_futuro_p90.npy"), media)
+    ultima = con.execute("SELECT max(fecha) FROM dim_calendario WHERE NOT es_futuro").fetchone()[0]
     fechas = pd.date_range(pd.Timestamp(ultima) + pd.Timedelta(days=1), periods=media.shape[1])
     log.info(f"predicciones de {fechas[0].date()} a {fechas[-1].date()} para {media.shape[0]:,} series")
 
@@ -63,10 +71,11 @@ def cargar(con):
     """).df().pivot_table(index=['item','store_code'], columns='fecha', values='unidades', fill_value=0)
     hist = hist.reindex(pd.MultiIndex.from_arrays([serie['item'], serie['store_code']])).fillna(0).to_numpy()
     ventanas = np.lib.stride_tricks.sliding_window_view(hist, R + L, axis=1).sum(axis=2)
-    percentil_empirico = np.percentile(ventanas, 90, axis=1)
+    niveles = np.array([nivel_servicio(i) for i in serie['item']])
+    percentil_empirico = np.array([np.percentile(v, n * 100) for v, n in zip(ventanas, niveles)])
 
     sigma = np.maximum(p90 - media, 0) / norm.ppf(0.90)
-    z = np.array([norm.ppf(NIVEL_POR_CELDA[c]) for c in serie['celda']])
+    z = norm.ppf(niveles)
     usa_empirico = (serie['clase_xyz'] == 'X').to_numpy()
 
     filas = []
@@ -81,7 +90,7 @@ def cargar(con):
             'item': serie['item'], 'store_code': serie['store_code'], 'segmento': serie['celda'],
             'demanda_esperada': mu.round(2), 'nivel_objetivo': np.ceil(nivel).astype(int),
             'stock_seguridad': np.ceil(nivel - mu).clip(0).astype(int),
-            'nivel_servicio': [NIVEL_POR_CELDA[c] for c in serie['celda']],
+            'nivel_servicio': niveles,
             'metodo': np.where(usa_empirico, 'percentil_empirico', 'modelo_cuantilico')}))
     rep = pd.concat(filas, ignore_index=True)
     rep['modelo'] = MODELO; rep['version'] = VERSION

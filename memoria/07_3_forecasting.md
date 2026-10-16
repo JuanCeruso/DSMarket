@@ -25,7 +25,7 @@ del capítulo. Un modelo local ajusta parámetros a una sola serie y no puede ap
 demás; con series que venden dos unidades diarias, eso significa estimar sobre muy poca señal.
 Un modelo global aprende un único conjunto de parámetros sobre las 30.490 series a la vez y
 comparte la información entre ellas: lo que aprende de una referencia de alta rotación sobre el
-efecto del fin de semana lo aplica a una de cola larga que por sí sola nunca lo habría mostrado.
+efecto del fin de semana lo aplica a una de venta escasa que por sí sola nunca lo habría mostrado.
 Este es el enfoque que domina la práctica reciente en previsión minorista a gran escala, y es el
 que el trabajo adopta como principal; Prophet y SARIMA se conservan como contraste de familia,
 no como candidatos serios a la escala del problema.
@@ -58,8 +58,9 @@ entre LightGBM y XGBoost, con el mismo planteamiento, es marginal; la diferencia
 el problema de forma recursiva o por bloques es lo que decide si hay modelo o no lo hay.
 
 Un WRMSSE ligeramente superior a 1 merece una lectura precisa y no complaciente: significa que,
-ponderando por facturación, el modelo se comporta de forma comparable a la referencia ingenua
-estacional sobre el conjunto de las series. La ventaja del modelo no está en batir esa
+ponderando por facturación, el error del modelo a 28 días vista es comparable al que tendría,
+dentro del entrenamiento, repetir el dato del día anterior (el denominador del RMSSE, §6.6). Es
+una referencia exigente, porque el ingenuo de un paso conoce el día anterior y el modelo no. La ventaja del modelo no está en batir esa
 referencia de forma uniforme, sino en dónde la bate —el capítulo §7.4 muestra que esa
 distribución importa más que el promedio— y en que produce, además, intervalos de predicción que
 la referencia no da.
@@ -70,8 +71,11 @@ la referencia no da.
 ### 7.3.4. Qué mira el modelo
 
 El análisis de importancia de variables arroja un resultado que conviene no maquillar: la media
-móvil de 28 días, `rmean_28`, concentra el **71,7%** de la importancia total, y las cuatro medias
-móviles juntas, alrededor del **88%**.
+móvil de 28 días, `rmean_28`, concentra el **71,7%** de la importancia total en la configuración
+de la sección 6 del cuaderno, y las cuatro medias móviles juntas, alrededor del **88%**. En los
+reentrenamientos posteriores (con la segmentación actual y con 400 días de historia) el peso de
+`rmean_28` baja a cerca del **60%**, porque parte pasa a otras medias móviles y retardos, pero la
+lectura no cambia.
 
 Esta observación se sometió a prueba con una búsqueda de hiperparámetros sobre un pliegue,
 validada en otro que no participó en la búsqueda. La configuración afinada **no mejoró**: WRMSSE
@@ -81,7 +85,14 @@ modelo estaba, en efecto, en una zona plana del espacio de configuraciones, y el
 no estaba ahí.
 
 La lectura correcta es que el modelo está haciendo, esencialmente, una media móvil corregida por
-calendario, segmento y precio. Y esa lectura tiene una consecuencia práctica que se documenta en
+calendario, segmento y precio.
+
+Una comprobación lo confirma. Tras rehacer la segmentación de §7.2, el modelo se reentrenó en los
+tres pliegues sustituyendo las tres variables de la segmentación anterior (dos particiones de
+producto y los grupos de tienda) por el grupo de producto actual. La versión anterior reproduce
+exactamente el WRMSSE de 1,0414; con la segmentación actual es de **1,0403**, prácticamente el
+mismo. Las variables de segmentación pesan menos del 0,2 % de la importancia del modelo en ambos
+casos: su papel es de interpretación, no de precisión. Y esa lectura tiene una consecuencia práctica que se documenta en
 la sección de trabajo futuro: no hay margen para que un modelo de mayor capacidad extraiga señal
 adicional, porque el techo lo pone el ruido de una serie que vende dos unidades diarias, no la
 arquitectura del modelo.
@@ -106,6 +117,11 @@ sustancial: el WRMSSE del pliegue pasa de **1,1111 a 1,0805**. Es la confirmaci�
 principio general del trabajo —cuando la información necesaria no está en los datos de
 entrenamiento, la solución es introducirla como conocimiento del dominio, no esperar que el
 modelo la infiera.
+
+La revisión de §7.3.11 encontró una solución mejor que la regla: con una ventana de entrenamiento
+de 400 días el modelo **sí ve la Navidad anterior**, y aprende el cierre por sí solo —predice 96
+unidades para el 25 de diciembre de 2015 frente a 14 reales—. La regla de cierre se mantiene en la
+carga de predicciones como salvaguarda, pero ya no es la que corrige el error.
 
 > **[FIGURA 7.13]** *Demanda real y predicha en diciembre, antes y después de la regla de cierre.*
 > `Fuente: Cuaderno 03. El día de Navidad debe quedar señalado.`
@@ -212,34 +228,82 @@ entrenamiento:
 
 | Procedimiento | MAE | Mejora sobre la referencia |
 |---|---|---|
-| **Misma referencia en la tienda del mismo grupo** | **0,838** | **39,4%** |
-| Modelo por atributos (categoría, departamento, tienda, precio) | 0,947 | 31,5% |
-| Media del departamento en la tienda | 1,327 | 4,1% |
-| Media de la categoría en la tienda (referencia) | 1,383 | — |
+| **Misma referencia en la tienda más parecida** | **0,918** | **34,6%** |
+| Modelo por atributos (categoría, departamento, tienda, precio) | 1,028 | 26,8% |
+| Media del departamento en la tienda | 1,343 | 4,3% |
+| Media de la categoría en la tienda (referencia) | 1,404 | — |
 
 El resultado interesante es que **la vía más simple gana al modelo**. Y su interés no es la
-diferencia de error sino lo que valida: el agrupamiento de tiendas de §7.2.5 no era una
+diferencia de error sino lo que valida: el parecido entre tiendas de §7.2.4 no es solo una
 descripción, es un instrumento operativo — dice de qué establecimiento copiar cuando llega un
-producto nuevo, y funciona mejor que un modelo entrenado con los atributos del producto.
+producto nuevo, y funciona mejor que un modelo entrenado con los atributos del producto. La
+tienda de la que se copia es la más parecida de §7.2.4, que existe para todas las tiendas, de modo
+que la vía se puede aplicar siempre que el producto ya se venda en otra tienda de la red.
 
-Ambos procedimientos comparten una limitación que hay que declarar: infravaloran de forma
-apreciable, con un sesgo del **−18,2%** en la vía por tienda vecina y del **−25,2%** en la del
-modelo. Cualquiera de los dos requeriría calibración antes de su uso.
+Los dos procedimientos difieren en el sesgo: copiar de la tienda más parecida sobrestima
+ligeramente (**+4,6%**), mientras que el modelo por atributos infravalora de forma apreciable
+(**−27,2%**) y requeriría calibración antes de usarse. Un producto que no se vende en ninguna otra
+tienda solo cuenta con el modelo por atributos o con la media del departamento.
 
-### 7.3.11. Límites reconocidos
+### 7.3.11. Revisión: medir por semanas y aprender del año anterior
+
+La tutoría planteó cuatro puntos sobre esta tarea; la sección 16 del cuaderno 03 responde a cada
+uno.
+
+**Semana vista y máximo desglose.** Ya se cumplía: el modelo predice las cuatro semanas
+siguientes, con un modelo por semana, para cada una de las 30.490 series producto-tienda.
+
+**Un ejemplo concreto.** Un producto de alimentación de Filadelfia que vende unas siete unidades
+al día tiene un error del 41% medido día a día, porque nadie puede saber si mañana se venderán
+cuatro o doce. Por semanas el error baja al 8%: vendió 51, 53, 57 y 41 unidades y el modelo
+predijo 52, 57, 50 y 44.
+
+**Una métrica que no se rompa con los ceros.** Más de la mitad de los días-producto no tienen
+ventas. Se añade el **WAPE semanal**: se suman predicción y venta de cada serie por semana y se
+mide qué parte de lo vendido fue error. Por semanas, los huecos sin ventas bajan del 57% de los
+días al 19% de las semanas y el error del 76% al 40%. Leído con honestidad, con esta métrica el
+modelo de 180 días empata con la media móvil de 28 días: su ventaja en el WRMSSE viene del reparto
+entre días y del peso de los productos que más facturan. Se propone usar las dos: el WRMSSE para
+comparar modelos y el WAPE semanal para explicar el error y para reponer.
+
+**Eventos a nivel semanal.** Se añadieron cuatro variables de calendario que miran la semana
+(si hay evento esa semana, cuál, y cuántos días faltan o han pasado). Con 180 días de historia no
+aportan nada: el modelo nunca ha visto la Navidad anterior. Con **400 días** sí la ve, y el
+resultado es la mayor mejora del proyecto en temporada alta:
+
+| WRMSSE | 180 días | 400 días | 400 días + eventos semanales |
+|---|---|---|---|
+| Noviembre 2015 | 1,0525 | 1,0203 | **1,0167** |
+| Diciembre 2015 | 1,1090 | 1,0519 | **1,0459** |
+| Media febrero-abril 2016 | 1,0406 | 1,0378 | **1,0376** |
+
+El grueso de la mejora viene de la historia más larga; las variables semanales añaden un poco en
+temporada alta y nada el resto del año. El modelo aprende además por sí solo el cierre del 25 de
+diciembre (96 unidades predichas frente a 14 reales, antes 36.000) y la semana de Black Friday pasa
+de un error del 10% a prácticamente cero.
+
+**El modelo final** combina las dos cosas. En la última ventana de validación (28 de marzo a 24 de
+abril de 2016) obtiene un WRMSSE de **0,9994**, el primero por debajo de 1, y un WAPE semanal del
+37,8% frente al 38,5% de la media móvil. Su percentil 90 cubre el **89,4%** de los días-producto,
+frente al 67,8% de la predicción media, y la media queda un 2,3% por debajo de la demanda real. Es
+el modelo que genera los ficheros de entrega y el que usa la simulación de §7.4.
+
+
+### 7.3.12. Límites reconocidos
 
 El capítulo deja tres problemas abiertos, que se recogen en las conclusiones y en la propuesta
 de trabajo futuro:
 
-1. **Temporada alta.** La regla de cierre corrige el caso extremo, pero el comportamiento del
-   modelo en diciembre sigue siendo el peor del año. Una ventana de entrenamiento que incluyera
-   el mismo período del año anterior es la vía natural, con el coste de cómputo que conlleva.
-2. **Cola larga.** En las series de demanda errática el modelo aporta poco sobre una regla
-   simple. Los métodos específicos para demanda intermitente son la referencia obligada.
+1. **Temporada alta.** Con 400 días de historia diciembre mejora un 5,7%, pero sigue siendo el
+   mes con más error: el modelo aún no capta del todo el pico del 31 de diciembre, y la política
+   de reposición no se ha simulado en esos meses.
+2. **Demanda errática.** En las series de clase Z y en la compra ocasional el error de
+   predicción es el más alto. Los métodos específicos para demanda intermitente son la
+   referencia obligada.
 3. **Sesgo inestable.** La corrección con la ventana reciente es una solución práctica, no una
    explicación de por qué el sesgo se mueve.
 
-### 7.3.12. Qué abre el capítulo siguiente
+### 7.3.13. Qué abre el capítulo siguiente
 
 El capítulo entrega una previsión media, una previsión al percentil 90 y una garantía de
 coherencia entre niveles. Nada de eso repone una sola unidad. La pregunta siguiente es qué se

@@ -37,10 +37,11 @@ conjunto de predictores.
 Un cuarto candidato quedó fuera, y merece un párrafo porque la decisión de excluirlo es un
 resultado. **Black Friday** se había incorporado inicialmente al análisis por expectativa
 comercial: es la fecha que cualquier informe de minorista destaca. El histórico de DSMarket no
-muestra en esa fecha pico alguno distinguible del ruido. La tentación de presentarlo como una
+muestra ningún pico: Black Friday vende un 24 % menos que los viernes de alrededor (entre −17 % y
+−29 % según el año), probablemente porque sigue a Thanksgiving, día de cierre (§6.2). La tentación de presentarlo como una
 oportunidad comercial desaprovechada —«la cadena no está capturando el efecto Black Friday»— era
 considerable y habría dado un titular atractivo. El dato no la sostenía, y se retiró del
-conjunto de eventos relevantes. Que la ausencia de efecto se deba a la política comercial de la
+conjunto de eventos relevantes. Que la ausencia de pico se deba a la política comercial de la
 compañía, a la naturaleza de su catálogo o a la codificación del calendario es una pregunta que
 estos datos no permiten responder, y así se deja consignado.
 
@@ -54,17 +55,18 @@ cada ciudad se extrajeron los quince productos más vendidos y se examinó cuán
 comunes a las tres.
 
 **Solo cinco de quince.** Dos tercios de los productos que encabezan las ventas en una ciudad no
-encabezan las de las otras dos. La descomposición por ciudad hace el contraste más nítido:
+encabezan las de las otras dos. La misma comparación entre las tiendas de cada ciudad hace el
+contraste más nítido:
 
-| Ciudad | Productos del top 15 comunes a las tres ciudades |
+| Ciudad | Productos del top 15 comunes a todas las tiendas de la ciudad |
 |---|---|
 | Boston | 10 de 15 |
 | Nueva York | 8 de 15 |
 | **Filadelfia** | **4 de 15** |
 
-Filadelfia es el caso extremo: once de sus quince referencias más vendidas no aparecen en el top
-de las otras dos ciudades. Es la ciudad con el perfil de demanda más idiosincrásico de la
-cadena, y ese hecho tiene consecuencias directas sobre el diseño de campañas —una promoción
+Filadelfia es el caso extremo: sus tres tiendas solo comparten cuatro de sus quince referencias
+más vendidas. Es la ciudad con las tiendas más distintas entre sí, mientras que las de Boston se
+parecen mucho. Este hecho tiene consecuencias directas sobre el diseño de campañas —una promoción
 uniforme para toda la red desperdicia esfuerzo en dos tercios del catálogo— y sobre el
 modelado, que es lo que abre el capítulo siguiente.
 

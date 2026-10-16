@@ -164,28 +164,27 @@ td.n,th.n{text-align:right;padding-right:0;font-family:"Fira Mono",monospace;
   <h3>Por qué hay que estandarizar</h3>
   <p>La distancia euclídea suma las diferencias de todas las variables. Si una está en dólares (precio, de 0 a 40) y otra es un ratio (de 0 a 2), la primera domina el resultado por su escala, no por su relevancia. Estandarizar —restar la media y dividir por el desvío— pone todas en la misma unidad: desvíos estándar.</p>
 
-  <h3>Cómo se valida algo sin respuesta correcta</h3>
-  <p>Se usan medidas internas, que evalúan la forma de los grupos en vez de compararlos con una verdad conocida. Usamos tres porque cada una mira algo distinto y conviene no depender de un solo número:</p>
+  <h3>Cuántos grupos: el método del codo</h3>
+  <p>No hay una respuesta correcta contra la que comparar, así que el número de grupos se elige mirando cómo baja el error interno (la inercia) al añadir grupos, con K de 2 a 14. Al principio cada grupo nuevo reduce mucho el error; a partir de cierto punto, casi nada. Ese «codo» se localiza de forma objetiva: se traza la recta que une el primer y el último punto de la curva y se buscan los puntos más alejados de ella. La zona del codo va de <strong>6 a 8 grupos</strong>, y dentro de ella K=6 es el de mejor silueta.</p>
   <div class="tabla-env">
   <table>
-    <thead><tr><th>Medida</th><th>Qué mira</th><th>Mejor</th></tr></thead>
+    <thead><tr><th>Comprobación</th><th>Qué mira</th><th>Resultado</th></tr></thead>
     <tbody>
-      <tr><td>Silhouette</td><td>Para cada punto, cuánto más cerca está de su grupo que del grupo vecino</td><td>Alto</td></tr>
-      <tr><td>Davies-Bouldin</td><td>Dispersión interna dividida por separación entre grupos</td><td>Bajo</td></tr>
-      <tr><td>Calinski-Harabasz</td><td>Varianza entre grupos sobre varianza dentro de los grupos</td><td>Alto</td></tr>
+      <tr><td>Codo (distancia a la recta)</td><td>A partir de cuántos grupos deja de compensar añadir otro</td><td>Zona de 6 a 8</td></tr>
+      <tr><td>Silueta</td><td>Para cada producto, cuánto más cerca está de su grupo que del grupo vecino</td><td>0,167 con K=6</td></tr>
+      <tr><td>Estabilidad (ARI)</td><td>Si con otras semillas aleatorias sale la misma partición</td><td>0,98 de media en 10 semillas</td></tr>
     </tbody>
   </table>
   </div>
   <div class="clave">
-    <p><strong>El silhouette salió 0,158, que suena bajo.</strong> Y lo es, en términos absolutos. Pero en datos de comportamiento de venta los grupos no son islas separadas sino zonas de un continuo: no existe una frontera nítida entre un producto «de fin de semana» y uno «de rutina». Lo que se busca es una partición <em>útil</em>, no una geométricamente perfecta.</p>
+    <p><strong>La silueta salió 0,167, que suena baja.</strong> Y lo es, en términos absolutos. Pero en datos de comportamiento de venta los grupos no son islas separadas sino zonas de un continuo: no existe una frontera nítida entre un producto «de fin de semana» y uno «de rutina». Lo que se busca es una partición <em>útil</em> y estable, no una geométricamente perfecta.</p>
   </div>
 
-  <h3>Por qué jerárquico para las tiendas</h3>
-  <p>Con 3.049 productos, K-Means es lo natural. Con <strong>10 tiendas</strong>, no: pedirle 5, 10 o 20 grupos a 10 puntos no tiene sentido. El clustering jerárquico construye el árbol completo de fusiones —empieza con cada tienda sola y va uniendo las más parecidas— y el dendrograma se lee directamente sin decidir el número de grupos de antemano.</p>
-  <p>Usamos enlace de <strong>Ward</strong>, que en cada paso fusiona el par que menos aumenta la varianza interna total. Es el criterio más coherente con lo que hace K-Means, y por eso ambos dieron exactamente la misma partición.</p>
+  <h3>Medir cada producto desde su primera venta</h3>
+  <p>Muchos productos entran en el catálogo a mitad del histórico. Si se cuentan como «días sin ventas» los días anteriores a su lanzamiento, un producto nuevo parece de venta escasa cuando no lo es. Por eso las variables de cada producto (ventas por día, fracción de días sin ventas, efecto del fin de semana, de diciembre y de los eventos) se calculan solo desde su primera venta.</p>
 
-  <h3>Por qué el GMM perdió</h3>
-  <p>Un modelo de mezcla de gaussianas es más flexible: permite grupos elípticos, de distinto tamaño y orientación, y asigna probabilidades en vez de pertenencias duras. Sobre el papel debería ir mejor. Fue peor en las tres métricas, y la razón es instructiva: <strong>más flexibilidad no ayuda cuando lo que falta es señal, no capacidad</strong>. Con grupos que no están realmente separados, la libertad extra se gasta en ajustar ruido.</p>
+  <h3>Por qué las tiendas no se agrupan</h3>
+  <p>Con 3.049 productos, K-Means es lo natural. Con <strong>10 tiendas</strong>, no: hay más variables para describirlas que tiendas, y cualquier agrupación sería inestable. Diez tiendas se comparan mejor directamente: se calcula lo parecido que es el perfil de venta de cada par de tiendas y se dibuja en un mapa de semejanza (MDS), donde las tiendas parecidas quedan cerca. No es un mapa geográfico. De ahí sale, para cada tienda, <strong>la tienda que más se le parece</strong>, que se usa luego para copiar productos nuevos y para emparejar tiendas en un experimento de precios.</p>
 </section>
 
 <section id="global">
@@ -198,7 +197,7 @@ td.n,th.n{text-align:right;padding-right:0;font-family:"Fira Mono",monospace;
     <h4>Por qué global gana en este problema</h4>
     <p>Porque la mayoría de las series son cortas y ruidosas. Un producto que vende dos unidades por día con 66% de días en cero no tiene suficiente historia propia para estimar nada estable. Pero <em>hay miles de productos parecidos</em>, y un modelo global aprende de todos ellos el patrón compartido —el efecto del fin de semana, el de diciembre, el del precio— y lo aplica a cada uno. Es transferencia de aprendizaje entre series.</p>
   </div>
-  <p>Es también la razón por la que los clusters de la Tarea 2 entran como variables: le permiten al modelo tratar distinto a un producto de «cola larga» que a uno del «núcleo estable» sin tener que descubrirlo desde cero para cada uno de los 3.049.</p>
+  <p>Es también la razón por la que los clusters de la Tarea 2 entran como variables: le permiten al modelo tratar distinto a un producto de «compra ocasional» que a uno de «alimentación de consumo diario» sin tener que descubrirlo desde cero para cada uno de los 3.049.</p>
 </section>
 
 <section id="tweedie">
@@ -245,7 +244,7 @@ td.n,th.n{text-align:right;padding-right:0;font-family:"Fira Mono",monospace;
   <div class="formula">RMSSE = √[  media((y − ŷ)²)  /  media((y<sub>t</sub> − y<sub>t−1</sub>)²)  ]
     <span class="expl">Al dividir por el error del naive, el resultado es adimensional y comparable entre series. Menor que 1 significa que el modelo aporta valor sobre esa referencia; mayor que 1, que es peor que no hacer nada.</span>
   </div>
-  <p>Ese umbral en 1 es lo que permitió el hallazgo de la Tarea 3: el arquetipo de cola larga tiene RMSSE 1,29. No es que el modelo fuera flojo ahí — es que <strong>esas series no son predecibles a nivel individual</strong>, y ninguna cantidad de variables lo iba a cambiar.</p>
+  <p>Ese umbral en 1 ayuda a leer la Tarea 3 por grupos: el error va de 0,88 en la alimentación de consumo diario a 0,93-0,96 en la compra ocasional y la Navidad. No es que el modelo sea flojo ahí — es que <strong>las series de venta escasa no son predecibles día a día</strong>, y ninguna cantidad de variables lo iba a cambiar. Por eso la sección 16 mide también el error por semanas.</p>
 
   <h3>Ponderar por lo que importa</h3>
   <p>El <strong>WRMSSE</strong> promedia los RMSSE ponderando cada serie por su facturación de los últimos 28 días. Equivocarse en el producto que más factura pesa más que equivocarse en uno marginal.</p>

@@ -27,10 +27,12 @@ FEATURES = (["sell_price", "weekday", "month", "day_of_month", "week_of_year", "
             + [f"lag_{k}" for k in range(5)]
             + [f"rmean_{w}" for w in VENTANAS_MEDIA]
             + ["rstd_28", "zero_frac_28", "price_rel", "price_chg",
-               "item_id", "store_id", "dept_id", "cat_id", "region_id",
-               "cluster_k5", "cluster_k10", "store_cluster"])
+               "item_id", "store_id", "dept_id", "cat_id", "region_id", "grupo_producto",
+               # eventos a nivel semanal (Tarea 3, sección 16)
+               "sem_evento", "evento_semana", "dias_hasta_evento", "dias_desde_evento"])
 CATEGORICAS = ["event", "item_id", "store_id", "dept_id", "cat_id", "region_id",
-               "cluster_k5", "cluster_k10", "store_cluster", "weekday", "month"]
+               "grupo_producto", "evento_semana", "weekday", "month"]
+EXTRA_SEMANAL = ["sem_evento", "evento_semana", "dias_hasta_evento", "dias_desde_evento"]
 
 
 def conectar():
@@ -55,8 +57,8 @@ def cargar_matrices():
     """
     con = conectar()
     meta = con.execute("""
-        SELECT s.item, s.store_code, p.categoria, p.departamento, p.cluster_k5, p.cluster_k10,
-               t.ciudad, t.grupo_comportamiento
+        SELECT s.item, s.store_code, p.categoria, p.departamento, p.grupo_producto,
+               t.ciudad
         FROM dim_serie s
         JOIN dim_producto p USING (item)
         JOIN dim_tienda  t USING (store_code)
@@ -93,10 +95,32 @@ def cargar_matrices():
     np.cumsum(V, axis=1, dtype=np.float32, out=cs[:, 1:])
 
     for col, nuevo in [("item", "item_id"), ("store_code", "store_id"), ("departamento", "dept_id"),
-                       ("categoria", "cat_id"), ("ciudad", "region_id"),
-                       ("grupo_comportamiento", "store_cluster")]:
+                       ("categoria", "cat_id"), ("ciudad", "region_id")]:
         meta[nuevo] = pd.factorize(meta[col])[0].astype(np.int16)
+    meta["grupo_producto"] = meta["grupo_producto"].astype(np.int16)
     return V, P, cs, cal, meta
+
+
+def variables_semanales(cal):
+    """Eventos vistos con perspectiva semanal: si la semana (sábado a viernes) tiene un evento,
+    cuál, y cuántos días faltan para el próximo o han pasado desde el último. Se conocen de
+    antemano por el calendario."""
+    es_evento = cal["evento"].notna().to_numpy()
+    n = len(cal)
+    semana = ((pd.to_datetime(cal["fecha"]) - pd.Timestamp("2011-01-29")).dt.days // 7).to_numpy()
+    ev_id = pd.factorize(cal["evento"].fillna("none"))[0]
+    df = pd.DataFrame({"semana": semana, "es": es_evento, "ev": np.where(es_evento, ev_id, 0)})
+    df["sem_evento"] = df.groupby("semana")["es"].transform("max").astype(np.int8)
+    df["evento_semana"] = df.groupby("semana")["ev"].transform("max").astype(np.int8)
+    pos = np.nonzero(es_evento)[0]
+    hasta = np.full(n, 15, np.int8); desde = np.full(n, 8, np.int8)
+    for t in range(n):
+        prox = pos[pos >= t]
+        if len(prox): hasta[t] = min(prox[0] - t, 15)
+        prev = pos[pos <= t]
+        if len(prev): desde[t] = min(t - prev[-1], 8)
+    df["dias_hasta_evento"] = hasta; df["dias_desde_evento"] = desde
+    return df[EXTRA_SEMANAL].to_numpy()
 
 
 def folds(n_dias):
@@ -140,9 +164,9 @@ def construir_matriz(dias, V, P, cs, cal, meta, min_lag=28):
         bloques.append(pd.DataFrame(d))
     X = pd.concat(bloques, ignore_index=True)
     del bloques
-    cols = ["item_id", "store_id", "dept_id", "cat_id", "region_id",
-            "cluster_k5", "cluster_k10", "store_cluster"]
+    cols = ["item_id", "store_id", "dept_id", "cat_id", "region_id", "grupo_producto"]
     X[cols] = meta[cols].to_numpy()[X["serie"].values]
+    X[EXTRA_SEMANAL] = variables_semanales(cal)[X["dia"].values]
     return X
 
 

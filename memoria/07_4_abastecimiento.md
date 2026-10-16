@@ -48,10 +48,10 @@ realmente se observó. El primer resultado describe el punto de partida:
 
 | Componente del coste | Importe (28 días) |
 |---|---|
-| Margen perdido por rotura | **161.353 USD** |
-| Coste de mantenimiento de inventario | **11.527 USD** |
+| Margen perdido por rotura | **164.496 USD** |
+| Coste de mantenimiento de inventario | **11.158 USD** |
 
-La proporción es lo relevante: **catorce dólares de venta perdida por cada dólar de inventario
+La proporción es lo relevante: **casi quince dólares de venta perdida por cada dólar de inventario
 inmovilizado**. La política de partida no es cara porque acumule existencias; es cara porque
 deja de vender. Ese diagnóstico, que la métrica de error no puede dar, orienta toda la
 optimización posterior en una única dirección: subir el nivel de servicio.
@@ -59,23 +59,37 @@ optimización posterior en una única dirección: subir el nivel de servicio.
 > **[FIGURA 7.16]** *Descomposición del coste de la política de partida.*
 > `Fuente: Cuaderno 04. La desproporción entre margen perdido y mantenimiento es el mensaje.`
 
-Aplicando la política con nivel objetivo por segmento, el nivel de servicio pasa del **86,3% al
-96,0%** y el coste total desciende un **61%**.
+Aplicando la política híbrida con un objetivo del 90%, el nivel de servicio pasa del **86,6% al
+96,2%** y el coste total desciende un **62,5%**, de 175.654 a 65.852 dólares. La híbrida mejora
+también a las dos alternativas puras —solo histórico (70.414 USD) y solo modelo (67.587 USD)— con
+cualquier objetivo entre el 85% y el 98%.
+
+Las predicciones que alimentan la simulación son las del modelo final de §7.3 (400 días de
+historia y eventos semanales) sobre la última ventana de validación, del 28 de marzo al 24 de
+abril de 2016.
 
 ### 7.4.4. La simulación refuta la conclusión del capítulo anterior
 
-En §7.3 se concluyó, a partir del error de predicción, que el modelo aportaba valor en las
-series del núcleo estable y poco en la cola larga. La simulación de la política dice lo
+En §7.3 el grupo de producto con menor error de predicción era Alimentación de consumo diario
+(RMSSE 0,88) y uno de los de mayor error, Compra ocasional en fechas señaladas (0,93). Leído así,
+el modelo debería usarse en el primero y no en el segundo. La simulación de la política dice lo
 contrario:
 
 | Segmento | Efecto de usar el modelo frente a la regla histórica |
 |---|---|
-| Cola larga (clases Y y Z) | **+19,3%** de mejora en coste |
-| Núcleo estable (clase X) | **−7,9%**: el modelo empeora el resultado |
+| Clase Z (demanda errática) | **+18,1%** de mejora en coste |
+| Compra ocasional en fechas señaladas | **+26,2%** |
+| Clase Y | −0,2% (empate) |
+| Clase X (demanda estable) | **−7,8%**: el modelo empeora el resultado |
+| Alimentación de consumo diario | **−7,2%** |
+
+La única excepción relevante es Temporada de Navidad (−49,9%), que en una ventana de marzo-abril
+está fuera de temporada y pesa poco en dinero (unos 800 de 65.000 dólares); necesita una regla de
+temporada propia.
 
 La explicación es que en las series estables el desvío histórico es un estimador excelente de la
 incertidumbre —hay muchos datos y poca varianza— mientras que el modelo cuantílico introduce
-ruido de estimación sin aportar información nueva. En la cola larga ocurre lo contrario: el
+ruido de estimación sin aportar información nueva. En la demanda errática ocurre lo contrario: el
 histórico es escaso y errático, y el modelo, que aprende de las 30.490 series a la vez, aporta
 la estructura que la serie individual no tiene.
 
@@ -83,7 +97,7 @@ la estructura que la serie individual no tiene.
 > `Fuente: Cuaderno 04. Los signos opuestos deben ser visibles de un vistazo.`
 
 Este es el segundo de los tres momentos en que una prueba refutó una conclusión del trabajo.
-Elegir la política por el RMSSE habría llevado a la decisión opuesta en ambos segmentos.
+Elegir la política por el RMSSE habría llevado a la decisión opuesta en ambos extremos.
 
 ### 7.4.5. La función de pérdida correcta
 
@@ -138,6 +152,10 @@ Es decir: la pregunta por la función de pérdida no cambió el modelo, cambió 
 servicio**, y ahí estaba el error caro. Un parámetro fijado por convención y nunca sometido a
 comprobación resultó ser la decisión más costosa del sistema.
 
+*Nota:* este experimento, como el resto de los de la carpeta `avanzado/`, se ejecutó con la
+configuración anterior del modelo (180 días de historia); sus conclusiones son comparativas entre
+candidatos y no dependen de esa configuración.
+
 Dos observaciones adicionales de la misma tabla. La primera, que el candidato B gana en ocho de
 los nueve segmentos ABC/XYZ, pero **en CZ gana la media móvil simple**: en la demanda más
 errática el modelo no aporta. La segunda, que sobre una rejilla de doce combinaciones de margen
@@ -167,6 +185,13 @@ Y el contraste que da sentido a la tabla: **mover el margen bruto entre el 10% y
 margen. La recomendación operativa que se deriva no es un número de nivel de servicio sino una
 instrucción de medición: DSMarket necesita medir su tasa de merma por categoría, porque es el
 parámetro del que depende la política y es el único que hoy no conoce.
+
+Mientras tanto, la política propuesta fija el nivel por categoría con la propia curva como guía:
+**90% para SUPERMARKET**, que incluye los frescos (óptimo con una merma en torno al 10%), y **95%
+para ACCESORIES y HOME_&_GARDEN**, cuyo sobrante se vende la semana siguiente (óptimo con una
+merma en torno al 5%). Son valores provisionales: el código los lee de una única tabla, de modo
+que medir la merma real basta para ajustarlos. Con la política híbrida, un objetivo del 95% da un
+servicio real del 97,3% y un coste de 55.699 dólares en las cuatro semanas.
 
 > **[FIGURA 7.18]** *Coste total por nivel de servicio objetivo y supuesto de merma.*
 > `Fuente: Cuaderno 04. Barras apiladas por componente, con el óptimo marcado en cada escenario.`
@@ -223,11 +248,11 @@ no cambia, de modo que:
 
 | | Margen perdido | Mantenimiento | Proporción |
 |---|---|---|---|
-| Medido en la simulación | 161.353 USD | 11.527 USD | 14 : 1 |
-| Con la cota inferior de censura | 183.678 USD | 11.527 USD | **16 : 1** |
-| Con la cota superior de censura | 335.377 USD | 11.527 USD | **29 : 1** |
+| Medido en la simulación | 164.496 USD | 11.158 USD | 15 : 1 |
+| Con la cota inferior de censura | 186.821 USD | 11.158 USD | **17 : 1** |
+| Con la cota superior de censura | 338.520 USD | 11.158 USD | **30 : 1** |
 
-La proporción de catorce a uno entre venta perdida y capital inmovilizado es, por tanto, un
+La proporción de quince a uno entre venta perdida y capital inmovilizado es, por tanto, un
 mínimo, y en el peor escenario la asimetría se duplica. El diagnóstico del capítulo —que la
 política no es cara por inmovilizar capital sino por dejar de vender— no solo se sostiene: se
 refuerza.

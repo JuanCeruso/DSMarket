@@ -33,22 +33,29 @@ cosa o son diez cosas distintas.»
 Dos hallazgos, uno detrás de otro, sin relleno entre medias.
 
 **Uno.** De los quince productos más vendidos en cada ciudad, solo cinco son comunes a las tres.
-Filadelfia baja a cuatro de quince. Una promoción uniforme para toda la red desperdicia esfuerzo
+Y dentro de Filadelfia, sus tres tiendas solo comparten cuatro de quince. Una promoción uniforme para toda la red desperdicia esfuerzo
 en dos tercios del catálogo.
 
-**Dos.** Al agrupar las tiendas por su perfil de demanda salen tres grupos, y **no coinciden con
-las ciudades**: Tribeca se comporta como una tienda de Boston. Aquí es donde hay que anticiparse
-a la objeción antes de que la hagan:
+**Dos.** Los productos se agrupan en **seis grupos**, elegidos con el método del codo, y cada
+uno tiene un nombre que dice qué contiene: alimentación de consumo diario y hogar de fin de semana
+son el 68 % de la facturación; Navidad vende casi el doble en diciembre; la compra ocasional se dispara
+en las fechas señaladas.
 
-> «Con solo diez tiendas, un resultado así puede ser inestabilidad del algoritmo. Repetimos la
-> segmentación diez veces quitando una tienda cada vez: el grupo se mantuvo unido en las diez,
-> con similitud de Jaccard igual a uno.»
+**Tres.** Las tiendas **no se agrupan con un algoritmo**, y hay que decirlo antes de que lo
+pregunten:
+
+> «Con diez tiendas y unas doce variables para describirlas, hay más variables que tiendas: es
+> la maldición de la dimensionalidad, y cualquier agrupación sería inestable. Diez tiendas se
+> comparan mejor directamente.»
+
+Y la comparación directa da el hallazgo: **el perfil no coincide con las ciudades**. Tribeca se
+parece más a las tiendas de Boston que a las de Nueva York.
 
 Cerrar con la matriz ABC/XYZ en diez segundos —AX es el 56% de la facturación, CZ es el 28% del
 catálogo por el 3,5%— porque es lo que usa el capítulo siguiente.
 
-- 4 diapositivas: solapamiento por ciudad · los tres grupos de tienda · la validación por
-  exclusión · la matriz ABC/XYZ.
+- 4 diapositivas: solapamiento por ciudad · el método del codo y los seis grupos de producto ·
+  el parecido entre tiendas · la matriz ABC/XYZ.
 
 ### 8:00 — 14:00 · Persona D · Predecir, y decidir
 
@@ -65,6 +72,13 @@ Y entonces la solución: cuatro modelos, uno por semana del horizonte, cada uno 
 mínimo que le corresponde. WRMSSE 1,0414. **La frase que hay que decir:** la estrategia de
 horizonte pesó unas veinte veces más que la elección de biblioteca.
 
+Después, lo que pidió la tutoría, en una frase cada cosa: medido **por semanas** (WAPE semanal) el
+error baja del 76 % al 40 %, porque más de la mitad de los días no se vende nada; y el modelo final
+aprende con **400 días** de historia en lugar de 180, de modo que ya ha visto una Navidad: mejora
+un 5,7 % en diciembre y un 3,4 % en noviembre, y aprende solo que el 25 de diciembre la tienda
+cierra. Mostrar el gráfico del producto de ejemplo: por semanas, vendió 51, 53, 57 y 41 y el modelo
+dijo 52, 57, 50 y 44.
+
 **Momento 2 — la respuesta al director financiero.** Sumar es válido. Reconciliar con MinT es
 mejor: mejora en los seis niveles, del 15,12% al 13,71%. Y añade algo que importa más que el
 punto de error — la coherencia garantizada: el informe de dirección no puede contradecir al de
@@ -73,9 +87,10 @@ operaciones.
 **Momento 3 — la refutación.** Es el minuto más valioso de toda la defensa. Decirlo despacio:
 
 > «En el capítulo de predicción concluimos, mirando el error, que el modelo servía en las series
-> estables y no en la cola larga. Al simular la política de reposición sobre las treinta mil
-> series con la demanda real, salió lo contrario: aporta un diecinueve por ciento en la cola
-> larga y resta un ocho por ciento en el núcleo estable. Habíamos elegido con una métrica
+> de alimentación diaria, las más regulares, y no en la compra ocasional. Al simular la política
+> de reposición sobre las treinta mil series con la demanda real, salió lo contrario: aporta un
+> veintiséis por ciento en la compra ocasional y resta un siete por ciento en la alimentación
+> diaria. Habíamos elegido con una métrica
 > simétrica un problema que no lo es. Quedarse corto cuesta el margen; pasarse cuesta el
 > almacenaje. No es lo mismo.»
 
@@ -133,19 +148,19 @@ nadie interrumpe a nadie. Respuestas de treinta a cuarenta y cinco segundos.
 
 | # | Pregunta probable | Quién | Respuesta |
 |---|---|---|---|
-| 1 | Un WRMSSE de 1,04 es peor que 1. ¿Entonces el modelo no sirve? | D | Un WRMSSE de 1 es la naive estacional, que es una referencia dura en series intermitentes. Lo relevante es dónde gana: la simulación de la política muestra un 19,3% de mejora en la cola larga. Y produce intervalos, que la referencia no da y que la reposición necesita. |
+| 1 | Un WRMSSE de 1,04 es peor que 1. ¿Entonces el modelo no sirve? | D | Un WRMSSE de 1 es el error que tendría, dentro del entrenamiento, repetir el dato del día anterior: una referencia dura en series intermitentes y a 28 días vista. Lo relevante es dónde gana: la simulación de la política muestra un 18% de mejora en las series erráticas (clase Z). Y produce intervalos, que la referencia no da y que la reposición necesita. |
 | 2 | ¿Por qué no probasteis redes neuronales? | D | Está dimensionado y dejado listo, y la expectativa honesta es que pierda: en la competición M5, con esta misma estructura de datos, ganaron los ensambles de árboles. Con la media móvil de 28 días concentrando el 71,7% de la importancia, el techo lo pone el ruido de la serie, no la arquitectura. |
 | 3 | ¿No optimizasteis hiperparámetros? | D | La búsqueda está montada, sobre el pliegue 2 y validando en el 3. Decidimos no incluirla porque el diagnóstico de importancia indicaba una zona plana, y el tiempo rendía más en el planteamiento del problema, que es donde estaba el factor veinte. |
-| 4 | ¿Por qué K=5? ¿No es arbitrario? | C | Criterio combinado: silueta, mínimo local de Davies-Bouldin y máximo relativo de Calinski-Harabasz. Y comprobación cruzada: la misma partición sale con Ward y con mezclas gaussianas. Mantenemos además K=10 para campañas, con un propósito distinto y declarado. |
+| 4 | ¿Por qué K=6? ¿No es arbitrario? | C | Método del codo con K de 2 a 14: la zona del codo, medida como los puntos más alejados de la recta que une los extremos, va de 6 a 8, y dentro de ella K=6 es el de mejor silueta. Es estable: con diez semillas distintas sale la misma partición (ARI medio 0,98). Y es la única segmentación: no mantenemos otra de 10 grupos que no encaje con ella. |
 | 5 | En la elasticidad, ¿por qué no variables instrumentales? | D | No encontramos un instrumento defendible: haría falta algo que mueva el precio y no la demanda, como un coste de proveedor, y no está en los datos. Preferimos declarar que no se puede identificar antes que usar un instrumento débil, que da un resultado con apariencia de rigor y sin él. |
 | 6 | ¿Por qué DuckDB y no Spark o una plataforma en la nube? | B | Por volumen: 58 millones de filas y 91 MB en consumo se procesan en segundos. Por reproducibilidad: el tribunal puede reconstruirlo sin credenciales. Y porque no cierra la puerta: es SQL estándar sobre Parquet, que es justo lo que ingiere una plataforma de nube. La migración cambia el motor, no la lógica. |
 | 7 | El 90% de nivel de servicio, ¿de dónde sale? | D | De ningún sitio, y es una crítica correcta. Lo usamos como referencia. El valor correcto es el ratio crítico, margen entre margen más coste de exceso: con margen 25% y posesión 5% da 0,83, y con un perecedero de merma 20%, 0,50. Está identificado como la corrección más inmediata. |
-| 8 | ¿Cómo sabéis que la política mejora si no la habéis desplegado? | D | No lo sabemos: es una simulación sobre demanda observada, y la cifra del 61% es el resultado de un modelo de costes con parámetros supuestos. Por eso presentamos una curva y no un número, y por eso la primera recomendación es medir la merma. |
+| 8 | ¿Cómo sabéis que la política mejora si no la habéis desplegado? | D | No lo sabemos: es una simulación sobre demanda observada, y la cifra del 62% es el resultado de un modelo de costes con parámetros supuestos. Por eso presentamos una curva y no un número, y por eso la primera recomendación es medir la merma. |
 | 9 | ¿Hay fuga de información en la validación? | D | Es lo primero que revisamos. Validación por avance, nunca aleatoria, y retardo mínimo condicionado al horizonte: el modelo del bloque cuatro no puede usar nada de los últimos veintiocho días. De hecho el resultado incómodo del capítulo salió precisamente de quitar esa fuga. |
-| 10 | ¿Qué pasa con un producto nuevo, sin histórico? | C | No está resuelto, y es una limitación real. El modelo es global, así que puede predecir con los atributos del producto y su tienda, pero sin retardos ni medias móviles pierde el 88% de su información útil. Lo razonable sería asignarlo a un arquetipo por similitud de catálogo hasta tener histórico. |
-| 11 | ¿Por qué quitasteis Black Friday? | A | Porque no había pico. Lo habíamos metido por expectativa, no por evidencia, y era tentador venderlo como oportunidad desaprovechada. El dato no lo sostenía. No sabemos si es la política comercial, el catálogo o la codificación del calendario, y así lo dejamos escrito. |
+| 10 | ¿Qué pasa con un producto nuevo, sin histórico? | C | No está resuelto, y es una limitación real. El modelo es global, así que puede predecir con los atributos del producto y su tienda, pero sin retardos ni medias móviles pierde el 88% de su información útil. Lo razonable es estimar su nivel con productos parecidos, o copiar la misma referencia en la tienda más parecida, hasta tener histórico (experimento 8 de la carpeta avanzado). |
+| 11 | ¿Por qué quitasteis Black Friday? | A | Porque no había pico: vende un 24% menos que los viernes de alrededor, probablemente porque va justo después de Thanksgiving, que es día de cierre. Lo habíamos metido por expectativa, no por evidencia, y era tentador venderlo como oportunidad desaprovechada. El dato no lo sostenía. |
 | 12 | ¿Cuál es la aportación original? | B | No un método nuevo. Tres cosas: llevar la cadena hasta la unidad pedida y el dinero, en vez de parar en la métrica de error; formular el criterio de selección de modelo como coste de negocio, demostrando su equivalencia con la pérdida pinball en el ratio crítico; y someter cada conclusión a una prueba de falsación, con tres casos en que la prueba nos contradijo. |
-| 13 | ¿Y Croston, para la demanda intermitente? | D | Es la referencia obligada y no lo incluimos: la comparación fue entre modelos globales y las familias clásicas generales. Está en trabajo futuro, y es justo el segmento —la cola larga— donde nuestro enfoque aporta menos sobre una regla simple. |
+| 13 | ¿Y Croston, para la demanda intermitente? | D | Es la referencia obligada y no lo incluimos: la comparación fue entre modelos globales y las familias clásicas generales. Está en trabajo futuro, y es justo el tipo de demanda —la compra ocasional— donde el error de predicción es mayor, aunque en reposición el modelo sí aporta. |
 | 14 | ¿Qué haríais con más tiempo? | B | Por retorno esperado y no por sofisticación: cambiar el criterio de selección al coste, predecir el total del ciclo en vez de la suma de días, y registrar la decisión real del encargado, que es el dato que convertiría esto en un sistema que aprende. |
 
 ## Preguntas que conviene provocar

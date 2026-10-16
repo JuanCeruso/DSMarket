@@ -10,6 +10,13 @@ ejecutá desde `PROYECTO/`.
 
 ---
 
+> **Nota (octubre 2026).** Estos experimentos se ejecutaron con la versión anterior del modelo:
+> 180 días de historia y la segmentación anterior de la Tarea 2 (cluster_k5, cluster_k10 y grupos
+> de tienda). El código compartido (`comun.py`) ya usa la configuración final —400 días en
+> `operacion/entrenar.py`, el grupo de producto actual y las variables de evento semanal—, así que
+> si se vuelven a ejecutar los resultados pueden cambiar ligeramente respecto a los de
+> `resultados/`. El experimento 8 (arranque en frío) sí se volvió a ejecutar con la versión final.
+
 ## La respuesta corta a «¿hay algo más avanzado que probar?»
 
 **Sí, pero no donde uno esperaría.** El diagnóstico de la Tarea 3 es el que manda: la media
@@ -127,9 +134,12 @@ misma referencia en la tienda más parecida.
 Lo difícil no es entrenar, es **evaluar sin hacer trampa**: la partición es por producto, no por
 fila, de modo que ningún producto de prueba aparece en el entrenamiento en ninguna tienda.
 
-Mirá la cobertura de la vía «tienda vecina»: cuando aplica suele ganar, y eso conecta con el
-hallazgo de §7.2 —el grupo de comportamiento cruza las fronteras de ciudad—. El agrupamiento no
-era descriptivo: sirve para decidir de qué tienda copiar.
+Resultado con la versión final: copiar la misma referencia de la tienda más parecida tiene un MAE
+de 0,918 unidades/día, un 34,6% mejor que la media de la categoría (1,404) y mejor que el modelo
+por atributos (1,028, con un sesgo del −27%). Esa vía gana, y eso conecta con el
+hallazgo de §7.2 —el parecido entre tiendas cruza las fronteras de ciudad—. La comparación de
+tiendas no era descriptiva: sirve para decidir de qué tienda copiar. La tienda vecina es la más
+parecida según la Tarea 2 (sección 5.3), que el almacén guarda en `dim_tienda.tienda_mas_parecida`.
 
 ## 9 · Surtido: candidatas a descatalogar
 
@@ -179,8 +189,8 @@ coste. Mira tres cosas:
    ganador frágil, y decirlo en la defensa vale más que presentar un número redondo.
 
 Ya tenemos un indicio fuerte de que los ranking no coinciden: la simulación de la Tarea 4
-invirtió la conclusión de la Tarea 3 sobre dónde aporta el modelo (+19,3% en la cola larga,
-−7,9% en el núcleo estable). Este experimento generaliza ese hallazgo de una comprobación a
+invirtió la conclusión de la Tarea 3 sobre dónde aporta el modelo: ahorra más justo en la demanda
+irregular, donde peor error de predicción tiene. Este experimento generaliza ese hallazgo de una comprobación a
 posteriori a un **criterio de selección**.
 
 ## 1 · Búsqueda de hiperparámetros con Optuna
@@ -262,9 +272,12 @@ rendimientos decrecientes. La búsqueda del experimento 1 ya cubre ese espacio d
 **LSTM o GRU genéricas.** Fueron superadas por NHITS y TFT en su propio terreno. Si vas a
 gastar tiempo en redes, gastalo en las del experimento 3.
 
-**Reentrenar con los cinco años completos.** Probamos ventanas de 180 días porque la variable
-`rmean_364` ya le da al modelo la referencia anual. Ampliar la ventana multiplica el coste sin
-aportar información nueva.
+**Reentrenar con los cinco años completos.** Aquí había escrito que no hacía falta, porque
+`rmean_364` ya le da al modelo la referencia anual. **Era un error.** En la Tarea 3 (sección 16.5)
+se probó entrenar con 400 días en lugar de 180 y diciembre mejoró un 5,7 %: con 180 días el modelo
+nunca ha visto una Navidad cuando predice diciembre, y `rmean_364` no basta para que aprenda el
+cierre del día 25. El modelo final se entrena con 400 días. Lo que sigue sin estar probado es si
+los cinco años completos aportan algo más que 400 días.
 
 ---
 

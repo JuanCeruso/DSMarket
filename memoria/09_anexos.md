@@ -6,16 +6,20 @@ incluirse.
 
 ## Anexo A. Cuadernos de análisis
 
-Cinco cuadernos Jupyter, uno por etapa, ejecutables de principio a fin. Cada uno se genera a
-partir de un guion de construcción versionado, de modo que el cuaderno entregado y el código que
-lo produce no pueden divergir.
+Cinco cuadernos Jupyter, uno por etapa. Los cuadernos 02, 04 y 05 se generan a partir de un
+guion de construcción versionado (`build_notebook_0X.py`) y se ejecutan de principio a fin, de
+modo que el cuaderno entregado y el código que lo produce no pueden divergir. El 03 conserva las
+salidas de su primera versión, cuyos ficheros intermedios no se pueden regenerar desde el
+repositorio; las secciones 15 y 16, añadidas en la revisión, son autocontenidas y se ejecutan con
+`actualizar_notebooks.py` a partir de `forecast_segmentacion.py`, `forecast_semanal.py` y
+`modelo_final.py`. Las ampliaciones del 01 (apartado 11.1) se añaden con `actualizar_eda.py`.
 
 | Cuaderno | Contenido | Sección |
 |---|---|---|
-| `01_EDA_DSMarket.ipynb` | Análisis exploratorio y diagnóstico de calidad | §7.1 |
-| `02_Clustering_DSMarket.ipynb` | Segmentación de productos y tiendas, clasificación ABC/XYZ | §7.2 |
-| `03_Forecasting_DSMarket.ipynb` | Comparación de modelos, validación y reconciliación | §7.3 |
-| `04_Abastecimiento_DSMarket.ipynb` | Política de reposición y simulación de costes | §7.4 |
+| `01_EDA_DSMarket.ipynb` | Análisis exploratorio, diagnóstico de calidad y eventos vistos por semanas | §7.1 |
+| `02_Clustering_DSMarket.ipynb` | Segmentación de productos (método del codo, variables medidas desde la primera venta) y comparación de tiendas | §7.2 |
+| `03_Forecasting_DSMarket.ipynb` | Comparación de modelos, validación y reconciliación; revisión con la segmentación actual, métrica semanal, eventos semanales y modelo final de 400 días | §7.3 |
+| `04_Abastecimiento_DSMarket.ipynb` | Política de reposición y simulación de costes con las predicciones del modelo final | §7.4 |
 | `05_Elasticidad_DSMarket.ipynb` | Estimación de elasticidad y prueba de falsación | §7.5 |
 
 ## Anexo B. El almacén analítico

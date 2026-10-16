@@ -184,7 +184,7 @@ md("""
 
 El modelo es **global**: uno solo aprende de las 30.490 series a la vez, en vez de un modelo por serie. Con series tan cortas e intermitentes es la única forma de que los productos de baja rotación aprendan algo de los demás.
 
-Las 29 variables se agrupan en cinco bloques:
+Las 28 variables se agrupan en cinco bloques:
 
 | Bloque | Variables | Qué aporta |
 |---|---|---|
@@ -281,7 +281,7 @@ print("calendario listo:", cal['event_final'].notna().sum(), "días con evento")
 md("""
 ## 5. Baselines: la vara contra la que hay que medirse
 
-Antes de entrenar nada complejo conviene fijar el piso. Si un modelo con 29 variables no le gana a la media de las últimas cuatro semanas, no vale la pena ponerlo en producción. Usamos tres referencias:
+Antes de entrenar nada complejo conviene fijar el piso. Si un modelo con 28 variables no le gana a la media de las últimas cuatro semanas, no vale la pena ponerlo en producción. Usamos tres referencias:
 
 1. **Naive estacional:** lo que se vendió el mismo día de la semana, cuatro semanas atrás.
 2. **Media móvil de 28 días:** el promedio diario del último mes, repetido en todo el horizonte.
@@ -313,7 +313,7 @@ Entrenamos los dos GBM con **objetivo Tweedie**, que es el adecuado para datos d
 
 La segunda es más trabajo (cuatro entrenamientos en vez de uno) pero, como se ve abajo, es lo que separa "empatar con la media móvil" de "ganarle".
 
-Ambos entrenan sobre los **180 días previos** a cada corte, con los últimos 28 reservados como validación para el early stopping. La ventana corta no es por gusto: en formato largo el dataset completo son 58 millones de filas, y la máquina donde corre esto tiene 3,8 GB de RAM. Las variables `rmean_364` y `lag_4` (364 días) le dan al modelo la referencia anual sin necesidad de entrenar sobre cinco años.
+Ambos entrenan sobre los **180 días previos** a cada corte, con los últimos 28 reservados como validación para el early stopping. La ventana corta no es por gusto: en formato largo el dataset completo son 58 millones de filas, y el equipo donde se desarrolló tenía 3,8 GB de RAM (el modelo final de la sección 16.6 amplía la ventana a 400 días). Las variables `rmean_364` y `lag_4` (364 días) le dan al modelo la referencia anual sin necesidad de entrenar sobre cinco años.
 """)
 
 code("""
@@ -745,6 +745,8 @@ El paquete final para Paul y para el equipo de abastecimiento son dos archivos c
 
 - **`predicciones_28dias.csv`** — la predicción central, para planificación y previsión de ventas.
 - **`predicciones_28dias_p90.csv`** — el percentil 90, para dimensionar stock con nivel de servicio del 90%.
+
+> **Actualización (octubre 2026).** Los dos ficheros de la entrega se regeneraron con el **modelo final** (400 días de historia y eventos semanales) en la sección 16.6. El gráfico y las cifras de esta sección corresponden a la versión anterior del modelo; los ficheros `predicciones_28dias*.csv` del repositorio ya contienen la versión final.
 """)
 
 code("""
@@ -774,6 +776,17 @@ for nombre, matriz in [('predicciones_28dias.csv', pred_futuro), ('predicciones_
 """)
 
 md("<<<CIERRE3>>>")
+# --- Sección de actualización (octubre 2026): segmentación actual de la Tarea 2 -------------------
+# Las celdas se definen en actualizar_notebooks.py y sus textos en textos_actualizacion.py.
+import actualizar_notebooks as _act
+_textos = {}
+exec(open('textos_actualizacion.py', encoding='utf-8').read(), {'textos': _textos})
+CELLS.insert(1, ('md', _act.NOTA_03.strip()))
+for _tipo, _src in [('md', _act.MD_03_INTRO), ('code', _act.CODE_03_A), ('code', _act.CODE_03_B),
+                    ('md', _textos['HALLAZGO_03']), ('md', _act.MD_03_GRUPOS), ('code', _act.CODE_03_C),
+                    ('md', _textos['HALLAZGO_03_GRUPOS'])]:
+    CELLS.append((_tipo, _src.strip()))
+
 NARRATIVA = {}
 
 NARRATIVA['<<<HALLAZGO_MODELOS>>>'] = """
@@ -793,7 +806,7 @@ Tres lecturas, y la segunda es incómoda pero hay que decirla:
 
 1. **El mismo algoritmo mejora un 2% solo por cambiar cómo se organiza el horizonte** (LightGBM pasa de 1.0628 a 1.0414). En cambio, la diferencia entre LightGBM y XGBoost con la misma estrategia es de 0.001 — ruido. Dicho de otra forma: elegir bien *qué información se le permite ver al modelo* rindió veinte veces más que elegir la librería.
 
-2. **Con la estrategia ingenua, los modelos no le ganan a la media móvil.** LightGBM con modelo único queda en 1.0628 y la media móvil de 28 días en 1.0657: empate técnico, después de 29 variables y dos librerías de gradient boosting. Recién con bloques semanales aparece una ventaja real (2,3% mejor en WRMSSE).
+2. **Con la estrategia ingenua, los modelos no le ganan a la media móvil.** LightGBM con modelo único queda en 1.0628 y la media móvil de 28 días en 1.0657: empate técnico, después de 28 variables y dos librerías de gradient boosting. Recién con bloques semanales aparece una ventaja real (2,3% mejor en WRMSSE).
 
 3. **La media móvil sigue ganando en MAE (1.0401 contra 1.0459) y eso no es una contradicción.** El MAE trata igual a todos los productos, y la mayoría son de baja rotación, donde el promedio reciente es casi imbatible. El WRMSSE pondera por facturación, y ahí es donde los modelos ganan: aciertan mejor **donde está el dinero**. Para la decisión de negocio manda el WRMSSE, pero conviene tener presente que en volumen de unidades sueltas la ganancia es marginal.
 
@@ -914,7 +927,7 @@ Del otro lado, el núcleo estable —que concentra 25.397 de las 42.000 unidades
 
 Por tienda el patrón es parecido: Roxbury, South End y Greenwich Village son las más predecibles (RMSSE ≈ 0,83) y **Harlem la más difícil (1,049, por encima de 1)** — que es justo la tienda con el mayor salto de fin de semana de las diez (1,50 según la Tarea 2). La volatilidad que la hacía distinta en el clustering es la misma que la hace impredecible acá.
 
-**Esto define directamente la Tarea 4:** no tiene sentido una política de reposición basada en predicción para la cola larga. Ahí corresponde una política de punto de pedido (stock mínimo y reposición por consumo), que no necesita predecir. La predicción se reserva para los arquetipos donde demostradamente funciona.
+**Ojo: de aquí no se puede deducir la política de reposición.** El RMSSE mide el acierto del pronóstico día a día, y la reposición depende de la demanda acumulada de varios días y de su coste. La simulación de la Tarea 4 (sección 6 del notebook 04) muestra que, justamente en la cola larga, reponer con el modelo **ahorra un 19 %** frente al percentil histórico. La política de cada segmento se decide allí, simulando su coste, no con esta métrica.
 """
 
 NARRATIVA['<<<HALLAZGO_CUANTILES>>>'] = """
@@ -927,7 +940,7 @@ En pinball loss —la métrica propia de la regresión cuantílica— el modelo 
 **Y acá está el número que le interesa a Paul:**
 
 - La predicción media cubre la demanda real solo el **67,8%** de las veces. Dicho de otro modo: **si se stockea según la predicción media, hay faltante en 1 de cada 3 combinaciones producto-día.**
-- Para llegar al 90% de nivel de servicio hace falta **+127% de stock** (2.625.551 unidades contra 1.158.667 para las mismas cuatro semanas).
+- Para llegar al 90% de nivel de servicio hace falta **+127% de stock** (2.625.552 unidades contra 1.158.668 para las mismas cuatro semanas).
 
 Ese salto no es un defecto del modelo, es la naturaleza del problema: cubrir la cola de una demanda muy asimétrica es caro. Pero ahora es una **decisión explícita y cuantificada** en vez de un número que alguien elige por intuición. Con los dos modelos se puede construir la curva completa de servicio contra capital inmovilizado, y es lo que la Tarea 4 necesita para justificar dónde poner el nivel de servicio en cada arquetipo — que no tiene por qué ser el mismo para el núcleo estable que para el premium.
 """
@@ -958,6 +971,8 @@ Vale la pena notar que **OLS es el peor de todos (21,04%)**: tratar todas las se
 NARRATIVA['<<<CIERRE3>>>'] = """
 ## 14. Estado de la Tarea 3 y próximos pasos
 
+> **Actualización (octubre 2026).** Este resumen corresponde a la primera versión. La sección 16 resuelve dos de sus limitaciones: la temporada alta (entrenando con 400 días de historia, diciembre mejora un 5,7 % y el modelo aprende solo el cierre del 25 de diciembre) y la conclusión sobre la cola larga, que la simulación del notebook 04 contradijo.
+
 **Lo que queda resuelto:**
 
 | Pedido | Resultado |
@@ -976,7 +991,7 @@ NARRATIVA['<<<CIERRE3>>>'] = """
 **→ Lo que entra directo en la Tarea 4 (abastecimiento):**
 
 - **Dos números por producto y día**, no uno: la predicción central para planificar y el p90 para dimensionar stock. Con ambos se construye la curva de nivel de servicio contra capital inmovilizado — pasar del 68% de servicio (stockear a la media) al 90% cuesta **+127% de inventario**.
-- **Políticas distintas por arquetipo.** El núcleo estable (RMSSE 0,77, el 60% de las unidades) admite reposición basada en predicción con stock de seguridad ajustado. La cola larga (RMSSE 1,29) necesita punto de pedido y stock mínimo, sin predicción de por medio.
+- **Políticas distintas por segmento, decididas simulando su coste** (Tarea 4). El RMSSE no basta para elegirlas: la simulación muestra que el modelo aporta más justo en la demanda irregular, donde peor RMSSE tiene.
 - **La regla de días de cierre** y la corrección del sesgo, que son ajustes de negocio y no de modelo.
 - **Predicciones coherentes entre niveles** vía MinT: la compra centralizada y la reposición por tienda parten del mismo número.
 """
@@ -990,7 +1005,8 @@ nb['cells'] = [nbf.v4.new_markdown_cell(s.strip()) if k == 'md' else nbf.v4.new_
 nb['metadata'] = {'kernelspec': {'display_name': 'Python 3', 'language': 'python', 'name': 'python3'},
                   'language_info': {'name': 'python', 'version': '3.10.12'}}
 import os
-out = os.path.join(os.path.expanduser('~'), 'mnt', 'PROYECTO', '03_Forecasting_DSMarket.ipynb')
+import sys
+out = sys.argv[1] if len(sys.argv) > 1 else '03_Forecasting_DSMarket.ipynb'
 nbf.write(nb, out)
 print(f"escrito: {out} ({len(CELLS)} celdas: {sum(1 for k,_ in CELLS if k=='md')} md / "
       f"{sum(1 for k,_ in CELLS if k=='code')} código)")

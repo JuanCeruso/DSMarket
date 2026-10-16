@@ -12,7 +12,7 @@ cada predicción, de modo que dentro de tres semanas se puede saber qué modelo 
 concreto.
 
     python3 operacion/entrenar.py
-    python3 operacion/entrenar.py --dias 365      # ventana de entrenamiento más larga
+    python3 operacion/entrenar.py --dias 180      # ventana corta (la versión anterior del modelo)
 """
 from __future__ import annotations
 import argparse, os, sys, time
@@ -98,7 +98,8 @@ def main(dias_entrenamiento, rondas):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dias", type=int, default=180, help="ventana de entrenamiento")
+    ap.add_argument("--dias", type=int, default=400,
+                    help="ventana de entrenamiento (400 días: incluye el año anterior completo, Tarea 3 sección 16.5)")
     ap.add_argument("--rondas", type=int, default=800, help="número máximo de árboles")
     a = ap.parse_args()
     main(a.dias, a.rondas)

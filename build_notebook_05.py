@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Generador de 05_Elasticidad_DSMarket.ipynb (análisis adicional, fuera del enunciado)."""
+import sys
 import nbformat as nbf
 CELLS = []
 def md(t): CELLS.append(('md', t.strip('\n')))
@@ -90,7 +91,7 @@ def regresion(df, col_y, col_x, etiqueta):
 code("""
 # Una sola consulta trae todo lo que necesitan las cinco especificaciones: niveles, rezagos,
 # adelantos y primeras diferencias. Cargar el panel una sola vez es obligatorio — son 6,6
-# millones de filas y la máquina tiene 3,8 GB.
+# millones de filas y el equipo de desarrollo tenía 3,8 GB de memoria.
 con = conectar()
 panel = con.execute(\"\"\"
     WITH dias AS (
@@ -168,11 +169,11 @@ por_arquetipo.round(4)
 """)
 
 md("""
-**A primera vista, todo encaja.** La elasticidad global es **−0,40** con un estadístico t de −19: negativa, como manda la teoría, y muy significativa. Y el patrón por arquetipo cuenta una historia perfectamente creíble:
+**A primera vista, todo encaja.** La elasticidad global es **−0,40** con un estadístico t de −19: negativa, como manda la teoría, y muy significativa. Y el patrón por grupo de producto (Tarea 2) cuenta una historia perfectamente creíble:
 
-- El **núcleo estable** es el más sensible (−0,61): son los productos baratos y de compra frecuente, donde el cliente conoce el precio de memoria.
-- El **premium** es de los menos sensibles (−0,20) y es el más caro (17,82 USD de media): quien compra premium mira menos la etiqueta.
-- La **cola larga** no reacciona (−0,06, sin significación).
+- La **alimentación de consumo diario** es la más sensible (−0,62): son los productos baratos (2,62 $ de media) y de compra frecuente, donde el cliente conoce el precio de memoria.
+- Los **accesorios y hogar de precio alto** son de los menos sensibles (−0,26) y los más caros (17,04 $ de media): quien compra un producto caro mira menos la etiqueta.
+- La **compra ocasional en fechas señaladas** y la **temporada de Navidad** no reaccionan (+0,10 y −0,13, sin significación): se compran por la fecha, no por el precio.
 
 Es un resultado que se defiende solo, encaja con la intuición y daría para un capítulo entero de recomendaciones de precios. **El problema es que probablemente sea falso.**
 """)
@@ -248,7 +249,7 @@ md("""
 
 Si los datos observacionales no pueden responder la pregunta, la respuesta no es inventar un número: es decir qué haría falta para responderla. Y eso sí lo podemos diseñar con precisión.
 
-**El diseño:** un experimento de precios por tienda, con grupos de tratamiento y control emparejados. Acá es donde el clustering de la Tarea 2 deja un aporte inesperado — **los grupos de comportamiento son exactamente el criterio de emparejamiento que hace falta**. Comparar Tribeca con una tienda de Boston es más limpio que compararla con otra de Nueva York, porque su perfil de demanda se parece más, y eso reduce la varianza del estimador.
+**El diseño:** un experimento de precios por tienda, con grupos de tratamiento y control emparejados. Aquí la Tarea 2 deja un aporte inesperado: **la tienda más parecida a cada una (sección 5.3 del notebook 02) es exactamente el criterio de emparejamiento que hace falta**. Comparar Tribeca con una tienda de Boston es más limpio que compararla con otra de Nueva York, porque su perfil de demanda se parece más, y eso reduce la varianza del estimador.
 
 **La pregunta práctica es cuánto tiene que durar.** Con el ruido de fondo real de estos datos podemos calcularlo.
 """)
@@ -303,7 +304,7 @@ NARRATIVA['<<<HALLAZGO_DIFERENCIAS>>>'] = """
 | Δlog(q) ~ Δlog(p), solo semanas con cambio | +0,018 | 1,7 |
 | PLACEBO — cambio de precio de la semana siguiente | +0,011 | 1,2 |
 
-La elasticidad pasa de **−0,40 a +0,02**, y el placebo (+0,011) es estadísticamente indistinguible del efecto "real" (+0,018). Por arquetipo, todos quedan pegados a cero, y el núcleo estable sale incluso **positivo y significativo (+0,060)** — lo que en una curva de demanda es un absurdo económico: subir el precio no aumenta las ventas.
+La elasticidad pasa de **−0,40 a +0,02**, y el placebo (+0,011) es estadísticamente indistinguible del efecto "real" (+0,018). Por grupo de producto, todos quedan pegados a cero, y la alimentación de consumo diario sale incluso **positiva y significativa (+0,061)** — lo que en una curva de demanda es un absurdo económico: subir el precio no aumenta las ventas.
 
 Ese signo positivo es, en realidad, la firma clásica del problema: **el precio no se mueve al azar**. Cuando DSMarket sube un precio suele ser porque ese producto está funcionando bien, y cuando lo baja es porque no rota. El precio responde a la demanda tanto como la demanda al precio, y sin una fuente de variación exógena no hay forma de separar ambas direcciones.
 
@@ -327,10 +328,12 @@ El ruido de fondo (desvío del cambio semanal de log-ventas) es de **0,706**. Co
 
 Como cada tienda tiene 3.049 productos, **un solo brazo de una tienda ya aporta unas 3.000 series**: para detectar una elasticidad de −0,5 alcanzaría con un subconjunto de productos de dos tiendas durante ocho semanas. Es un experimento barato y de bajo riesgo comercial.
 
+**Una cautela sobre estos tamaños:** el cálculo trata cada serie como una observación independiente. Pero el precio se cambiaría por tienda, y las series de una misma tienda comparten clientes, días y clima, así que no son independientes. La muestra efectiva se acerca más al número de tiendas que al de series: con diez tiendas, el experimento solo tiene potencia para efectos claros, y conviene analizarlo con errores agrupados por tienda. Las cifras de la tabla son, por tanto, un mínimo.
+
 **La propuesta concreta:**
 
-1. **Emparejar tiendas por grupo de comportamiento**, no por ciudad — usando los grupos de la Tarea 2. Tribeca y una tienda de Boston son mejor pareja que Tribeca y otra de Nueva York, y eso reduce la varianza del estimador.
-2. **Seleccionar productos del núcleo estable y de fin de semana/hogar**, que concentran el volumen: ahí el experimento tiene potencia y el resultado tiene valor comercial.
+1. **Emparejar cada tienda con la que más se le parece**, no por ciudad, usando la comparación de tiendas de la Tarea 2. Tribeca y una tienda de Boston son mejor pareja que Tribeca y otra de Nueva York, y eso reduce la varianza del estimador.
+2. **Seleccionar productos de alimentación de consumo diario y de hogar de fin de semana**, que concentran el volumen: ahí el experimento tiene potencia y el resultado tiene valor comercial.
 3. **Mover el precio un 10% en el brazo de tratamiento durante 8 semanas**, con medición previa de 4 semanas para verificar tendencias paralelas.
 4. **Escalonar el arranque entre tiendas** (diseño escalonado): permite estimar el efecto sin dejar a ninguna tienda sin tratar todo el período, y protege contra shocks temporales.
 
@@ -344,12 +347,12 @@ Michelle preguntó cuánto responde la demanda al precio. La respuesta de este a
 
 El recorrido, que es lo que vale la pena llevar a la memoria:
 
-1. La especificación estándar de panel con efectos fijos da **−0,40**, muy significativo, con un patrón por arquetipo que encaja con la intuición comercial.
+1. La especificación estándar de panel con efectos fijos da **−0,40**, muy significativo, con un patrón por grupo de producto que encaja con la intuición comercial.
 2. Una prueba de falsación lo refuta: **el precio futuro predice las ventas igual de bien que el actual**. El número medía una correlación de niveles, no una respuesta causal.
 3. Con la identificación correcta —primeras diferencias sobre los cambios de precio efectivos— **el efecto desaparece** (+0,02) y en el segmento principal sale incluso positivo, la firma típica de precios que responden a la demanda.
 4. La raíz del problema está en los datos: los precios de DSMarket **casi no se mueven** (1,1% de las semanas) y cuando se mueven no lo hacen al azar.
 
-**Lo que proponemos:** un experimento de precios de 8 semanas, con tiendas emparejadas por grupo de comportamiento y arranque escalonado. Los cálculos de potencia muestran que basta con unos cientos de series por brazo para detectar una elasticidad de −0,5.
+**Lo que proponemos:** un experimento de precios de 8 semanas, con cada tienda emparejada con la que más se le parece y arranque escalonado. Los cálculos de potencia muestran que basta con unos cientos de series por brazo para detectar una elasticidad de −0,5.
 
 **Y una reflexión metodológica que atraviesa todo el proyecto:** en la Tarea 4 encontramos que una métrica de error de predicción no sustituye a la métrica de negocio; acá encontramos que un coeficiente significativo no sustituye a una identificación creíble. En los dos casos el hallazgo apareció porque pusimos a prueba nuestra propia conclusión en vez de defenderla. Un modelo que no se somete a una prueba que pueda refutarlo no es evidencia — es una opinión con decimales.
 """
@@ -363,6 +366,6 @@ nb['cells'] = [nbf.v4.new_markdown_cell(s.strip()) if k == 'md' else nbf.v4.new_
 nb['metadata'] = {'kernelspec': {'display_name': 'Python 3', 'language': 'python', 'name': 'python3'},
                   'language_info': {'name': 'python', 'version': '3.10.12'}}
 import os
-out = os.path.join(os.path.expanduser('~'), 'mnt', 'PROYECTO', '05_Elasticidad_DSMarket.ipynb')
+out = sys.argv[1] if len(sys.argv) > 1 else '05_Elasticidad_DSMarket.ipynb'
 nbf.write(nb, out)
 print(f"escrito: {out} ({len(CELLS)} celdas)")

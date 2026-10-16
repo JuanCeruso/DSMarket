@@ -23,7 +23,7 @@ es peor.
 
 CÓMO SE ACOTA
 -------------
-Un cero puede ser demanda cero (lo normal en la cola larga) o una rotura. Se separan por
+Un cero puede ser demanda cero (lo normal en los productos de venta escasa) o una rotura. Se separan por
 probabilidad: bajo un modelo Poisson con la intensidad esperada de ese día —media móvil de 28
 días corregida por día de la semana—, la probabilidad de observar cero es exp(−lambda). Un cero
 con lambda alta es sospechoso.

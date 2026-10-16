@@ -124,7 +124,7 @@ def explicar(item: str, tienda: str, serie, resultado: dict, arquetipo: str) -> 
         return explicacion_base(serie, resultado, arquetipo)
     contexto = f"""Producto: {item}   Tienda: {tienda}
 Segmento ABC/XYZ: {serie['celda']}  (A/B/C = peso en facturación; X/Y/Z = predictibilidad)
-Arquetipo de comportamiento: {arquetipo}
+Grupo de producto: {arquetipo}
 Coeficiente de variación de la demanda diaria: {serie['coef_variacion']:.2f}
 Días sin ninguna venta en los últimos 90 días: {serie['frac_dias_sin_venta']:.0%}
 Facturación de los últimos 90 días: {serie['facturacion_90d']:,.0f} USD
@@ -155,8 +155,8 @@ Esquema disponible (todas son vistas ya registradas):
   fact_predicciones(item, store_code, fecha, prediccion_media, prediccion_p90)
   fact_reposicion(fecha_revision, item, store_code, segmento, demanda_esperada,
                   nivel_objetivo, stock_seguridad, nivel_servicio, metodo)
-  dim_producto(item, categoria, departamento, cluster_k5, cluster_k10, arquetipo)
-  dim_tienda(store_code, tienda, ciudad, grupo_comportamiento)
+  dim_producto(item, categoria, departamento, grupo_producto, arquetipo)   -- arquetipo = nombre del grupo de producto
+  dim_tienda(store_code, tienda, ciudad, tienda_mas_parecida)
   dim_serie(item, store_code, unidades_90d, facturacion_90d, media_dia, desvio_dia,
             frac_dias_sin_venta, coef_variacion, clase_abc, clase_xyz)
   dim_calendario(fecha, dia_semana, anio, mes, semana_iso, evento, es_fin_de_semana,

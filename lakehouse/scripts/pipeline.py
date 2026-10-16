@@ -85,7 +85,7 @@ def silver(con):
                  WHEN month(b.fecha) = 9 AND dayofweek(b.fecha) = 1 AND day(b.fecha) <= 7 THEN 'Labor Day'
                  ELSE b.evento_origen
                END AS evento,
-               b.weekday_int IN (5, 6) AS es_fin_de_semana,
+               b.weekday_int IN (1, 2) AS es_fin_de_semana,
                year(b.fecha) AS anio, month(b.fecha) AS mes, week(b.fecha) AS semana_iso,
                -- día de cierre conocido: la tienda no abre (hallazgo de la Tarea 3)
                (month(b.fecha) = 12 AND day(b.fecha) = 25)
@@ -161,24 +161,23 @@ def gold(con):
         ORDER BY e.fecha
     """, f"{GOLD}/dim_calendario.parquet", "dim_calendario (con horizonte)")
 
+    # grupo de producto de la Tarea 2 (notebook 02, sección 4.9)
     _volcar(con, f"""
         WITH prod AS (SELECT DISTINCT item, category AS categoria, department AS departamento
                       FROM read_parquet('{BRONZE}/item_sales.parquet')),
-             cl AS (SELECT * FROM read_csv_auto('{CACHE}/clusters_producto.csv'))
-        SELECT p.item, p.categoria, p.departamento, cl.cluster_k5, cl.cluster_k10,
-               CASE cl.cluster_k5 WHEN 0 THEN 'Premium/accesorios' WHEN 1 THEN 'Núcleo estable'
-                    WHEN 2 THEN 'Cola larga/eventos' WHEN 3 THEN 'Fin de semana/hogar'
-                    WHEN 4 THEN 'Fin de año' END AS arquetipo
-        FROM prod p LEFT JOIN cl ON cl.item = p.item
+             seg AS (SELECT * FROM read_csv_auto('{CACHE}/segmentacion_productos.csv'))
+        SELECT p.item, p.categoria, p.departamento, seg.grupo AS grupo_producto,
+               seg.nombre_grupo AS arquetipo
+        FROM prod p LEFT JOIN seg ON seg.item = p.item
     """, f"{GOLD}/dim_producto.parquet", "dim_producto")
 
+    # las tiendas no se agrupan (Tarea 2, sección 5): se guarda la más parecida a cada una
     _volcar(con, f"""
         WITH t AS (SELECT DISTINCT store_code, store AS tienda, region AS ciudad
                    FROM read_parquet('{BRONZE}/item_sales.parquet')),
-             cl AS (SELECT * FROM read_csv_auto('{CACHE}/clusters_tienda.csv'))
-        SELECT t.store_code, t.tienda, t.ciudad,
-               'Grupo ' || chr(CAST(65 + cl.cluster_k3 AS INTEGER)) AS grupo_comportamiento
-        FROM t LEFT JOIN cl USING (store_code)
+             par AS (SELECT * FROM read_csv_auto('{CACHE}/tienda_mas_parecida.csv'))
+        SELECT t.store_code, t.tienda, t.ciudad, par.tienda_mas_parecida
+        FROM t LEFT JOIN par USING (store_code)
     """, f"{GOLD}/dim_tienda.parquet", "dim_tienda")
 
     # tabla de hechos atómica: una fila por producto-tienda-día, valorizada

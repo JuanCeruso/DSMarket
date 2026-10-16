@@ -6,17 +6,23 @@
 ninguna de las dimensiones examinadas. Solo cinco de los quince productos más vendidos son
 comunes a las tres ciudades, y Filadelfia se aparta del resto con solo cuatro. Tres eventos del
 calendario tienen efecto medible —Labor Day, SuperBowl y Easter, entre el 15% y el 22%— y uno
-que se esperaba relevante, Black Friday, no lo tiene. La categoría con mayor dispersión de
+que se esperaba relevante, Black Friday, va en sentido contrario: vende un 24 % menos que un
+viernes normal. Medidos por semanas, los eventos mueven también las semanas vecinas: las dos
+semanas previas a Navidad venden un 4-5 % más. La categoría con mayor dispersión de
 precios entre tiendas es SUPERMARKET, con un 2,75%, en contra de la expectativa inicial.
 
-**OE2 — Segmentar el catálogo y la red.** Cinco arquetipos de producto —Núcleo estable,
-Fin de semana/hogar, Fin de año, Cola larga/eventos y Premium/accesorios— y tres grupos de
-tienda, con concordancia entre *k*-medias, agrupamiento de Ward y mezclas gaussianas. El grupo C,
-que reúne los tres establecimientos de Boston con Tribeca, resistió las diez iteraciones de la
-validación por exclusión con similitud de Jaccard igual a 1: **el perfil de demanda de una tienda
-no respeta las fronteras de ciudad**. Ese agrupamiento demostró después tener un uso operativo y
-no solo descriptivo (§7.3.10). La partición fina revela dos micro-segmentos de campaña, navideño
-(×2,29) y de eventos (×1,99), que reaparecen en todos los capítulos posteriores.
+**OE2 — Segmentar el catálogo y la red.** Seis grupos de producto elegidos con el método del
+codo y estables entre semillas (índice de Rand ajustado 0,98), con nombres ligados a lo que
+contienen: Alimentación de consumo diario, Hogar de fin de semana, Básicos de rotación lenta,
+Accesorios y hogar de precio alto, Compra ocasional en fechas señaladas y Temporada de Navidad.
+Las variables se miden desde la primera venta de cada producto, para no confundir un lanzamiento
+tardío con un producto de venta ocasional. Los dos primeros grupos reúnen el 68 % de la
+facturación; el de Navidad vende casi el doble en diciembre y el de fechas señaladas un 26 % más
+en los días de evento. Las tiendas no se agruparon con un
+algoritmo —diez tiendas con más variables que observaciones— sino que se compararon
+directamente, y la comparación muestra que **el perfil de demanda de una tienda no respeta las
+fronteras de ciudad**: Tribeca se parece más a Boston que a Nueva York. Ese parecido tiene además
+un uso operativo (§7.3.10).
 
 Se evaluó además la posibilidad de derivar recomendaciones de venta cruzada y **se descartó con
 evidencia**: el co-movimiento aparente entre productos se explica por el calendario y el tráfico
@@ -32,14 +38,20 @@ del −0,02% en WRMSSE—, mientras que **reformular el objetivo como el total d
 error un 15,7% y eliminó un sesgo del −7,4%**. Las dos comprobaciones apuntan en la misma
 dirección: el rendimiento estaba en el planteamiento, no en el modelo.
 
+La revisión de la tutoría añadió dos cambios al modelo final. Medido **por semanas** (WAPE semanal),
+que es como se repone, el error baja del 76% al 40%, porque más de la mitad de los días no hay
+ventas. Y entrenar con **400 días de historia** en lugar de 180, con variables de evento a nivel
+semanal, mejora el WRMSSE un 5,7% en diciembre y un 3,4% en noviembre sin empeorar el resto del año
+(1,0376 de media en febrero-abril), y el modelo aprende por sí solo el cierre del 25 de diciembre.
+
 **OE4 — Los agregados.** Sumar es válido y preferible a modelar cada nivel por separado, pero
 reconciliar con MinT es mejor que sumar: mejora el error en los seis niveles de la jerarquía, de
 un 15,12% a un 13,71% de error porcentual absoluto medio, y garantiza además la coherencia entre
 informes.
 
-**OE5 — La política de reposición.** La política de partida pierde catorce dólares de margen por
-cada dólar de inventario inmovilizado. La política propuesta eleva el nivel de servicio del
-86,3% al 96,0% con una reducción del coste total del 61%. El nivel de servicio óptimo lo decide
+**OE5 — La política de reposición.** La política de partida pierde casi quince dólares de margen por
+cada dólar de inventario inmovilizado. La política propuesta, híbrida según la clase XYZ, eleva el
+nivel de servicio del 86,6% al 96,2% con una reducción del coste total del 62,5%. El nivel de servicio óptimo lo decide
 la merma y no el margen, lo que convierte la medición de la merma por categoría en la
 recomendación operativa más urgente para la compañía.
 
@@ -64,16 +76,16 @@ siente más responsable es otro, y recorre los seis capítulos: en cuatro ocasio
 o una hipótesis atractiva fue sometida a una prueba que podía refutarla, y la prueba la refutó.
 
 **Primera. Un hallazgo que hubo que aprender a no publicar.** Black Friday no mostraba el pico
-esperado. Era tentador presentarlo como una oportunidad comercial desaprovechada —es un titular
-atractivo y difícil de contradecir— pero el dato no lo sostenía. Se descartó como evento del
-calendario. El criterio que se estableció entonces gobierna el resto del documento: un hallazgo
+esperado; medido con cuidado, vende incluso un 24 % menos que un viernes normal. Era tentador
+presentarlo como una oportunidad comercial desaprovechada —es un titular atractivo y difícil de
+contradecir— pero el dato no lo sostenía. Se descartó como evento de pico del calendario. El criterio que se estableció entonces gobierna el resto del documento: un hallazgo
 que resulta conveniente para la narrativa y que el dato no sostiene no entra.
 
 **Segunda. Una métrica de error no es una métrica de negocio.** El capítulo de predicción
-concluyó, a partir del error, que el modelo servía en el núcleo estable y no en la cola larga.
-La simulación de la política demostró lo contrario: aporta un 19,3% en la cola larga y resta un
-7,9% en el núcleo. Elegir la política por el RMSSE habría producido la decisión equivocada en
-los dos segmentos. La generalización de este hallazgo —que la función de pérdida con la que se
+medía el menor error en Alimentación de consumo diario y uno de los mayores en Compra ocasional
+en fechas señaladas. La simulación de la política demostró lo contrario de lo que eso sugiere: el
+modelo aporta un 26% en la compra ocasional y resta un 7% en la alimentación diaria. Elegir la
+política por el RMSSE habría producido la decisión equivocada en los dos extremos. La generalización de este hallazgo —que la función de pérdida con la que se
 elige el modelo debería ser la del negocio, y que esa función coincide con la pérdida pinball
 evaluada en el ratio crítico— es la aportación metodológica que el trabajo considera más
 transferible a otros problemas.
@@ -103,22 +115,24 @@ Se enumeran las que afectan a la validez de las conclusiones, ordenadas por impo
    estos datos no los distinguen. El sesgo recorre todo el trabajo —el modelo predice por debajo,
    la simulación infravalora el coste de la rotura— y no es corregible sin datos de inventario,
    solo acotable (§7.4.7). Su dirección es conocida y favorable: sobre el período simulado, el
-   coste real de la rotura se sitúa entre 183.678 y 335.377 dólares frente a los 161.353
+   coste real de la rotura se sitúa entre 186.821 y 338.520 dólares frente a los 164.496
    medidos, de modo que **todas las cifras de coste de rotura presentadas son conservadoras** y
-   la asimetría frente al coste de mantenimiento pasa de catorce a uno a situarse entre dieciséis
-   y veintinueve a uno. Además, toda la evaluación de la política se apoya en una
-   simulación y no en su aplicación: la cifra de ahorro del 61% es el resultado de un modelo de
+   la asimetría frente al coste de mantenimiento pasa de quince a uno a situarse entre diecisiete
+   y treinta a uno. Además, toda la evaluación de la política se apoya en una
+   simulación y no en su aplicación: la cifra de ahorro del 62,5% es el resultado de un modelo de
    costes, no una medición.
 2. **Los parámetros económicos son supuestos.** Margen, coste de posesión y merma no fueron
    facilitados por la compañía. Las conclusiones sobre el nivel de servicio óptimo son
    condicionales a esos supuestos, y por eso se presentan como una curva y no como un número.
 3. **No hay efecto de sustitución.** Cada serie se trata de forma independiente. La rotura de un
    producto probablemente desplaza demanda hacia otro, y ese efecto no está modelado.
-4. **Los datos composicionales se trataron con distancia euclídea.** Los perfiles semanales y
-   mensuales de la segmentación suman uno por construcción y su tratamiento riguroso exigiría una
-   transformación previa de razones logarítmicas.
-5. **La ventana de entrenamiento no cubre un ciclo anual completo.** Es la causa directa del peor
-   fallo del modelo, la temporada alta de diciembre.
+4. **La segmentación de productos tiene bordes difusos.** La silueta de la partición elegida es
+   moderada (0,17) porque los productos forman un continuo y no grupos separados. Los grupos son
+   una forma útil y estable de ordenar el catálogo, no tipos naturales de producto.
+5. **La temporada alta sigue siendo el período más difícil.** Entrenar con 400 días, que incluyen
+   el año anterior, corrigió el fallo más grave —el cierre del 25 de diciembre— y mejoró
+   diciembre un 5,7 %, pero el pico del 31 de diciembre sigue infravalorado y la validación en
+   temporada alta se apoya en un solo año.
 6. **El calendario de eventos es el proporcionado.** No se dispone de promociones planificadas ni
    de acciones de la competencia, que son determinantes conocidos de la demanda minorista.
 
@@ -136,15 +150,15 @@ categoría, que es también la primera recomendación de este trabajo.
 incorporado a la política, que sigue sumando predicciones diarias. Integrarla es trabajo de
 ingeniería, no de investigación.
 
-**Métodos específicos para demanda intermitente.** La cola larga sigue siendo el segmento donde
-el enfoque general aporta menos, y la comparación de §7.4.5 lo confirma por otra vía: en el
+**Métodos específicos para demanda intermitente.** La compra ocasional y las series de clase Z
+siguen siendo donde el error de predicción es mayor, y la comparación de §7.4.5 lo confirma por otra vía: en el
 segmento CZ la media móvil simple supera al modelo.
 
 **Predicción de productos sin histórico.** Una referencia nueva llega al lineal sin retardos ni
 medias móviles, es decir sin el 88% de la información que usa el modelo, y es justo el momento en
 que un error de dimensionamiento resulta más caro. La vía natural es predecir su nivel de demanda
 a partir de sus atributos y del comportamiento de la misma referencia en la tienda más parecida,
-lo que da un uso operativo a los grupos de tienda de §7.2.
+lo que da un uso operativo a la comparación de tiendas de §7.2.
 
 **Revisión del surtido.** La celda CZ de la matriz ABC/XYZ concentra cerca del 28% del catálogo
 por el 3,5% de la facturación. La política de reposición da el surtido por dado; la pregunta de

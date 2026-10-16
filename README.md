@@ -17,6 +17,9 @@ bruto hasta la cantidad que debe pedirse de cada producto en cada tienda.
 |---|---|
 | `*.ipynb` | Los cinco cuadernos de análisis, uno por etapa |
 | `build_notebook_0*.py` | Los guiones que **generan** esos cuadernos — se editan estos, no el `.ipynb` |
+| `forecast_segmentacion.py`, `forecast_semanal.py`, `modelo_final.py` | Reentrenamientos de la revisión del forecasting (secciones 15 y 16 del cuaderno 03) y el modelo final: 400 días de historia y eventos semanales |
+| `actualizar_notebooks.py`, `actualizar_eda.py` | Añaden esas secciones a los cuadernos 03 y 01 y ejecutan solo las celdas nuevas |
+| `predicciones_28dias*.csv` | La entrega: predicción media y percentil 90 de los 28 días siguientes, con el modelo final |
 | `lakehouse/scripts/` | Construcción del almacén analítico en tres capas |
 | `operacion/` | La capa que hace que esto sea un sistema y no un conjunto de cuadernos |
 | `app/` | Panel interactivo (Streamlit) |
@@ -94,13 +97,13 @@ reglas.
 ## Los resultados, en corto
 
 - La demanda no es homogénea: **solo 5 de los 15 productos más vendidos** son comunes a las tres
-  ciudades, y los grupos de comportamiento de tienda no respetan las fronteras de ciudad.
+  ciudades, y el parecido entre tiendas no respeta las fronteras de ciudad.
 - **La estrategia de horizonte pesó veinte veces más que la elección de biblioteca.** Con la
   formulación ingenua ningún modelo supera a una media móvil.
 - Reformular el objetivo como el total del ciclo reduce el error un **15,7%** y elimina un sesgo
   del −7,4%.
 - La reconciliación jerárquica con MinT mejora el error en los seis niveles de agregación.
-- La política de reposición eleva el nivel de servicio del **86,3% al 96,0%** con un 61% menos de
+- La política de reposición eleva el nivel de servicio del **86,6% al 96,2%** con un 62,5% menos de
   coste; el óptimo lo decide la merma, no el margen.
 - La elasticidad precio **no es identificable** con estos datos, y se demuestra con una prueba de
   falsación.
@@ -115,7 +118,9 @@ era obligatoria.
 ## Reproducibilidad
 
 Los cuadernos se generan desde sus guiones, de modo que el cuaderno entregado y el código que lo
-produce no pueden divergir. Las semillas aleatorias están fijadas. El almacén se reconstruye
+produce no pueden divergir. La excepción es el cuaderno 03: sus secciones 1 a 14 se conservan con
+las salidas originales y las secciones 15 y 16 se añaden y ejecutan con `actualizar_notebooks.py`,
+porque reejecutarlo entero lleva varias horas. Las semillas aleatorias están fijadas. El almacén se reconstruye
 íntegro desde los ficheros de origen con un solo comando, y trece contratos de datos detienen el
 proceso si algo no cuadra.
 

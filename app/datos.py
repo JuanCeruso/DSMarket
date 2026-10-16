@@ -7,8 +7,8 @@ from scipy.stats import norm
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GOLD = os.path.join(RAIZ, "lakehouse", "gold")
 
-NIVEL_POR_CELDA = {"AX": .98, "AY": .95, "AZ": .90, "BX": .95, "BY": .90,
-                   "BZ": .85, "CX": .90, "CY": .85, "CZ": .80}
+# nivel de servicio por categoría (Tarea 4): fresco al 90%, no perecedero al 95%
+NIVEL_POR_CATEGORIA = {"SUPERMARKET": .90, "ACCESORIES": .95, "HOME_&_GARDEN": .95}
 PALETA = {"navy": "#0a2a5c", "azul": "#2a78d6", "dorado": "#eda100",
           "verde": "#6a9f1f", "gris": "#8a8a8a"}
 
@@ -43,7 +43,8 @@ def sugerir(pred_serie: pd.DataFrame, serie: pd.Series, stock: float, en_transit
     """Misma política que la API: híbrida por segmento, nivel objetivo = demanda + stock de seguridad."""
     cobertura = dias_revision + lead_time
     bloque = pred_serie.head(cobertura)
-    servicio = nivel_servicio if nivel_servicio is not None else NIVEL_POR_CELDA[serie["celda"]]
+    servicio = nivel_servicio if nivel_servicio is not None else (
+        NIVEL_POR_CATEGORIA["SUPERMARKET"] if str(serie["item"] if "item" in serie.index else serie.name).startswith("SUPERMARKET") else .95)
     z = norm.ppf(servicio)
     media = float(bloque["prediccion_media"].sum())
     sigma_dia = (bloque["prediccion_p90"] - bloque["prediccion_media"]).clip(lower=0) / norm.ppf(0.90)
@@ -66,7 +67,7 @@ def explicacion_base(serie: pd.Series, resultado: dict, arquetipo: str) -> str:
     valor = {"A": "alta facturación", "B": "facturación media", "C": "baja facturación"}[celda[0]]
     estab = {"X": "demanda estable", "Y": "demanda variable", "Z": "demanda errática"}[celda[1]]
     return (f"Segmento **{celda}** ({valor}, {estab}, CV {serie['coef_variacion']:.1f}), "
-            f"arquetipo «{arquetipo}». Se cubren {resultado['cobertura']} días con un objetivo de "
+            f"grupo «{arquetipo}». Se cubren {resultado['cobertura']} días con un objetivo de "
             f"servicio del {resultado['servicio']:.0%}, calculado con {resultado['metodo']}. "
             f"La demanda esperada del período es {resultado['demanda_esperada']:.1f} unidades y el "
             f"stock de seguridad {resultado['stock_seguridad']:.1f}.")

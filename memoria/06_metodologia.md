@@ -80,11 +80,19 @@ la semana— y se retuvieron únicamente aquellos con efecto consistente y de ma
 
 Tres eventos superaron el criterio con elevaciones de entre el 15% y el 22%: **Labor Day**,
 **SuperBowl** y **Easter**. Un cuarto candidato, incorporado inicialmente por expectativa
-comercial más que por evidencia, fue **Black Friday**; el examen del histórico no mostró pico
-alguno atribuible a esa fecha y se retiró del conjunto de eventos relevantes. La decisión se
-documenta en §7.1 porque ilustra un criterio que el trabajo aplica de forma general: un hallazgo
-que resulta atractivo para la narrativa comercial pero que el dato no sostiene no entra en el
-informe.
+comercial más que por evidencia, fue **Black Friday**. El examen del histórico no solo no mostró
+un pico: en los cinco años, Black Friday vende un **24 % menos** que los viernes de alrededor
+(entre −17 % y −29 % según el año), probablemente porque sigue a Thanksgiving, día de cierre. Se
+retiró del conjunto de eventos de pico. La decisión ilustra un criterio que el trabajo aplica de
+forma general: un hallazgo que resulta atractivo para la narrativa comercial pero que el dato no
+sostiene no entra en el informe.
+
+Siguiendo la recomendación de la tutoría, los eventos se examinaron también **a nivel semanal**:
+ventas de la semana del evento y de las semanas vecinas frente a las cuatro semanas previas. El
+resultado justifica el cambio de perspectiva: las dos semanas anteriores a Navidad venden un
+4-5 % más, mientras que la semana del día 25 cae un 12 % por el cierre; mirar solo el día exacto
+pierde el efecto real. Por eso el modelo de predicción incorpora variables de evento semanal
+(§6.4.1).
 
 ### 6.2.4. Demanda censurada
 
@@ -166,7 +174,7 @@ La capa oro adopta un **esquema en estrella** con cuatro dimensiones y tres tabl
 |---|---|---|---|
 | `dim_calendario` | dimensión | 1.941 | Fecha, día de la semana, evento, banderas de cierre y temporada |
 | `dim_producto` | dimensión | 3.049 | Categoría, departamento y los grupos de §7.2 |
-| `dim_tienda` | dimensión | 10 | Nombre, ciudad y grupo de comportamiento |
+| `dim_tienda` | dimensión | 10 | Nombre y ciudad |
 | `dim_serie` | dimensión | 30.490 | Estadísticos de la serie y clases ABC/XYZ |
 | `fact_ventas` | hecho | 58.327.370 | Unidades, precio e importe por día |
 | `fact_predicciones` | hecho | 853.720 | Previsión media y percentil 90 a 28 días |
@@ -218,13 +226,15 @@ El conjunto de variables predictoras se organiza en cuatro bloques:
 
 - **Retardos.** Valores de la serie en días anteriores, con el retardo mínimo condicionado por
   el horizonte de predicción (§6.4.2).
-- **Medias móviles.** Promedios de la serie sobre ventanas de 7, 28, 91 y 364 días. La ventana
-  anual proporciona la referencia estacional sin necesidad de ampliar el período de
-  entrenamiento.
-- **Calendario.** Día de la semana, mes, semana del año, bandera de fin de semana, evento y
-  banderas derivadas de cierre y temporada alta.
+- **Medias móviles.** Promedios de la serie sobre ventanas de 7, 28, 91 y 364 días.
+- **Calendario.** Día de la semana, mes, semana del año, bandera de fin de semana y evento del
+  día.
+- **Eventos a nivel semanal.** Si la semana (de sábado a viernes, como el calendario original)
+  contiene un evento, cuál, cuántos días faltan para el próximo evento y cuántos han pasado desde
+  el último. Se conocen de antemano por el calendario, de modo que no introducen información
+  futura.
 - **Precio y segmento.** Precio de la semana, variación relativa respecto de la semana anterior,
-  categoría, departamento, tienda, ciudad y los grupos de comportamiento obtenidos en §7.2.
+  categoría, departamento, tienda, ciudad y el grupo de producto obtenido en §7.2.
 
 ### 6.4.2. La restricción de retardo mínimo
 
@@ -279,21 +289,25 @@ pliegues— y condicionó la decisión de calibrar únicamente con la ventana m�
 
 ### 6.5.2. Ventana de entrenamiento
 
-Se emplean ventanas de 180 días. La decisión se apoya en la existencia de la variable de media
-móvil anual, que aporta la referencia estacional sin necesidad de que el modelo vea físicamente
-el año completo, y en la evidencia de que ampliar la ventana multiplica el coste de cómputo sin
-mejora medible.
+La comparación de modelos de §7.3 se hizo con ventanas de 180 días, con el argumento de que la
+media móvil anual ya aporta la referencia estacional. Ese argumento resultó insuficiente: con 180
+días, el modelo que predice diciembre no ha visto ninguna Navidad, y la media anual no basta para
+que aprenda el cierre del día 25 ni la subida de las semanas previas. Se repitió la validación
+con **400 días**, que incluyen el año anterior completo: el error mejora un 5,7 % en diciembre y
+un 3,4 % en noviembre sin empeorar el resto del año. El **modelo final se entrena con 400 días**;
+el coste es un tiempo de entrenamiento algo más del doble.
 
 ### 6.5.3. Validación de la segmentación
 
-Las particiones de productos y tiendas se validaron con tres procedimientos complementarios.
-Las **métricas internas** —coeficiente de silueta, índice de Davies-Bouldin e índice de
-Calinski-Harabasz— guiaron la elección del número de grupos. La **concordancia entre métodos**
-se midió con el índice de Rand ajustado, comparando la partición obtenida por *k*-medias con la
-del método jerárquico de Ward y con la de un modelo de mezclas gaussianas. Por último, la
-**estabilidad** se evaluó con un procedimiento de exclusión sucesiva: se repitió la
-segmentación de tiendas eliminando una tienda cada vez y se midió con el índice de Jaccard
-cuánto se conservaban los grupos.
+La segmentación de productos se validó en tres pasos. Las **variables** se revisaron con su
+matriz de correlación, para descartar las que repetían información. El **número de grupos** se
+eligió con el método del codo —*k*-medias con *K* de 2 a 14— y el coeficiente de silueta. La
+**estabilidad** se comprobó repitiendo la segmentación con diez semillas aleatorias y midiendo
+con el índice de Rand ajustado la coincidencia con la primera ejecución.
+
+Las tiendas no se segmentaron con un algoritmo: con diez tiendas y unas doce variables de
+perfil, se compararon directamente mediante una tabla de perfil y una matriz de distancias
+(§7.2.4).
 
 ## 6.6. Métricas
 
@@ -306,18 +320,32 @@ agregables entre series de escalas muy distintas: el error de una referencia que
 doscientas unidades diarias domina cualquier promedio en el que participe una que vende dos.
 
 **RMSSE** (*root mean squared scaled error*) resuelve ese problema escalando el error cuadrático
-medio por el error que cometería una predicción ingenua estacional sobre el propio período de
-entrenamiento:
+medio por el error que cometería, dentro del propio período de entrenamiento, la predicción
+ingenua de un paso: predecir cada día con el valor del día anterior.
 
 $$\text{RMSSE} = \sqrt{\dfrac{\frac{1}{h}\sum_{t=n+1}^{n+h}(y_t-\hat{y}_t)^2}{\frac{1}{n-1}\sum_{t=2}^{n}(y_t-y_{t-1})^2}}$$
 
-El denominador convierte la métrica en adimensional, de modo que un valor inferior a 1 indica
-que el modelo supera a la referencia ingenua y uno superior, que no la supera. Es la métrica
-que permite promediar entre las 30.490 series.
+El denominador convierte la métrica en adimensional y permite promediar entre las 30.490 series.
+Conviene leerlo con cuidado: la referencia predice *un día* vista con el dato de ayer, un
+problema más fácil que predecir a 28 días, de modo que un RMSSE ligeramente superior a 1 no
+significa que el modelo sea peor que una regla ingenua aplicada al mismo horizonte. Lo que
+importa es la comparación entre modelos y referencias con la misma métrica.
 
 **WRMSSE** pondera el RMSSE de cada serie por su participación en la facturación. Es la métrica
 principal del trabajo, porque una mejora del error en una referencia que factura mil dólares
 diarios y otra en una que factura dos no tienen el mismo valor para la compañía.
+
+**WAPE semanal** (*weighted absolute percentage error*) responde a una observación de la
+tutoría: más de la mitad de los días-producto no tienen ninguna venta, y medir el error día a día
+mezcla el error del modelo con el azar de qué día concreto cae cada venta. Se suman predicción y
+venta real de cada serie por semanas y se calcula
+
+$$\text{WAPE} = \frac{\sum |\hat{y} - y|}{\sum y} \times 100$$
+
+que se lee directamente como el porcentaje de las unidades de la semana en que se equivoca el
+modelo. No falla con los ceros, porque divide por el total vendido, y coincide con el horizonte
+de la reposición, que también es semanal. El WRMSSE se mantiene para comparar modelos; el WAPE
+semanal, para explicar el error a negocio.
 
 **Pérdida pinball** evalúa las predicciones cuantílicas. Para un cuantil $\tau$ y un error
 $e = y - \hat{q}_\tau$:
@@ -333,17 +361,18 @@ bien calibrado.
 
 ### 6.6.2. Métricas de segmentación
 
+La **inercia** es la suma de las distancias al cuadrado de cada elemento al centro de su grupo.
+Disminuye siempre al aumentar el número de grupos; el **codo** de su curva señala el punto a
+partir del cual añadir grupos apenas reduce la dispersión. Cuando la curva es suave, el codo se
+localiza como el punto más alejado de la recta que une sus extremos.
+
 El **coeficiente de silueta** compara, para cada elemento, su distancia media al propio grupo
-con la distancia media al grupo vecino más próximo; toma valores en $[-1, 1]$ y desciende de
-forma natural al aumentar el número de grupos, por lo que se interpreta junto con las otras
-dos. El **índice de Davies-Bouldin** mide la razón entre dispersión interna y separación entre
-grupos, y se minimiza. El **índice de Calinski-Harabasz** es un cociente entre varianza
-explicada e intragrupo, y se maximiza.
+con la distancia media al grupo vecino más próximo; toma valores en $[-1, 1]$ y se usa como
+criterio de apoyo dentro de la zona del codo.
 
 El **índice de Rand ajustado** mide la concordancia entre dos particiones del mismo conjunto
-corrigiendo por la coincidencia esperable al azar. El **índice de Jaccard** entre dos conjuntos
-$A$ y $B$ —$|A \cap B| / |A \cup B|$— se emplea para medir cuánto se conserva un grupo entre dos
-ejecuciones distintas de la segmentación.
+corrigiendo por la coincidencia esperable al azar; aquí se emplea para medir la estabilidad de
+la segmentación entre ejecuciones con distinta semilla.
 
 ### 6.6.3. Métricas económicas
 

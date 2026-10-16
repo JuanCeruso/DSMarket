@@ -17,8 +17,14 @@ import numpy as np, pandas as pd
 from scipy.stats import norm
 from base import GOLD, conectar
 
-NIVEL_POR_CELDA = {"AX": .98, "AY": .95, "AZ": .90, "BX": .95, "BY": .90,
-                   "BZ": .85, "CX": .90, "CY": .85, "CZ": .80}
+# Nivel de servicio objetivo (Tarea 4, secciones 5.1 y 7): lo decide la merma, no el segmento.
+# Lo fresco (SUPERMARKET) se queda en el 90%; lo no perecedero, cuyo sobrante se vende la semana
+# siguiente, al 95%. Son parámetros de negocio: cuando DSMarket mida la merma real se ajustan aquí.
+NIVEL_POR_CATEGORIA = {"SUPERMARKET": .90, "ACCESORIES": .95, "HOME_&_GARDEN": .95}
+
+
+def nivel_servicio(item: str) -> float:
+    return NIVEL_POR_CATEGORIA["SUPERMARKET"] if item.startswith("SUPERMARKET") else .95
 
 
 def main(dias_revision, lead_time):
@@ -48,7 +54,7 @@ def main(dias_revision, lead_time):
     if df.empty:
         raise SystemExit("No hay predicciones cargadas. Ejecutá antes: python3 operacion/predecir.py")
 
-    df["nivel_servicio"] = df["segmento"].map(NIVEL_POR_CELDA).fillna(0.90)
+    df["nivel_servicio"] = df["item"].map(nivel_servicio)
     z = norm.ppf(df["nivel_servicio"].to_numpy())
 
     # sigma del modelo cuantílico: (p90 - media) / z_{0.90}, agregado en cuadratura

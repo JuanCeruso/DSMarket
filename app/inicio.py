@@ -45,11 +45,12 @@ with st.sidebar:
     etiqueta = tiendas.apply(lambda r: f"{r['tienda']} · {r['ciudad']}", axis=1).tolist()
     i_tienda = st.selectbox("Tienda", range(len(tiendas)), format_func=lambda i: etiqueta[i])
     tienda = tiendas.iloc[i_tienda]["store_code"]
-    st.caption(f"Grupo de comportamiento: **{tiendas.iloc[i_tienda]['grupo_comportamiento']}**")
+    parecida = tiendas.set_index("store_code")["tienda"].get(tiendas.iloc[i_tienda]["tienda_mas_parecida"], "—")
+    st.caption(f"Tienda más parecida: **{parecida}**")
 
     st.divider()
     arquetipos = ["(todos)"] + sorted(d["productos"]["arquetipo"].dropna().unique().tolist())
-    filtro_arq = st.selectbox("Filtrar por arquetipo", arquetipos)
+    filtro_arq = st.selectbox("Filtrar por grupo de producto", arquetipos)
     disponibles = series_idx.xs(tienda, level="store_code")
     if filtro_arq != "(todos)":
         items_arq = set(prod_idx.index[prod_idx["arquetipo"] == filtro_arq])
@@ -79,7 +80,7 @@ with tab1:
     st.header(f"{item}")
     c = st.columns([1, 1, 1, 1])
     c[0].metric("Segmento", serie["celda"])
-    c[1].metric("Arquetipo", arquetipo)
+    c[1].metric("Grupo de producto", arquetipo)
     c[2].metric("Coef. de variación", f"{serie['coef_variacion']:.2f}")
     c[3].metric("Facturación 90 días", f"${serie['facturacion_90d']:,.0f}")
 
@@ -152,7 +153,7 @@ with tab2:
         col.subheader(titulo)
         col.altair_chart((grafico + texto).properties(height=220), width='stretch')
     st.info("**AX** concentra el 56% de la facturación con demanda estable: es donde automatizar rinde más. "
-            "**CZ** es el 28% del catálogo por el 3,5% de la facturación: regla simple y revisar surtido.")
+            "**CZ** es el 28% del catálogo por el 3,5% de la facturación: ahí el modelo gana al histórico, y conviene revisar el surtido.")
 
     st.subheader(f"Mayores pedidos sugeridos en {tiendas.iloc[i_tienda]['tienda']}")
     top = disponibles.head(15).copy()

@@ -133,14 +133,14 @@ esperado del vendedor de periódicos y la pérdida pinball evaluada en el ratio 
 articula los capítulos §7.3 y §7.4 de esta memoria y la que sostiene su principal aportación
 metodológica.
 
-### 4.4.5. Segmentación y datos composicionales
+### 4.4.5. Segmentación
 
-La segmentación de productos y tiendas emplea métodos clásicos de agrupamiento cuya validación
-se apoya en el coeficiente de silueta (Rousseeuw, 1987), el índice de Davies y Bouldin (1979) y
-el de Caliński y Harabasz (1974), junto con el índice de Rand ajustado de Hubert y Arabie (1985)
-para medir la concordancia entre particiones. La limitación metodológica reconocida en §7.2.1
-—el tratamiento de perfiles normalizados como si vivieran en un espacio euclídeo— corresponde al
-problema de los datos composicionales formulado por Aitchison (1982).
+La segmentación de productos emplea *k*-medias, con el número de grupos elegido por el método
+del codo (Thorndike, 1953) y contrastado con el coeficiente de silueta (Rousseeuw, 1987). La estabilidad de la
+partición se mide con el índice de Rand ajustado de Hubert y Arabie (1985) entre ejecuciones
+con distinta semilla. La decisión de no aplicar agrupamiento a las diez tiendas se apoya en la
+maldición de la dimensionalidad descrita por Bellman (1961): con más variables que
+observaciones, las distancias pierden capacidad de discriminar.
 
 ### 4.4.6. Identificación del efecto del precio
 

@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
-"""Generador de 04_Abastecimiento_DSMarket.ipynb (TFM DSMarket - Tarea 4)."""
+"""Generador de 04_Abastecimiento_DSMarket.ipynb (TFM DSMarket - Tarea 4).
+
+Versión 2 (octubre 2026), tras la tutoría y la revisión interna:
+  - usa las predicciones del modelo final de la Tarea 3 (400 días de historia + eventos semanales,
+    `modelo_final.py`), media y percentil 90, en la ventana simulada;
+  - usa los 6 grupos de producto actuales de la Tarea 2;
+  - las políticas se comparan al mismo nivel de servicio objetivo, y el nivel se elige con la
+    curva servicio-coste en vez de fijarlo por celda a mano;
+  - la tabla de política final sigue lo que dice la simulación (el modelo se usa donde ahorra).
+"""
 import nbformat as nbf
 CELLS = []
 def md(t): CELLS.append(('md', t.strip('\n')))
@@ -15,7 +24,7 @@ Las tres tareas anteriores terminaron en un pronóstico. Un pronóstico, por sí
 
 La estructura es: primero la teoría que gobierna la decisión (secciones 2 y 3), después la propuesta concreta simulada sobre datos reales (4 a 7), y al final el diseño de cómo llevarlo a producción y escalarlo (8 y 9).
 
-Una aclaración de alcance desde el principio: DSMarket no nos dio datos de costes, márgenes ni plazos de entrega. Todo lo que sigue usa **supuestos explícitos y parametrizados**, y la sección 6 muestra exactamente cuánto cambia la recomendación si esos supuestos cambian. Es la parte que hay que validar con Finanzas antes de aplicar nada.
+Una aclaración de alcance desde el principio: DSMarket no nos dio datos de costes, márgenes ni plazos de entrega. Todo lo que sigue usa **supuestos explícitos y parametrizados**, y la sección 5.1 muestra exactamente cuánto cambia la recomendación si esos supuestos cambian. Es la parte que hay que validar con Finanzas antes de aplicar nada.
 """)
 
 md("## 1. Configuración")
@@ -60,18 +69,18 @@ El resultado central de la teoría es que la cantidad óptima no es la demanda e
 
 $$\\text{Nivel de servicio óptimo} = \\frac{C_u}{C_u + C_o}$$
 
-Esto es lo que justifica todo el trabajo de la Tarea 3 sobre intervalos de predicción: **stockear a la predicción media es óptimo solo si faltante y sobrante cuestan exactamente lo mismo**, cosa que casi nunca ocurre. En la Tarea 3 medimos que la predicción media cubre apenas el 67,8% de la demanda real — es decir, que la política de "pedir lo que dice el pronóstico" acepta implícitamente un 32% de faltantes.
+Esto es lo que justifica todo el trabajo de la Tarea 3 sobre intervalos de predicción: **stockear a la predicción media es óptimo solo si faltante y sobrante cuestan exactamente lo mismo**, cosa que casi nunca ocurre. En la Tarea 3 medimos que la predicción media queda por encima de la demanda real solo en unos dos de cada tres días-producto. Ojo con leer ese número como "un tercio de la demanda se pierde": es un porcentaje de **días**, no de **unidades**. Cuánta demanda se pierde de verdad depende del inventario que se arrastra de un día a otro, y eso lo mide la simulación de la sección 4.
 
 ### 2.2. Stock de seguridad: por qué la fórmula del manual no sirve tal cual
 
 La fórmula clásica del stock de seguridad es $SS = z_{\\alpha} \\cdot \\sigma_{L} $, donde $\\sigma_L$ es el desvío de la demanda durante el plazo de cobertura y $z_\\alpha$ el valor de la normal para el nivel de servicio buscado. Tiene dos supuestos que en este catálogo se rompen:
 
-1. **Supone demanda normal.** La demanda de estos productos es asimétrica y discreta: en la Tarea 2 vimos que hay segmentos con 66% de días sin ninguna venta. Una normal ajustada a eso da stocks negativos en la cola izquierda y subestima la derecha.
+1. **Supone demanda normal.** La demanda de estos productos es asimétrica y discreta: en la Tarea 2 vimos que hay grupos de productos que no venden nada en cerca del 40% de los días en que están a la venta. Una normal ajustada a eso da stocks negativos en la cola izquierda y subestima la derecha.
 2. **Supone que $\\sigma$ es estable y se estima del pasado.** Pero el desvío cambia con el día de la semana, la temporada y el precio — justamente lo que el modelo de la Tarea 3 aprende.
 
 Nuestra propuesta usa el **modelo cuantílico** entrenado en la Tarea 3 para estimar la dispersión: en vez de calcular $\\sigma$ del histórico, la derivamos de la distancia entre el percentil 90 predicho y la media predicha, $\\sigma_t = (p90_t - \\mu_t)/z_{0.90}$. Así la dispersión es **condicional**: cambia día a día según lo que el modelo sabe de ese producto en ese momento.
 
-La sección 7 pone a prueba si esto realmente sirve, y el resultado no es el que esperábamos.
+La sección 6 pone a prueba si esto realmente sirve, y el resultado no es el que esperábamos.
 
 ### 2.3. La política: revisión periódica (R, S)
 
@@ -85,7 +94,7 @@ El nivel objetivo tiene que cubrir la demanda de todo el período en que la deci
 
 $$S = \\underbrace{\\sum_{i=1}^{R+L} \\mu_i}_{\\text{demanda esperada}} + \\underbrace{z_{\\alpha}\\sqrt{\\sum_{i=1}^{R+L}\\sigma_i^2}}_{\\text{stock de seguridad}}$$
 
-*(La suma de varianzas asume independencia entre días. Es una simplificación: si la demanda está autocorrelacionada, subestima la dispersión real. Lo retomamos en la sección 7, porque resultó importar más de lo previsto.)*
+*(La suma de varianzas asume independencia entre días. Es una simplificación: si la demanda está autocorrelacionada, subestima la dispersión real. Lo retomamos en la sección 6, porque resultó importar más de lo previsto.)*
 """)
 
 md("""
@@ -112,15 +121,16 @@ if V is None:      # primera ejecución: reconstruimos la matriz de ventas desde
 meta = pd.read_csv(f"{CACHE}/meta.csv")
 calendar = pd.read_csv(f"{DATA_DIR}/daily_calendar_with_events.csv")
 calendar['date'] = pd.to_datetime(calendar['date'])
-clusters_prod = pd.read_csv(f"{CACHE}/clusters_producto.csv", index_col=0)
-meta['cluster_k5'] = meta['item'].map(clusters_prod['cluster_k5'])
+segmentacion = pd.read_csv(f"{CACHE}/segmentacion_productos.csv", index_col=0)   # Tarea 2 (notebook 02)
+meta['grupo'] = meta['item'].map(segmentacion['nombre_grupo'])
 
 n_series, n_days = V.shape
 s, e = n_days - 28, n_days                       # ventana de simulación = fold 3 de la Tarea 3
 H = e - s
 demanda = V[:, s:e].astype(np.float64)
-media_pred = pickle.load(open(f"{CACHE}/pred2_fold2.pkl", "rb"))['pred_lgb'].astype(np.float64)
-p90_pred = np.load(f"{CACHE}/p90_eval.npy").astype(np.float64)
+# predicciones del modelo final de la Tarea 3 (sección 16.6) para esta ventana: media y percentil 90
+media_pred = np.load(f"{CACHE}/final_eval_media.npy").astype(np.float64)
+p90_pred = np.load(f"{CACHE}/final_eval_p90.npy").astype(np.float64)
 print(f"ventana simulada: {calendar['date'].iloc[s].date()} a {calendar['date'].iloc[e-1].date()} ({H} días)")
 print(f"series: {n_series:,} | demanda real del período: {demanda.sum():,.0f} unidades")
 """)
@@ -172,11 +182,12 @@ plt.tight_layout(); plt.show()
 """)
 
 code("""
-NOM_ARQ = {0: '0 · Premium', 1: '1 · Núcleo estable', 2: '2 · Cola larga',
-           3: '3 · Fin de semana', 4: '4 · Fin de año'}
-cruce = pd.crosstab(pd.Series([NOM_ARQ[c] for c in meta['cluster_k5'].values[activo]], name='arquetipo (Tarea 2)'),
+cruce = pd.crosstab(pd.Series(meta['grupo'].values[activo], name='grupo de producto (Tarea 2)'),
                     pd.Series(clase_xyz[activo], name='XYZ'), normalize='index') * 100
-cruce.round(1)
+cruce['series'] = pd.Series(meta['grupo'].values[activo]).value_counts()
+cruce['% de la facturación'] = (pd.Series(facturacion[activo]).groupby(meta['grupo'].values[activo]).sum()
+                                / facturacion[activo].sum() * 100)
+cruce.sort_values('X', ascending=False).round(1)
 """)
 
 md("<<<HALLAZGO_SEGMENTACION>>>")
@@ -184,12 +195,13 @@ md("<<<HALLAZGO_SEGMENTACION>>>")
 md("""
 ## 4. La simulación: cuatro políticas sobre datos reales
 
-Comparamos cuatro formas de fijar el nivel objetivo S, simulando día a día las cuatro semanas del período de validación con la **demanda real** que efectivamente ocurrió:
+Comparamos tres formas de fijar el nivel objetivo S, simulando día a día las cuatro semanas del período de validación con la **demanda real** que efectivamente ocurrió:
 
 1. **Actual** — pedir la predicción media, sin stock de seguridad. Es la política implícita de "hacerle caso al pronóstico".
 2. **Stock de seguridad clásico** — la fórmula del manual, con σ estimado del histórico reciente.
 3. **Modelo cuantílico** — σ derivado del percentil 90 que predice el modelo.
-4. **Segmentada** — como la anterior, pero con un nivel de servicio distinto por celda ABC/XYZ.
+
+Las dos últimas apuntan al **mismo nivel de servicio objetivo (90%)**, para que la comparación sea justa: lo único que cambia es cómo se estima la incertidumbre. Qué nivel conviene es otra pregunta, y la responde la sección 5.
 
 La simulación respeta la mecánica real: el inventario se consume día a día, los pedidos se hacen solo los días de revisión, tardan dos días en llegar, y **lo que no hay en el estante se pierde** (no hay pedidos pendientes que el cliente espere).
 """)
@@ -240,13 +252,10 @@ def economia(r, etiqueta):
             'coste total USD': margen_perdido + mantenimiento,
             'remanente final (uds)': r['remanente'][a].sum()}
 
-SL_SEGMENTADO = {'AX':.98,'AY':.95,'AZ':.90,'BX':.95,'BY':.90,'BZ':.85,'CX':.90,'CY':.85,'CZ':.80}
-z_segmentado = np.array([Z[SL_SEGMENTADO[c]] for c in celda])
 POLITICAS = {
     'Actual (a la predicción media)':        lambda t: nivel_objetivo(t, sig_mod_ext, 0.0),
     'Stock de seguridad clásico (σ histórico)': lambda t: nivel_objetivo(t, sig_his_ext, Z[0.90]),
     'Modelo cuantílico (σ del modelo)':      lambda t: nivel_objetivo(t, sig_mod_ext, Z[0.90]),
-    'Segmentada ABC/XYZ':                    lambda t: nivel_objetivo(t, sig_mod_ext, z_segmentado),
 }
 resultados = {nombre: simular(fn) for nombre, fn in POLITICAS.items()}
 comparacion = pd.DataFrame([economia(r, n) for n, r in resultados.items()]).set_index('política')
@@ -258,7 +267,7 @@ comparacion.round(1)
 code("""
 fig, axes = plt.subplots(1, 2, figsize=(14, 4.6))
 nombres = list(comparacion.index)
-colores = ['#c9c8c0', DSMARKET_GREEN, DSMARKET_BLUE, DSMARKET_GOLD]
+colores = ['#c9c8c0', DSMARKET_GREEN, DSMARKET_BLUE]
 
 axes[0].barh(nombres[::-1], comparacion['nivel de servicio %'][::-1], color=colores[::-1])
 axes[0].set_xlim(80, 100)
@@ -369,14 +378,14 @@ md("<<<HALLAZGO_SENSIBILIDAD>>>")
 md("""
 ## 6. ¿Sirve el modelo para reponer? El test que nos contradijo
 
-En la Tarea 3 medimos el error de predicción por segmento y sacamos una conclusión que parecía obvia: el modelo acierta en el núcleo estable (RMSSE 0,77) y falla en la cola larga (RMSSE 1,29, peor que el naive), así que **la cola larga no debería reponerse con predicción** sino con una regla empírica.
+En la primera versión de la Tarea 3 medimos el error de predicción por segmento y sacamos una conclusión que parecía obvia: el modelo acertaba en los productos de venta regular y fallaba en la demanda irregular (RMSSE por encima de 1), así que **la demanda irregular no debería reponerse con predicción** sino con una regla empírica.
 
-Es una afirmación comprobable, así que la comprobamos. Simulamos la misma política de dos formas:
+Es una afirmación comprobable, así que la comprobamos. Simulamos la misma política de dos formas, al mismo nivel objetivo (90%):
 
 - **Con modelo:** nivel objetivo = predicción + stock de seguridad del modelo cuantílico.
 - **Sin modelo:** nivel objetivo = **percentil 90 empírico** de la demanda histórica en ventanas de 9 días. Sin predicción, sin features, sin entrenamiento: puro histórico.
 
-Si nuestra conclusión de la Tarea 3 fuera correcta, el modelo debería ganar en el núcleo estable y perder en la cola larga.
+Si aquella conclusión fuera correcta, el modelo debería ganar en los productos regulares y perder en los irregulares. Se mide por clase XYZ (lo regular que es cada serie) y por grupo de producto de la Tarea 2.
 """)
 
 code("""
@@ -400,7 +409,7 @@ def por_segmento(r, etiquetas, nombre_politica):
                        'coste USD': perdido + mantener})
     return salida
 
-etq_arq = np.array([NOM_ARQ[c] for c in meta['cluster_k5'].values])
+etq_arq = meta['grupo'].values.astype(str)
 etq_xyz = np.array([f'XYZ · {c}' for c in clase_xyz])
 filas = []
 for r, nom in [(sim_con, 'Con modelo'), (sim_sin, 'Sin modelo (empírico)')]:
@@ -433,20 +442,41 @@ md("<<<HALLAZGO_CONTRADICCION>>>")
 md("""
 ## 7. La política recomendada
 
-El resultado anterior sugiere una política **híbrida**: usar el histórico donde es suficiente y el modelo donde aporta. La probamos contra las dos alternativas puras.
+La política tiene dos decisiones, y las dos se toman con la simulación:
+
+1. **Cómo se calcula el nivel objetivo de cada serie.** El resultado de la sección 6 sugiere una política **híbrida**: el percentil histórico en las series estables (X), donde es suficiente, y el modelo en las variables y erráticas (Y, Z), donde aporta. Se compara con las dos alternativas puras **al mismo nivel objetivo (90%)**.
+2. **A qué nivel de servicio apuntar.** No se fija a mano por celda: sale de la curva servicio-coste de la sección 5, y depende sobre todo de la merma.
 """)
 
 code("""
-usa_empirico = (clase_xyz == 'X')
-nivel_hibrido = lambda t: np.where(usa_empirico, percentil_empirico, nivel_con_modelo(t))
-sim_hib = simular(nivel_hibrido)
+def nivel_hibrido_a(sl):
+    \"\"\"Nivel objetivo híbrido para un nivel de servicio dado: percentil histórico en X, modelo en Y/Z.\"\"\"
+    emp = np.percentile(ventanas_hist, sl * 100, axis=1)
+    z = norm.ppf(sl)
+    return lambda t: np.where(clase_xyz == 'X', emp, nivel_objetivo(t, sig_mod_ext, z))
 
-finales = pd.DataFrame([economia(sim_con, 'Solo modelo'),
-                        economia(sim_sin, 'Solo percentil empírico'),
-                        economia(sim_hib, 'Híbrida (empírico en X, modelo en Y/Z)'),
-                        economia(resultados['Actual (a la predicción media)'], 'Actual (referencia)')]
+usa_empirico = (clase_xyz == 'X')
+sim_hib = simular(nivel_hibrido_a(0.90))
+finales = pd.DataFrame([economia(resultados['Actual (a la predicción media)'], 'Actual (referencia)'),
+                        economia(sim_sin, 'Solo percentil empírico (90%)'),
+                        economia(sim_con, 'Solo modelo (90%)'),
+                        economia(sim_hib, 'Híbrida: empírico en X, modelo en Y/Z (90%)')]
                        ).set_index('política')
 finales.round(1)
+""")
+
+code("""
+# El mismo análisis a lo largo de toda la curva: ¿la híbrida gana a cualquier nivel de servicio?
+filas = []
+for sl in [0.85, 0.90, 0.95, 0.98]:
+    for nombre, fn in [('Solo modelo', lambda t, z=norm.ppf(sl): nivel_objetivo(t, sig_mod_ext, z)),
+                       ('Híbrida', nivel_hibrido_a(sl))]:
+        e_ = economia(simular(fn), nombre)
+        filas.append({'objetivo': f"{sl:.0%}", 'política': nombre, 'servicio %': e_['nivel de servicio %'],
+                      'coste total USD': e_['coste total USD'], 'inventario medio (uds)': e_['inventario medio (uds)']})
+curva_hib = pd.DataFrame(filas).pivot(index='objetivo', columns='política',
+                                      values=['servicio %', 'coste total USD'])
+curva_hib.round(1)
 """)
 
 md("<<<POLITICA_FINAL>>>")
@@ -464,12 +494,12 @@ El cálculo de la sección 7 no sirve de nada si vive en un notebook. La forma n
                    ┌──────────────────────────────┐
    ventas diarias  │  1. Ingesta y features       │  batch nocturno
    precios         │     (ventas, precios,        │
-   calendario      │      calendario, clusters)   │
+   calendario      │      calendario, grupos)     │
                    └──────────────┬───────────────┘
                                   ▼
                    ┌──────────────────────────────┐
-                   │  2. Entrenamiento semanal    │  ~2 min por modelo
-                   │     LightGBM media + p90     │  (domingo de madrugada)
+                   │  2. Entrenamiento semanal    │  LightGBM media + p90,
+                   │     400 días de historia     │  (domingo de madrugada)
                    └──────────────┬───────────────┘
                                   ▼
                    ┌──────────────────────────────┐
@@ -487,38 +517,38 @@ El cálculo de la sección 7 no sirve de nada si vive en un notebook. La forma n
 
 ### Contrato de la API
 
-**`POST /reposicion/sugerencia`**
+**`POST /reposicion/sugerencia`** — se pide para una tienda, una fecha de revisión y una lista de productos con su stock; la respuesta devuelve el nivel objetivo y el pedido sugerido de cada uno. El ejemplo siguiente no es inventado: está calculado con la política de la sección 7 para un producto real de la clase AX en la primera revisión de la ventana simulada.
+""")
 
-```json
-{
-  "tienda": "NYC_1",
-  "fecha_revision": "2016-04-25",
-  "productos": [
-    {"item": "SUPERMARKET_3_069", "stock_actual": 42, "en_transito": 0}
-  ],
-  "parametros": {"dias_revision": 7, "lead_time": 2, "nivel_servicio": 0.95}
-}
-```
+code("""
+import json
+# un producto real AX (alta facturación, demanda estable) de la tienda NYC_1, con la política híbrida
+tienda_ej = 'NYC_1'
+cand = np.nonzero((meta['store_code'].values == tienda_ej) & (celda == 'AX') & activo)[0]
+i = cand[np.argmax(facturacion[cand])]
+sl = 0.95
+nivel = nivel_hibrido_a(sl)(0)[i]
+demanda_esp = media_pred[i, :VENTANA].sum() if clase_xyz[i] != 'X' else np.percentile(ventanas_hist[i], 50)
+stock_actual, en_transito = round(0.4 * nivel), 0
+peticion = {"tienda": tienda_ej, "fecha_revision": str(calendar['date'].iloc[s].date()),
+            "productos": [{"item": meta['item'].iloc[i], "stock_actual": stock_actual, "en_transito": en_transito}],
+            "parametros": {"dias_revision": R, "lead_time": L, "nivel_servicio": sl}}
+respuesta = {"fecha_revision": peticion["fecha_revision"],
+             "cobertura_hasta": str(calendar['date'].iloc[s + VENTANA].date()),
+             "sugerencias": [{"item": meta['item'].iloc[i], "grupo_producto": meta['grupo'].iloc[i],
+                              "segmento": str(celda[i]),
+                              "demanda_esperada": round(float(demanda_esp), 1),
+                              "nivel_objetivo": round(float(nivel), 1),
+                              "pedido_sugerido": int(max(np.ceil(nivel - stock_actual - en_transito), 0)),
+                              "nivel_servicio_aplicado": sl,
+                              "metodo": "percentil empírico" if clase_xyz[i] == 'X' else "modelo cuantílico",
+                              "motivo": "serie estable (clase X): el histórico de ventanas de 9 días es más fiable que el modelo"
+                                        if clase_xyz[i] == 'X' else "serie variable: el modelo estima mejor la incertidumbre"}]}
+print("Petición:"); print(json.dumps(peticion, indent=2, ensure_ascii=False))
+print("\\nRespuesta:"); print(json.dumps(respuesta, indent=2, ensure_ascii=False))
+""")
 
-```json
-{
-  "fecha_revision": "2016-04-25",
-  "cobertura_hasta": "2016-05-04",
-  "sugerencias": [
-    {
-      "item": "SUPERMARKET_3_069",
-      "demanda_esperada": 86.4,
-      "nivel_objetivo": 118.0,
-      "pedido_sugerido": 76,
-      "nivel_servicio_aplicado": 0.95,
-      "segmento": "AX",
-      "confianza": "alta",
-      "motivo": "serie estable, política empírica"
-    }
-  ]
-}
-```
-
+md("""
 Tres decisiones de diseño que conviene justificar:
 
 - **La API no predice, lee predicciones.** El modelo corre en batch y deja las predicciones en tabla; la API solo resuelve la aritmética de la política. Así responde en milisegundos y el pico de carga de las revisiones semanales no depende del modelo.
@@ -545,8 +575,8 @@ El proyecto piloto cubre 10 tiendas. La pregunta de Michelle es qué pasa al mul
 
 **Lo que NO escala directamente, y es lo importante:**
 
-1. **Una tienda nueva no tiene historia.** Es el problema de arranque en frío, y es donde la Tarea 2 deja el aporte más concreto: en vez de esperar un año de datos, se asigna la tienda nueva al **grupo de comportamiento** que le corresponda por tipo de zona, y se arranca con el perfil de demanda de ese grupo. Recordemos el hallazgo: el perfil de demanda **cruza fronteras de ciudad** (Tribeca se comporta como Boston), así que el criterio de asignación debe ser el tipo de barrio, no la geografía.
-2. **Los supuestos económicos no son nacionales.** Márgenes, costes logísticos y plazos de entrega cambian por región. Los parámetros de la política tienen que ser configurables por tienda o por grupo, no constantes.
+1. **Una tienda nueva no tiene historia.** Es el problema de arranque en frío, y es donde la Tarea 2 deja el aporte más concreto: en vez de esperar un año de datos, se arranca con el perfil de demanda de la **tienda existente más parecida** por tipo de barrio (Tarea 2, sección 5.3). Recordemos el hallazgo: el perfil de demanda **cruza fronteras de ciudad** (Tribeca se parece más a las tiendas de Boston que a las de Nueva York), así que el criterio debe ser el tipo de barrio, no la geografía.
+2. **Los supuestos económicos no son nacionales.** Márgenes, costes logísticos y plazos de entrega cambian por región. Los parámetros de la política tienen que ser configurables por tienda o por región, no constantes.
 3. **La validación tiene que ser continua.** Con 10 tiendas se puede revisar a mano; con 1.000 hace falta el monitoreo automático de la sección 8, o los problemas se detectan cuando ya costaron dinero.
 
 **Plan por fases sugerido:**
@@ -555,7 +585,7 @@ El proyecto piloto cubre 10 tiendas. La pregunta de Michelle es qué pasa al mul
 |---|---|---|
 | 1 (2 meses) | 2 tiendas piloto, categoría SUPERMARKET | Validar el nivel de servicio real contra el simulado y medir la merma real |
 | 2 (3 meses) | Las 10 tiendas, todas las categorías | Ajustar parámetros por categoría; medir el ahorro real contra la línea base |
-| 3 (6 meses) | Despliegue nacional por grupos de comportamiento | Extender por grupo, no por ciudad; una tienda nueva arranca con el perfil de su grupo |
+| 3 (6 meses) | Despliegue nacional por tipo de barrio | Cada tienda nueva arranca con el perfil de la tienda existente más parecida, no con la media de su ciudad |
 
 La fase 1 no es opcional: **la merma real es el parámetro que decide la política entera** (sección 5.1) y hoy no lo tenemos medido.
 """)
@@ -565,105 +595,111 @@ md("<<<CIERRE4>>>")
 NARRATIVA = {}
 
 NARRATIVA['<<<HALLAZGO_SEGMENTACION>>>'] = """
-**Hallazgo — el catálogo está muy desbalanceado, y eso es una oportunidad:**
+**Hallazgo: el catálogo está muy desequilibrado, y eso es una oportunidad.**
 
-- **AX — 5.494 series (18% del catálogo) que valen el 55,9% de la facturación, y además son predecibles.** Es el segmento donde automatizar la reposición rinde más: mucho dinero en juego y demanda estable. Si el proyecto solo llegara a estas series, ya habría capturado más de la mitad del valor.
-- **CZ — 8.493 series (28% del catálogo) que valen el 3,5%, y son erráticas.** Casi un tercio del catálogo aporta menos del 4% del negocio. Acá no conviene invertir en precisión: conviene una regla simple, barata de mantener, y revisar si algunos de esos productos deberían seguir en el surtido.
-- **CX está prácticamente vacío (6 series).** Tiene sentido: un producto de rotación estable difícilmente factura poco.
+- **AX: 5.494 series (18 % del catálogo) que suman el 55,9 % de la facturación y además son predecibles.** Es donde automatizar la reposición rinde más: mucho dinero en juego y demanda estable. Solo con estas series ya se cubre más de la mitad del valor.
+- **CZ: 8.493 series (28 % del catálogo) que suman el 3,5 % de la facturación y son erráticas.** Casi un tercio del catálogo aporta menos del 4 % del negocio. Aquí no compensa invertir en precisión, y conviene revisar si algunos de esos productos deben seguir en el surtido.
+- **CX está prácticamente vacío (6 series).** Es lógico: un producto que se vende de forma estable difícilmente factura poco.
 
-El cruce con los arquetipos de la Tarea 2 confirma que **los dos ejes miden cosas distintas y se complementan**. El "núcleo estable" es el arquetipo con mayor proporción de series X (36,7%), como era de esperar, pero aun así un 15,9% de sus series son Z. Y la "cola larga" es 46,9% Z. O sea: el arquetipo dice *cómo se comporta* el producto (fin de semana, diciembre, eventos) y el XYZ dice *qué tan fiable* es la señal. Para reponer hacen falta los dos.
+El cruce con los grupos de producto de la Tarea 2 muestra que **los dos ejes miden cosas distintas y se complementan**:
+
+- **Alimentación de consumo diario** es el único grupo con mayoría de series estables (X: 53 %) y suma el 38 % de la facturación.
+- **Compra ocasional en fechas señaladas** es casi todo errático (Z: 77 %), seguido de **Temporada de Navidad** (56 %) y **Accesorios y hogar de precio alto** (50 %).
+- **Hogar de fin de semana** y **Básicos de rotación lenta** son sobre todo Y, con una parte importante de Z (27 % y 41 %).
+
+El grupo dice *cómo* se vende un producto (a diario, en fin de semana, en Navidad, en fechas señaladas) y la clase XYZ dice *cuánto se puede fiar* la previsión de cada serie. Para reponer hacen falta los dos.
 """
 
 NARRATIVA['<<<HALLAZGO_SIMULACION>>>'] = """
-**Hallazgo — la política actual pierde plata por faltantes, no por exceso:**
+**Hallazgo: la política actual pierde dinero por quedarse sin stock, no por tener demasiado.**
 
 | Política | Servicio | Coste total (28 días) | Ahorro |
 |---|---|---|---|
-| Actual (a la predicción media) | 86,3% | $172.880 | — |
-| Stock de seguridad clásico | 95,1% | $76.740 | 55,6% |
-| Modelo cuantílico | 95,5% | $69.668 | 59,7% |
-| **Segmentada ABC/XYZ** | **96,1%** | **$66.070** | **61,8%** |
+| Actual (pedir la predicción media) | 86,6 % | 175.654 $ | — |
+| Stock de seguridad clásico | 95,3 % | 76.171 $ | 56,6 % |
+| **Modelo cuantílico** | **95,9 %** | **67.587 $** | **61,5 %** |
+
+*(las dos políticas con stock de seguridad, con un objetivo del 90 %)*
 
 Tres lecturas:
 
-1. **Pedir la predicción media atiende solo el 86,3% de la demanda y cuesta $172.880 en cuatro semanas** — de los cuales **$161.353 son margen perdido** por faltantes y apenas $11.527 el coste de mantener stock. La política actual no es cara por inmovilizar capital: es cara porque **deja de vender**. Son 162.189 unidades que el cliente quiso comprar y no encontró.
+1. **Pedir la predicción media cubre solo el 86,6 % de la demanda y cuesta 175.654 $ en cuatro semanas.** De eso, **164.496 $ son margen perdido** por roturas de stock y solo 11.158 $ el coste de mantener inventario. La política actual no es cara por tener stock parado: es cara porque **deja de vender**. Son 158.990 unidades que el cliente quiso comprar y no encontró.
+2. **Cualquier política con stock de seguridad ahorra más del 55 %.** Es el mensaje más simple y más rentable del proyecto, y no necesita machine learning: solo aceptar que hay que tener algo más de lo que dice la previsión.
+3. **El stock de seguridad calculado con el modelo cuantílico mejora al clásico un 11,3 %** (67.587 $ frente a 76.171 $), con un servicio algo mayor. Ahí es donde aporta el modelo de la Tarea 3: no tanto en predecir mejor la media como en **estimar mejor la incertidumbre**.
 
-2. **Cualquier política con stock de seguridad ahorra más del 55%.** Es el mensaje más simple y más rentable de todo el proyecto, y no requiere machine learning: requiere aceptar que hay que stockear por encima del pronóstico.
-
-3. **El stock de seguridad calculado con el modelo cuantílico le gana al clásico por un 9,2%** ($69.668 contra $76.740), con un nivel de servicio ligeramente mejor. Ahí sí es donde aporta el modelo de la Tarea 3: no en predecir mejor el promedio, sino en **estimar mejor la incertidumbre**.
-
-La segmentación ABC/XYZ suma otro 5% sobre eso, subiendo el servicio al 96,1%: pone el stock donde el negocio lo necesita en vez de repartirlo parejo.
+*Nota:* las predicciones son las del modelo final de la Tarea 3 (notebook 03, sección 16.6: 400 días de historia y eventos semanales) sobre la última ventana de validación, del 28 de marzo al 24 de abril de 2016.
 """
 
 NARRATIVA['<<<HALLAZGO_SENSIBILIDAD>>>'] = """
-**Hallazgo — el nivel de servicio óptimo lo decide la merma, no el margen:**
+**Hallazgo: el nivel de servicio óptimo lo decide la merma, no el margen.**
 
-Con los supuestos base (margen 25%, coste de mantenimiento 25% anual, **sin merma**) el óptimo está en el **99%**, y el newsvendor teórico lo confirma: 98,2%. La razón es aritmética — mantener una unidad nueve días cuesta $0,0196, y perder una venta cuesta $1,06. Con esa relación, casi cualquier cantidad de stock se paga sola.
+Con los supuestos base (margen del 25 %, coste de mantenimiento del 25 % anual y **sin merma**) el óptimo está en el **99 %**, y el newsvendor teórico lo confirma: 98,2 %. La razón es aritmética: mantener una unidad nueve días cuesta 0,02 $ y perder una venta cuesta 1,06 $. Con esa relación, casi cualquier cantidad de stock se paga sola.
 
-Pero ese cálculo asume que **el sobrante conserva su valor**, y eso es falso para todo lo fresco. Al agregar merma la recomendación se mueve mucho:
+Pero ese cálculo supone que **lo que sobra conserva su valor**, y eso no es cierto en los productos frescos. Al añadir merma, la recomendación se mueve mucho:
 
-| Merma sobre el remanente | Nivel de servicio óptimo |
+| Merma sobre lo que sobra | Nivel de servicio óptimo |
 |---|---|
-| 0% | 99% |
-| 2% | 99% |
-| 5% | 95% |
-| 10% | 90% |
-| **20%** | **80%** |
+| 0 % | 99 % |
+| 2 % | 99 % |
+| 5 % | 95 % |
+| 10 % | 90 % |
+| **20 %** | **80 %** |
 
-En cambio, mover el **margen bruto entre el 10% y el 35% deja el óptimo prácticamente donde estaba** (98-99%).
+En cambio, mover el **margen bruto entre el 10 % y el 35 % apenas cambia el óptimo** (98-99 %).
 
-**La conclusión práctica para Paul es concreta y accionable:** no hace falta discutir el margen para fijar la política — hace falta **medir la tasa de merma por categoría**. Es un solo número por categoría, probablemente ya esté en los sistemas de DSMarket, y decide si el objetivo correcto es el 80% o el 99%. Mientras no lo tengamos, la recomendación prudente es diferenciar: nivel alto para lo no perecedero (ACCESORIES, HOME_&_GARDEN, donde el sobrante se vende la semana siguiente) y moderado para lo fresco de SUPERMARKET.
+**Conclusión práctica:** para fijar la política no hace falta discutir el margen, sino **medir la merma por categoría**. Es un solo número por categoría, probablemente ya esté en los sistemas de DSMarket, y decide si el objetivo correcto es el 80 % o el 99 %. Mientras no se tenga, la recomendación prudente es diferenciar: más alto en lo no perecedero (ACCESORIES y HOME_&_GARDEN, donde lo que sobra se vende la semana siguiente) y moderado en SUPERMARKET, que incluye los frescos.
 """
 
 NARRATIVA['<<<HALLAZGO_CONTRADICCION>>>'] = """
-**Hallazgo — nuestra conclusión de la Tarea 3 era exactamente al revés, y conviene explicar por qué:**
+**Hallazgo: el modelo ayuda más justo donde peor predice, y conviene explicar por qué.**
 
-| Segmento | Ahorro de usar el modelo |
+| Segmento | Ahorro de reponer con el modelo |
 |---|---|
-| XYZ · X (demanda estable) | **−11,8%** (el histórico simple es mejor) |
-| XYZ · Y | +3,1% |
-| XYZ · Z (demanda errática) | **+10,6%** |
-| 1 · Núcleo estable | **−7,9%** |
-| 2 · Cola larga | **+19,3%** |
+| XYZ · X (demanda estable) | **−7,8 %** (el histórico simple es mejor) |
+| XYZ · Y | −0,2 % (empate) |
+| XYZ · Z (demanda errática) | **+18,1 %** |
+| Alimentación de consumo diario | **−7,2 %** |
+| Compra ocasional en fechas señaladas | **+26,2 %** |
+| Temporada de Navidad | −49,9 % |
 
-En la Tarea 3 dijimos que el modelo funcionaba en el núcleo estable (RMSSE 0,77) y no servía en la cola larga (RMSSE 1,29), y de ahí dedujimos que la cola larga debía reponerse con una regla empírica. **La simulación dice lo contrario: el modelo aporta un 19,3% justamente en la cola larga, y pierde un 7,9% en el núcleo estable.**
+En la Tarea 3 (sección 15.1), el grupo con menor error de predicción era **Alimentación de consumo diario** (RMSSE 0,88) y uno de los peores **Compra ocasional** (0,93). Si la política se eligiera por el error de predicción, se usaría el modelo en alimentación y una regla simple en la compra ocasional. **La simulación dice lo contrario: el modelo ahorra un 26 % en la compra ocasional y pierde un 7 % en alimentación.**
 
-La explicación tiene que ver con qué mide cada cosa:
+La explicación está en qué mide cada cosa:
 
-- El **RMSSE mide el acierto del pronóstico puntual, día a día**. La política de reposición no usa eso: usa la **distribución de la demanda acumulada en nueve días**. Son dos preguntas distintas y no tienen por qué ordenarse igual.
-- Para una serie **estable y de alto volumen**, el percentil empírico de las ventanas históricas de nueve días es un estimador excelente: hay muchos datos, el comportamiento no cambia, y no asume ninguna forma de distribución. Nuestro cálculo, en cambio, arma la dispersión de nueve días sumando varianzas diarias **asumiendo independencia entre días** — y esa suposición subestima la variabilidad real cuando hay autocorrelación, que es mayor precisamente en las series de alto volumen.
-- Para una serie **errática**, el percentil empírico de 180 días es ruidoso y está desactualizado. El modelo, que condiciona en el nivel reciente y el calendario, sí aporta.
+- El **RMSSE mide el acierto día a día**. La reposición no usa eso: usa **cuánto se puede vender en nueve días** (los siete del ciclo más los dos de entrega). Son preguntas distintas y no tienen por qué ordenarse igual.
+- En una serie **estable y de mucho volumen**, el percentil de las ventas históricas en ventanas de nueve días ya es un estimador excelente: hay muchos datos y el comportamiento no cambia. El modelo, en cambio, suma la incertidumbre de cada día **como si los días fueran independientes**, y eso se queda corto cuando un día alto suele ir seguido de otro alto, que es lo habitual en estas series.
+- En una serie **errática**, el percentil de los últimos 180 días es ruidoso y se queda desfasado. El modelo, que tiene en cuenta el nivel reciente y el calendario, sí aporta.
 
-**La lección metodológica, que va a la memoria:** *una métrica de error de predicción no es un sustituto de la métrica de negocio.* Elegir la política de reposición mirando el RMSSE nos habría llevado a la decisión opuesta a la correcta en dos segmentos. La forma de decidir es simular la política y medir el resultado económico — que es exactamente lo que hicimos acá.
+**Temporada de Navidad** es la excepción: el modelo sale peor, pero son productos fuera de temporada en esta ventana (marzo-abril) y el importe es pequeño (unos 800 $ de 65.000 $). Como ya señalaba la Tarea 3, este grupo necesita una regla de temporada propia.
+
+**La lección metodológica:** *una métrica de error de predicción no sustituye a la métrica de negocio.* Elegir la política mirando el RMSSE habría llevado a la decisión contraria a la correcta. La forma de decidir es simular la política y medir su coste, que es lo que se ha hecho aquí.
 """
 
 NARRATIVA['<<<POLITICA_FINAL>>>'] = """
-**La política que proponemos: híbrida y segmentada.**
+**La política que proponemos: híbrida según la clase XYZ.**
 
-| Política | Servicio | Coste total (28 días) |
+| Política (objetivo 90 %) | Servicio | Coste total (28 días) |
 |---|---|---|
-| Actual (referencia) | 86,3% | $172.880 |
-| Solo modelo | 95,5% | $69.668 |
-| Solo percentil empírico | 95,9% | $70.414 |
-| **Híbrida (empírico en X, modelo en Y/Z)** | **96,0%** | **$67.031** |
+| Actual (referencia) | 86,6 % | 175.654 $ |
+| Solo percentil empírico | 95,9 % | 70.414 $ |
+| Solo modelo | 95,9 % | 67.587 $ |
+| **Híbrida (empírico en X, modelo en Y y Z)** | **96,2 %** | **65.852 $** |
 
-La híbrida **domina a las dos alternativas puras**: mejor nivel de servicio *y* menor coste que cualquiera de las dos por separado. Es un 3,8% mejor que la mejor política pura y un **61% mejor que la política actual**.
+La híbrida **mejora a las dos alternativas puras**: más servicio *y* menos coste que cualquiera de las dos. Es un 2,6 % mejor que la mejor política pura y un **62,5 % mejor que la actual**. Y no depende del objetivo elegido: con objetivos del 85 %, 90 %, 95 % y 98 % la híbrida da siempre más servicio y menos coste que el modelo solo.
 
-En términos operativos, la propuesta se resume así:
+En la práctica, la propuesta tiene **dos decisiones separadas**:
 
-| Segmento | Cómo se calcula el nivel objetivo | Servicio sugerido | Revisión |
-|---|---|---|---|
-| **AX** (56% de la facturación) | Percentil empírico de ventanas de 9 días | 95-98% | Semanal, automática |
-| **AY, AZ** | Modelo: predicción + p90 | 90-95% | Semanal, automática |
-| **BX** | Percentil empírico | 95% | Semanal, automática |
-| **BY, BZ** | Modelo | 85-90% | Semanal, automática |
-| **CX, CY** | Percentil empírico | 85-90% | Quincenal |
-| **CZ** (28% del catálogo, 3,5% de la facturación) | Regla de stock mínimo, sin predicción | 80% | Quincenal + revisión de surtido |
+| Decisión | Regla | De dónde sale |
+|---|---|---|
+| **Cómo se calcula el stock objetivo** | Clase X: percentil de las ventas históricas en ventanas de 9 días. Clases Y y Z (incluida CZ): predicción del modelo más su margen de incertidumbre. | Sección 6: el modelo gana en Z, pierde en X y empata en Y. |
+| **Qué nivel de servicio se pide** | **SUPERMARKET: 90 %.** **ACCESORIES y HOME_&_GARDEN: 95 %.** | Sección 5.1: con un 10 % de merma el óptimo es el 90 %, con un 5 % es el 95 %. Son valores provisionales hasta medir la merma real. |
 
-Dos aclaraciones honestas sobre estos números:
+Todas las series se revisan **cada semana**. Las de la celda CZ se reponen igual que el resto, con el modelo, pero conviene **revisar periódicamente si deben seguir en el surtido**: son el 28 % del catálogo y aportan el 3,5 % de la facturación.
 
-1. **Los ahorros son del ejercicio simulado, no una promesa.** La simulación usa la demanda real observada, lo cual es lo correcto para comparar políticas entre sí, pero asume que la demanda no habría cambiado con más disponibilidad en góndola. En la realidad, tener producto disponible probablemente *aumente* las ventas — así que la comparación entre políticas es válida, pero el ahorro absoluto es una estimación.
-2. **La comparación se hizo sobre cuatro semanas de marzo-abril.** Por lo que vimos en la Tarea 3, en temporada alta el modelo se degrada: estos resultados no se pueden extrapolar sin más a noviembre y diciembre.
+Dos aclaraciones sobre estos números:
+
+1. **Los ahorros son del periodo simulado, no una promesa.** La simulación usa la demanda real, lo que es correcto para comparar políticas entre sí, pero supone que la demanda no habría cambiado con más producto en el lineal. En la realidad, tener producto disponible probablemente *aumente* las ventas.
+2. **La comparación se hizo sobre cuatro semanas de marzo-abril.** Con 400 días de historia el modelo ya aprende Navidad y Thanksgiving (notebook 03, sección 16.5), pero la política de reposición no se ha simulado en temporada alta.
 """
 
 NARRATIVA['<<<CIERRE4>>>'] = """
@@ -673,25 +709,25 @@ NARRATIVA['<<<CIERRE4>>>'] = """
 
 | Pedido del enunciado | Resultado |
 |---|---|
-| Cómo aplicar los modelos a la reposición semanal/diaria | Política de revisión periódica (R=7, L=2) con nivel objetivo híbrido, simulada sobre 30.490 series y 4 semanas reales |
-| Stock mínimo | Stock de seguridad diferenciado por celda ABC/XYZ, con el nivel de servicio como parámetro de negocio, no del modelo |
-| Minimizar remanente | Curva servicio-coste completa; el nivel óptimo va del 80% al 99% según la merma (sección 5.1) |
-| Diseño de API *(opcional)* | Sección 8: arquitectura, contrato, y métricas de monitoreo |
+| Cómo aplicar los modelos a la reposición semanal o diaria | Política de revisión periódica (R=7, L=2) con stock objetivo híbrido, simulada sobre 30.490 series y 4 semanas reales |
+| Stock mínimo | Stock de seguridad por serie: el método depende de la clase XYZ y el nivel de servicio de la categoría (merma) |
+| Minimizar el remanente | Curva servicio-coste completa; el nivel óptimo va del 80 % al 99 % según la merma (sección 5.1) |
+| Diseño de API *(opcional)* | Sección 8: arquitectura, contrato y métricas de seguimiento |
 | Plan de escalabilidad *(opcional)* | Sección 9: qué escala solo, qué no, y plan en tres fases |
 
-**El resultado central:** pasar de "pedir lo que dice el pronóstico" a una política con stock de seguridad calculado sube el nivel de servicio del 86,3% al 96,0% y **reduce el coste total un 61%** en el período simulado. La mayor parte de ese ahorro no viene del modelo sino de una idea de gestión —stockear por encima del pronóstico— y el modelo aporta el refinamiento: estimar bien *cuánto* por encima, y en qué productos.
+**El resultado central:** pasar de "pedir lo que dice la previsión" a una política con stock de seguridad sube el nivel de servicio del 86,6 % al 96,2 % y **reduce el coste total un 62,5 %** en el periodo simulado. La mayor parte del ahorro no viene del modelo sino de una idea de gestión, tener algo más de lo que dice la previsión, y el modelo aporta el ajuste fino: *cuánto* más, y en qué productos.
 
-**Los tres números que necesitamos de DSMarket para cerrar la propuesta:**
+**Los tres datos que necesitamos de DSMarket para cerrar la propuesta:**
 
-1. **La tasa de merma por categoría.** Es el parámetro que decide el nivel de servicio objetivo, y hoy es el único supuesto que puede mover la recomendación de punta a punta (del 80% al 99%).
-2. **El margen bruto real por categoría.** Menos crítico —vimos que mueve poco el óptimo— pero necesario para dimensionar el ahorro en dinero.
-3. **El plazo de entrega real por tienda y proveedor.** Usamos 2 días para todo; si en la práctica varía, el stock de seguridad tiene que variar con él.
+1. **La merma por categoría.** Decide el nivel de servicio objetivo, y es el único supuesto que puede mover la recomendación de un extremo a otro (del 80 % al 99 %).
+2. **El margen bruto real por categoría.** Menos crítico, porque mueve poco el óptimo, pero necesario para traducir el ahorro a dinero real.
+3. **El plazo de entrega real por tienda y proveedor.** Se han usado 2 días para todo; si varía, el stock de seguridad tiene que variar con él.
 
-**Lo que queda pendiente y conviene decir antes de que lo pregunten:**
+**Lo que queda pendiente:**
 
-- La política **no está validada en temporada alta**, por la limitación heredada de la Tarea 3. Antes de aplicarla en noviembre-diciembre hay que repetir esta simulación sobre esos meses, con la regla de días de cierre incorporada.
-- La simulación **no modela restricciones de espacio en góndola**, que en la práctica son un tope duro. Con niveles de servicio del 95-99% el inventario medio sube un 70-130%, y eso puede simplemente no entrar en la tienda.
-- **No modelamos el efecto de la disponibilidad sobre la demanda.** Es una simplificación estándar, pero conviene tenerla presente: los ahorros estimados son probablemente conservadores por el lado de las ventas perdidas.
+- La política **no se ha simulado en temporada alta**. Antes de aplicarla en noviembre y diciembre conviene repetir esta simulación sobre esos meses, con el modelo de 400 días.
+- La simulación **no tiene en cuenta el espacio en el lineal**, que en la práctica es un límite duro. Con objetivos del 90-99 % el inventario medio sube entre un 85 % y un 135 %, y puede que no quepa en la tienda.
+- **No se modela el efecto de la disponibilidad sobre la demanda.** Es una simplificación habitual, pero hace que los ahorros estimados sean probablemente conservadores.
 """
 
 CELLS = [(k, NARRATIVA.get(s.strip(), s)) for k, s in CELLS]
@@ -703,7 +739,8 @@ nb['cells'] = [nbf.v4.new_markdown_cell(s.strip()) if k == 'md' else nbf.v4.new_
 nb['metadata'] = {'kernelspec': {'display_name': 'Python 3', 'language': 'python', 'name': 'python3'},
                   'language_info': {'name': 'python', 'version': '3.10.12'}}
 import os
-out = os.path.join(os.path.expanduser('~'), 'mnt', 'PROYECTO', '04_Abastecimiento_DSMarket.ipynb')
+import sys
+out = sys.argv[1] if len(sys.argv) > 1 else '04_Abastecimiento_DSMarket.ipynb'
 nbf.write(nb, out)
 print(f"escrito: {out} ({len(CELLS)} celdas: {sum(1 for k,_ in CELLS if k=='md')} md / "
       f"{sum(1 for k,_ in CELLS if k=='code')} código)")

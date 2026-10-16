@@ -93,8 +93,14 @@ class RespuestaReposicion(BaseModel):
     resumen: dict
 
 # ----------------------------------------------------------------- lógica
-NIVEL_POR_CELDA = {"AX": .98, "AY": .95, "AZ": .90, "BX": .95, "BY": .90,
-                   "BZ": .85, "CX": .90, "CY": .85, "CZ": .80}
+# Nivel de servicio objetivo (Tarea 4, secciones 5.1 y 7): lo decide la merma, no el segmento.
+# Lo fresco (SUPERMARKET) se queda en el 90%; lo no perecedero, cuyo sobrante se vende la semana
+# siguiente, al 95%. Son parámetros de negocio: cuando DSMarket mida la merma real se ajustan aquí.
+NIVEL_POR_CATEGORIA = {"SUPERMARKET": .90, "ACCESORIES": .95, "HOME_&_GARDEN": .95}
+
+
+def nivel_servicio(item: str) -> float:
+    return NIVEL_POR_CATEGORIA["SUPERMARKET"] if item.startswith("SUPERMARKET") else .95
 CONFIANZA = {"X": "alta", "Y": "media", "Z": "baja"}
 
 def _explicar(celda: str, arquetipo: str | None, metodo: str, servicio: float, cv: float) -> str:
@@ -104,7 +110,7 @@ def _explicar(celda: str, arquetipo: str | None, metodo: str, servicio: float, c
     partes.append({"X": "demanda estable", "Y": "demanda variable", "Z": "demanda errática"}[celda[1]]
                   + f" (CV {cv:.1f})")
     if arquetipo:
-        partes.append(f"arquetipo «{arquetipo}»")
+        partes.append(f"grupo de producto «{arquetipo}»")
     partes.append("nivel calculado con el histórico, que en series estables es más robusto que el modelo"
                   if metodo == "percentil_empirico"
                   else "nivel calculado con el modelo, que en series erráticas aporta sobre el histórico")
@@ -134,7 +140,7 @@ def sugerir(peticion: PeticionReposicion) -> RespuestaReposicion:
             raise HTTPException(404, f"Sin datos para {entrada.item} en {peticion.tienda}")
 
         celda = f"{serie['clase_abc']}{serie['clase_xyz']}"
-        servicio = p.nivel_servicio if p.nivel_servicio is not None else NIVEL_POR_CELDA[celda]
+        servicio = p.nivel_servicio if p.nivel_servicio is not None else nivel_servicio(entrada.item)
         media = float(bloque["prediccion_media"].sum())
         sigma_dia = (bloque["prediccion_p90"] - bloque["prediccion_media"]).clip(lower=0) / norm.ppf(0.90)
         sigma = float(np.sqrt((sigma_dia ** 2).sum()))
@@ -177,19 +183,20 @@ def prediccion(tienda: str, item: str,
 
 @app.get("/tiendas", tags=["catálogo"])
 def tiendas():
-    """Tiendas disponibles, con su grupo de comportamiento (Tarea 2)."""
+    """Tiendas disponibles, con la tienda más parecida a cada una (Tarea 2, sección 5.3)."""
     return DATOS["tiendas"].reset_index().to_dict("records")
 
 @app.get("/segmentos", tags=["catálogo"])
 def segmentos():
-    """Distribución del catálogo por celda ABC/XYZ y nivel de servicio aplicado a cada una."""
+    """Distribución del catálogo por celda ABC/XYZ y método de reposición aplicado a cada una."""
     s = DATOS["series"].reset_index()
     s["celda"] = s["clase_abc"] + s["clase_xyz"]
     resumen = (s.groupby("celda")
                  .agg(series=("item", "count"), facturacion_90d=("facturacion_90d", "sum"))
                  .reset_index())
     resumen["pct_facturacion"] = (resumen["facturacion_90d"] / resumen["facturacion_90d"].sum() * 100).round(1)
-    resumen["nivel_servicio"] = resumen["celda"].map(NIVEL_POR_CELDA)
+    resumen["metodo"] = resumen["celda"].str[1].map(
+        {"X": "percentil_empirico", "Y": "modelo_cuantilico", "Z": "modelo_cuantilico"})
     return resumen.drop(columns="facturacion_90d").to_dict("records")
 
 @app.get("/salud", tags=["operación"])

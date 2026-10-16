@@ -356,7 +356,7 @@ ON COLUMNS('^d_[0-9]+$') INTO NAME d VALUE unidades</code></pre>
   <p>Se descartan las filas sin etiqueta de semana, se calcula el desfase de cinco semanas y se expande el precio semanal a precio diario. Al final corre el control de calidad que verifica que no quede ninguna venta sin precio.</p>
 
   <h3>Paso 5 · Dimensiones del gold</h3>
-  <p>Calendario, producto, tienda y serie. Las dos primeras incorporan los resultados de la Tarea 2: cada producto lleva su arquetipo y cada tienda su grupo de comportamiento. <code>dim_serie</code> calcula la clasificación ABC/XYZ en SQL, con funciones de ventana.</p>
+  <p>Calendario, producto, tienda y serie. Las dos primeras incorporan los resultados de la Tarea 2: cada producto lleva su grupo de producto y cada tienda la tienda a la que más se parece. <code>dim_serie</code> calcula la clasificación ABC/XYZ en SQL, con funciones de ventana.</p>
 
   <h3>Paso 6 · Tabla de hechos y marts</h3>
   <p><code>fact_ventas</code> al grano atómico, valorizada con el precio. Y dos marts pre-agregados para el dashboard, porque PowerBI no necesita 58 millones de filas para mostrarle un gráfico a un director financiero.</p>
@@ -381,7 +381,7 @@ ON COLUMNS('^d_[0-9]+$') INTO NAME d VALUE unidades</code></pre>
         │                     ABC / XYZ
         │                      ▲     ▲
         └──── <b>dim_producto</b> ─┘     └─ <b>dim_tienda</b>
-              arquetipo (T2)        grupo (T2)</div>
+              grupo (T2)            parecida (T2)</div>
   <p><code>dim_serie</code> tiene una columna <code>serie_id</code> que concatena producto y tienda. Existe por una razón muy concreta: <strong>PowerBI no admite relaciones por clave compuesta</strong>, así que hay que darle una clave sustituta única.</p>
 
   <h3>La trampa del fan-out</h3>

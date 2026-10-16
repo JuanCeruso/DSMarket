@@ -44,8 +44,8 @@ columnar comprimido). El grano atómico completo de ventas (58,3 millones de fil
 | Tabla | Grano | Filas |
 |---|---|---|
 | `dim_calendario` | día | 1.913 |
-| `dim_producto` | producto (con arquetipo de la Tarea 2) | 3.049 |
-| `dim_tienda` | tienda (con grupo de comportamiento) | 10 |
+| `dim_producto` | producto, con su grupo de la Tarea 2 (`grupo_producto` y su nombre en `arquetipo`) | 3.049 |
+| `dim_tienda` | tienda, con la tienda más parecida de la Tarea 2 | 10 |
 | `dim_serie` | producto × tienda (con clase ABC/XYZ) | 30.490 |
 | `fact_ventas` | producto × tienda × día, valorizado | 58.327.370 |
 | `fact_predicciones` | producto × tienda × día futuro (media y p90) | 853.720 |
