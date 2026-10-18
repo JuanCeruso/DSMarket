@@ -70,20 +70,20 @@ abril de 2016.
 
 ### 7.4.4. La simulación refuta la conclusión del capítulo anterior
 
-En §7.3 el grupo de producto con menor error de predicción era Alimentación de consumo diario
-(RMSSE 0,88) y uno de los de mayor error, Compra ocasional en fechas señaladas (0,93). Leído así,
+En §7.3 el grupo de producto con menor error de predicción era Alta rotación diaria
+(RMSSE 0,88) y uno de los de mayor error, Venta esporádica con pico en eventos (0,93). Leído así,
 el modelo debería usarse en el primero y no en el segundo. La simulación de la política dice lo
 contrario:
 
 | Segmento | Efecto de usar el modelo frente a la regla histórica |
 |---|---|
 | Clase Z (demanda errática) | **+18,1%** de mejora en coste |
-| Compra ocasional en fechas señaladas | **+26,2%** |
+| Venta esporádica con pico en eventos | **+26,2%** |
 | Clase Y | −0,2% (empate) |
 | Clase X (demanda estable) | **−7,8%**: el modelo empeora el resultado |
-| Alimentación de consumo diario | **−7,2%** |
+| Alta rotación diaria | **−7,2%** |
 
-La única excepción relevante es Temporada de Navidad (−49,9%), que en una ventana de marzo-abril
+La única excepción relevante es Pico de diciembre (−49,9%), que en una ventana de marzo-abril
 está fuera de temporada y pesa poco en dinero (unos 800 de 65.000 dólares); necesita una regla de
 temporada propia.
 

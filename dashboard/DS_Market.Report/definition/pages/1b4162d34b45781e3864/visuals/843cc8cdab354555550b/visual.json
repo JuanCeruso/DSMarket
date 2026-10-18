@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "843cc8cdab354555550b",
+  "position": {
+    "x": 1502.8,
+    "y": 124.7,
+    "z": 3000,
+    "height": 298.9,
+    "width": 382.1,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Ciudad líder"
+                }
+              },
+              "queryRef": "_Medidas.Ciudad líder",
+              "nativeQueryRef": "Ciudad líder"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

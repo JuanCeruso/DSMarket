@@ -29,7 +29,7 @@ def nivel_servicio(item: str) -> float:
 
 def cargar(con):
     meta = pd.read_csv(f"{CACHE}/meta.csv")
-    # modelo final de la Tarea 3 (notebook 03, sección 16.6): 400 días + eventos semanales
+    # modelo final de la Tarea 3 (notebook 03, sección 13): 400 días + eventos semanales
     media = np.load(f"{CACHE}/final_futuro_media.npy")
     p90 = np.maximum(np.load(f"{CACHE}/final_futuro_p90.npy"), media)
     ultima = con.execute("SELECT max(fecha) FROM dim_calendario WHERE NOT es_futuro").fetchone()[0]

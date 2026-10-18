@@ -1,0 +1,109 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "d3db2749a68588d81195",
+  "position": {
+    "x": 1050,
+    "y": 674,
+    "z": 60,
+    "height": 376,
+    "width": 835,
+    "tabOrder": 60
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_producto_top_dias"
+                    }
+                  },
+                  "Property": "item"
+                }
+              },
+              "queryRef": "mart_producto_top_dias.item",
+              "nativeQueryRef": "item",
+              "displayName": "Producto"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_producto_top_dias"
+                    }
+                  },
+                  "Property": "fecha"
+                }
+              },
+              "queryRef": "mart_producto_top_dias.fecha",
+              "nativeQueryRef": "fecha",
+              "displayName": "Fecha"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_producto_top_dias"
+                    }
+                  },
+                  "Property": "unidades"
+                }
+              },
+              "queryRef": "mart_producto_top_dias.unidades",
+              "nativeQueryRef": "unidades",
+              "displayName": "Unidades"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "mart_producto_top_dias"
+                  }
+                },
+                "Property": "unidades"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Mejores días de venta (suma de las 10 tiendas)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

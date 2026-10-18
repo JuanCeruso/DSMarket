@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "f8699110dcd84f9df0f6",
+  "position": {
+    "x": 1100,
+    "y": 124,
+    "z": 60,
+    "height": 212,
+    "width": 415,
+    "tabOrder": 60
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Revisión de referencia"
+                }
+              },
+              "queryRef": "_Medidas.Revisión de referencia",
+              "nativeQueryRef": "Revisión de referencia"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Revisión de referencia'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

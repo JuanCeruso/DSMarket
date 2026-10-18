@@ -34,7 +34,11 @@ def conectar(vistas: bool = True):
     con.execute(f"SET temp_directory='{tmp}';")
     if vistas:
         for f in sorted(os.listdir(GOLD)):
-            if f.endswith(".parquet"):
+            # Solo ficheros cuyo nombre sea un identificador válido: el nombre de la vista sale
+            # del nombre del fichero, así que un «fact_predicciones.bak.parquet» se registraría
+            # como la vista «fact_predicciones.bak» y DuckDB lo leería como esquema.tabla,
+            # tumbando la conexión entera. Las copias de seguridad se ignoran en vez de romper.
+            if f.endswith(".parquet") and f[:-8].isidentifier():
                 con.execute(f"CREATE OR REPLACE VIEW {f[:-8]} AS "
                             f"SELECT * FROM read_parquet('{os.path.join(GOLD, f)}')")
     return con

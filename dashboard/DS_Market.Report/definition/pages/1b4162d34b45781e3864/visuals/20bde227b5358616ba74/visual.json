@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "20bde227b5358616ba74",
+  "position": {
+    "x": 124,
+    "y": 56,
+    "z": 9004,
+    "height": 32,
+    "width": 1500,
+    "tabOrder": 9004
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Indicadores clave del negocio",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "fontWeight": "normal",
+                      "color": "#C9D6EA",
+                      "fontFamily": "Segoe UI"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "Left"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

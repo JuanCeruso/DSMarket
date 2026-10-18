@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.4.0/schema.json",
+  "displayName": "Ocultar filtros · Precios",
+  "name": "7e45c57acd7fd5c905ec",
+  "options": {
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "c6da9b6835b7688de04d",
+    "sections": {
+      "c6da9b6835b7688de04d": {
+        "visualContainers": {},
+        "visualContainerGroups": {
+          "949eddf4e5f06d04acac": {
+            "isHidden": true
+          }
+        }
+      }
+    }
+  }
+}

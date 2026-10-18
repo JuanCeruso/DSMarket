@@ -35,11 +35,21 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .ipynb_checkpoints/
+.pytest_cache/
+.coverage
+htmlcov/
 
 # ---------- copias que dejan los parches ----------
 *.bak
 *.bak_*
 *.tmp
+lakehouse/respaldo/
+
+# ---------- ficheros de bloqueo de Word ----------
+~$*
+
+# Ojo: requirements-bloqueado.txt SÍ va al repositorio. Es el fichero que reproduce
+# los números de la memoria; ignorarlo sería ignorar la reproducibilidad.
 
 # ---------- secretos: nunca, bajo ningún concepto ----------
 .env
@@ -64,3 +74,6 @@ Guía*.pdf
 first_steps_dsmarket.ipynb
 01_EDA_DSMarket_fixed.ipynb
 01_EDA_DSMarket_vscode_fixed.ipynb
+
+# CSV exportados del gold para Power BI (se regeneran, no se versionan)
+lakehouse/gold_csv/

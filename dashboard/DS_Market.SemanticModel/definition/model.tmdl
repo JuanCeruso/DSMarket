@@ -1,0 +1,37 @@
+model Model
+	culture: es-ES
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-ES
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["RutaGold","dim_producto","dim_categoria","dim_calendario","dim_tienda","dim_serie","mart_ventas_dia","mart_producto_tienda","mart_precios","mart_precios_producto","mart_precios_tienda","mart_producto_top_dias","mart_producto_mes","mart_arquetipo_mes","mart_arquetipo_dia_semana","mart_producto_perfil","dim_arquetipo","_Medidas","fact_predicciones","fact_reposicion"]
+
+annotation PBI_ProTooling = ["DaxQueryView_Desktop","DevMode"]
+
+ref table dim_producto
+ref table dim_categoria
+ref table dim_calendario
+ref table dim_tienda
+ref table dim_serie
+ref table mart_ventas_dia
+ref table mart_producto_tienda
+ref table mart_precios
+ref table mart_precios_producto
+ref table mart_precios_tienda
+ref table mart_producto_top_dias
+ref table mart_producto_mes
+ref table mart_arquetipo_mes
+ref table mart_arquetipo_dia_semana
+ref table mart_producto_perfil
+ref table dim_arquetipo
+ref table _Medidas
+ref table fact_predicciones
+ref table fact_reposicion
+
+ref cultureInfo es-ES
+

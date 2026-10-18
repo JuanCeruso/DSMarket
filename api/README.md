@@ -41,7 +41,7 @@ curl -X POST http://127.0.0.1:8000/reposicion/sugerencia \
 {
   "item": "SUPERMARKET_3_511",
   "segmento": "AX",
-  "arquetipo": "Temporada de Navidad",
+  "arquetipo": "Pico de diciembre",
   "demanda_esperada": 189.47,
   "nivel_objetivo": 239.27,
   "stock_seguridad": 49.8,
@@ -50,7 +50,7 @@ curl -X POST http://127.0.0.1:8000/reposicion/sugerencia \
   "nivel_servicio_aplicado": 0.9,
   "metodo": "percentil_empirico",
   "confianza": "alta",
-  "motivo": "Segmento AX; alta facturación; demanda estable (CV 0.4); grupo de producto «Temporada de Navidad»; nivel calculado con el histórico, que en series estables es más robusto que el modelo; objetivo de servicio 90%."
+  "motivo": "Segmento AX; alta facturación; demanda estable (CV 0.4); grupo de producto «Pico de diciembre»; nivel calculado con el histórico, que en series estables es más robusto que el modelo; objetivo de servicio 90%."
 }
 ```
 

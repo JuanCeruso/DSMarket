@@ -16,9 +16,7 @@ bruto hasta la cantidad que debe pedirse de cada producto en cada tienda.
 | Carpeta | Contenido |
 |---|---|
 | `*.ipynb` | Los cinco cuadernos de análisis, uno por etapa |
-| `build_notebook_0*.py` | Los guiones que **generan** esos cuadernos — se editan estos, no el `.ipynb` |
 | `forecast_segmentacion.py`, `forecast_semanal.py`, `modelo_final.py` | Reentrenamientos de la revisión del forecasting (secciones 15 y 16 del cuaderno 03) y el modelo final: 400 días de historia y eventos semanales |
-| `actualizar_notebooks.py`, `actualizar_eda.py` | Añaden esas secciones a los cuadernos 03 y 01 y ejecutan solo las celdas nuevas |
 | `predicciones_28dias*.csv` | La entrega: predicción media y percentil 90 de los 28 días siguientes, con el modelo final |
 | `lakehouse/scripts/` | Construcción del almacén analítico en tres capas |
 | `operacion/` | La capa que hace que esto sea un sistema y no un conjunto de cuadernos |
@@ -117,10 +115,9 @@ era obligatoria.
 
 ## Reproducibilidad
 
-Los cuadernos se generan desde sus guiones, de modo que el cuaderno entregado y el código que lo
-produce no pueden divergir. La excepción es el cuaderno 03: sus secciones 1 a 14 se conservan con
-las salidas originales y las secciones 15 y 16 se añaden y ejecutan con `actualizar_notebooks.py`,
-porque reejecutarlo entero lleva varias horas. Las semillas aleatorias están fijadas. El almacén se reconstruye
+Los cuadernos son la fuente: se editan y se ejecutan directamente como cuadernos Jupyter. El 03 conserva las
+salidas originales (reejecutarlo entero lleva varias horas) y sus secciones 15 y 16 se apoyan en
+`forecast_segmentacion.py`, `forecast_semanal.py` y `modelo_final.py`. Las semillas aleatorias están fijadas. El almacén se reconstruye
 íntegro desde los ficheros de origen con un solo comando, y trece contratos de datos detienen el
 proceso si algo no cuadra.
 

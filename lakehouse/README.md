@@ -62,6 +62,7 @@ todos de la misma fuente en vez de ficheros sueltos.
 ```bash
 python3 scripts/pipeline.py all           # bronze + silver + gold
 python3 scripts/carga_predicciones.py     # carga las salidas de los modelos a gold
+python3 scripts/carga_clusters.py         # análisis de grupos de producto (Tarea 2): fichas, índices y mejores días
 ```
 
 ```python

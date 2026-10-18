@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "4da24d2d05e1fcbdd407",
+  "position": {
+    "x": 28,
+    "y": 425,
+    "z": 9031,
+    "height": 30,
+    "width": 154,
+    "tabOrder": 9031
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Explorador de productos",
+                    "textStyle": {
+                      "fontSize": "12pt",
+                      "fontWeight": "normal",
+                      "color": "#FFFFFF",
+                      "fontFamily": "Segoe UI"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "Left"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

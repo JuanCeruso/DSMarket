@@ -12,10 +12,13 @@ cuantílico):
     cache_forecast/final_futuro_media.npy, final_futuro_p90.npy
         los 28 días siguientes al último día con datos (25-abr a 22-may de 2016): la entrega.
 
-El precio de los días futuros no se conoce y se arrastra el último observado de cada serie
-(mismo supuesto que operacion/predecir.py).
+Precio de los días futuros, dos variantes:
+    arrastrado       el último precio observado de cada serie (supuesto original, operacion/predecir.py);
+    precios reales   los precios de las semanas posteriores que trae item_prices.csv sin yearweek
+                     (EDA, sección 4.3); se activa con --precios-futuros y escribe archivos con sufijo _pf.
 
-    python3 modelo_final.py
+    python3 modelo_final.py                      # precio arrastrado
+    python3 modelo_final.py --precios-futuros    # precios reales de las semanas futuras
 """
 import os, gc, time
 import numpy as np
@@ -36,8 +39,11 @@ OBJETIVOS = {
 }
 
 
-def extender(V, P, cs, cal):
-    """Añade 28 días futuros: ventas a cero (no se usan), precio arrastrado y calendario sin eventos."""
+def extender(V, P, cs, cal, PF=None):
+    """Añade 28 días futuros: ventas a cero (no se usan), precio (arrastrado o real) y calendario sin eventos.
+
+    PF: precios de las semanas posteriores (series, semanas). Si es None, se arrastra el último precio.
+    """
     H = fs.HORIZON
     ultimo = np.full(V.shape[0], np.nan, np.float32)
     for t in range(P.shape[1] - 1, max(P.shape[1] - 60, -1), -1):
@@ -46,6 +52,14 @@ def extender(V, P, cs, cal):
             break
         ultimo[falta] = P[falta, t]
     futuro = np.repeat(ultimo[:, None], H, axis=1)        # sin precio conocido: NaN, la serie queda fuera
+    if PF is not None:
+        n = P.shape[1]
+        ultima_sem = (n - 1) // 7                          # semana a la que pertenece el último día con datos
+        for j in range(H):
+            k = (n + j) // 7 - ultima_sem                  # 0 = misma semana (precio ya conocido), 1.. = semanas posteriores
+            if k >= 1:
+                nuevo = PF[:, k - 1]
+                futuro[:, j] = np.where(np.isnan(nuevo), futuro[:, j], nuevo)
     V2 = np.hstack([V, np.zeros((V.shape[0], H), V.dtype)])
     P2 = np.hstack([P, futuro])
     cs2 = np.zeros((V2.shape[0], V2.shape[1] + 1), np.float32)
@@ -57,9 +71,13 @@ def extender(V, P, cs, cal):
     return V2, P2, cs2, cal2
 
 
-def entrenar_y_predecir(objetivo, start, V, P, cs, cal, meta, sem):
-    """4 bloques semanales: entrena con los 400 días previos a `start` y predice los 28 siguientes."""
+def entrenar_y_predecir(objetivo, start, V, P, cs, cal, meta, sem, P_pred=None):
+    """4 bloques semanales: entrena con los 400 días previos a `start` y predice los 28 siguientes.
+
+    P_pred: precios con los que se predice (por defecto, los mismos P). Permite probar precio arrastrado frente a real.
+    """
     params = OBJETIVOS[objetivo]
+    P_pred = P if P_pred is None else P_pred
     M = np.zeros((V.shape[0], fs.HORIZON), dtype=np.float32)
     for b in range(4):
         min_lag = 7 * (b + 1)
@@ -73,18 +91,18 @@ def entrenar_y_predecir(objetivo, start, V, P, cs, cal, meta, sem):
                       valid_sets=[lgb.Dataset(Ava, label=yva, reference=d1)],
                       callbacks=[lgb.early_stopping(50, verbose=False), lgb.log_evaluation(0)])
         del d1, Atr, ytr, Ava, yva; gc.collect()
-        Xte = fw.construir(range(start + 7 * b, start + 7 * (b + 1)), V, P, cs, cal, meta, EXTRA, min_lag, sem)
+        Xte = fw.construir(range(start + 7 * b, start + 7 * (b + 1)), V, P_pred, cs, cal, meta, EXTRA, min_lag, sem)
         M[Xte['serie'], Xte['dia'] - start] = np.maximum(
             m.predict(fs.a_float32(Xte, FEATURES), num_iteration=m.best_iteration), 0)
         del Xte, m; gc.collect()
-    return np.where(np.isnan(P[:, start:start + fs.HORIZON]), 0, M)
+    return np.where(np.isnan(P_pred[:, start:start + fs.HORIZON]), 0, M)
 
 
-def generar(nombre, start, V, P, cs, cal, meta):
+def generar(nombre, start, V, P, cs, cal, meta, sufijo=''):
     sem = fw.variables_semanales(cal)
     salida = {}
     for objetivo in OBJETIVOS:
-        archivo = f"{CACHE}/final_{nombre}_{objetivo}.npy"
+        archivo = f"{CACHE}/final_{nombre}_{objetivo}{sufijo}.npy"
         if os.path.exists(archivo):
             salida[objetivo] = np.load(archivo)
             continue
@@ -98,7 +116,11 @@ def generar(nombre, start, V, P, cs, cal, meta):
 
 
 if __name__ == '__main__':
+    import sys
+    reales = '--precios-futuros' in sys.argv
     V, P, cs, cal, meta, folds = fs.cargar()
-    generar('eval', folds[2][0], V, P, cs, cal, meta)
-    V2, P2, cs2, cal2 = extender(V, P, cs, cal)
-    generar('futuro', V.shape[1], V2, P2, cs2, cal2, meta)
+    if not reales:
+        generar('eval', folds[2][0], V, P, cs, cal, meta)
+    PF = fs.cargar_precios_futuros(meta) if reales else None
+    V2, P2, cs2, cal2 = extender(V, P, cs, cal, PF)
+    generar('futuro', V.shape[1], V2, P2, cs2, cal2, meta, sufijo='_pf' if reales else '')

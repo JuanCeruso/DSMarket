@@ -37,9 +37,9 @@ Y dentro de Filadelfia, sus tres tiendas solo comparten cuatro de quince. Una pr
 en dos tercios del catálogo.
 
 **Dos.** Los productos se agrupan en **seis grupos**, elegidos con el método del codo, y cada
-uno tiene un nombre que dice qué contiene: alimentación de consumo diario y hogar de fin de semana
-son el 68 % de la facturación; Navidad vende casi el doble en diciembre; la compra ocasional se dispara
-en las fechas señaladas.
+uno tiene un nombre que dice qué contiene: «Alta rotación diaria» y «Pico de fin de semana»
+son el 68 % de la facturación; «Pico de diciembre» vende casi el doble en diciembre; la venta esporádica se dispara
+en los eventos.
 
 **Tres.** Las tiendas **no se agrupan con un algoritmo**, y hay que decirlo antes de que lo
 pregunten:
@@ -87,9 +87,9 @@ operaciones.
 **Momento 3 — la refutación.** Es el minuto más valioso de toda la defensa. Decirlo despacio:
 
 > «En el capítulo de predicción concluimos, mirando el error, que el modelo servía en las series
-> de alimentación diaria, las más regulares, y no en la compra ocasional. Al simular la política
+> de alta rotación diaria, las más regulares, y no en la venta esporádica. Al simular la política
 > de reposición sobre las treinta mil series con la demanda real, salió lo contrario: aporta un
-> veintiséis por ciento en la compra ocasional y resta un siete por ciento en la alimentación
+> veintiséis por ciento en la venta esporádica y resta un siete por ciento en la alta rotación
 > diaria. Habíamos elegido con una métrica
 > simétrica un problema que no lo es. Quedarse corto cuesta el margen; pasarse cuesta el
 > almacenaje. No es lo mismo.»
@@ -160,7 +160,7 @@ nadie interrumpe a nadie. Respuestas de treinta a cuarenta y cinco segundos.
 | 10 | ¿Qué pasa con un producto nuevo, sin histórico? | C | No está resuelto, y es una limitación real. El modelo es global, así que puede predecir con los atributos del producto y su tienda, pero sin retardos ni medias móviles pierde el 88% de su información útil. Lo razonable es estimar su nivel con productos parecidos, o copiar la misma referencia en la tienda más parecida, hasta tener histórico (experimento 8 de la carpeta avanzado). |
 | 11 | ¿Por qué quitasteis Black Friday? | A | Porque no había pico: vende un 24% menos que los viernes de alrededor, probablemente porque va justo después de Thanksgiving, que es día de cierre. Lo habíamos metido por expectativa, no por evidencia, y era tentador venderlo como oportunidad desaprovechada. El dato no lo sostenía. |
 | 12 | ¿Cuál es la aportación original? | B | No un método nuevo. Tres cosas: llevar la cadena hasta la unidad pedida y el dinero, en vez de parar en la métrica de error; formular el criterio de selección de modelo como coste de negocio, demostrando su equivalencia con la pérdida pinball en el ratio crítico; y someter cada conclusión a una prueba de falsación, con tres casos en que la prueba nos contradijo. |
-| 13 | ¿Y Croston, para la demanda intermitente? | D | Es la referencia obligada y no lo incluimos: la comparación fue entre modelos globales y las familias clásicas generales. Está en trabajo futuro, y es justo el tipo de demanda —la compra ocasional— donde el error de predicción es mayor, aunque en reposición el modelo sí aporta. |
+| 13 | ¿Y Croston, para la demanda intermitente? | D | Es la referencia obligada y no lo incluimos: la comparación fue entre modelos globales y las familias clásicas generales. Está en trabajo futuro, y es justo el tipo de demanda —la venta esporádica— donde el error de predicción es mayor, aunque en reposición el modelo sí aporta. |
 | 14 | ¿Qué haríais con más tiempo? | B | Por retorno esperado y no por sofisticación: cambiar el criterio de selección al coste, predecir el total del ciclo en vez de la suma de días, y registrar la decisión real del encargado, que es el dato que convertiría esto en un sistema que aprende. |
 
 ## Preguntas que conviene provocar

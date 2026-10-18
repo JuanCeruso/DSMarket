@@ -1,0 +1,94 @@
+table mart_precios_producto
+	lineageTag: 75d8bdda-da67-41a9-97d3-f11f64d0fcca
+
+	column item
+		dataType: string
+		lineageTag: 79c30a08-fcc3-4208-b10d-d1c74839ead4
+		summarizeBy: none
+		sourceColumn: item
+
+		annotation SummarizationSetBy = Automatic
+
+	column categoria
+		dataType: string
+		lineageTag: 351d6bb1-61c7-43e8-a7f4-ee240126c4de
+		summarizeBy: none
+		sourceColumn: categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column departamento
+		dataType: string
+		lineageTag: 6525b212-14e3-40d8-a243-8394bb5a600c
+		summarizeBy: none
+		sourceColumn: departamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column precio_min
+		dataType: double
+		formatString: \$#,0.00
+		lineageTag: 924cbd92-5e7b-4439-96c4-001870999ff7
+		summarizeBy: none
+		sourceColumn: precio_min
+
+		annotation SummarizationSetBy = Automatic
+
+	column precio_max
+		dataType: double
+		formatString: \$#,0.00
+		lineageTag: 82fa29d9-82f4-493a-8b10-ebd877e056e3
+		summarizeBy: none
+		sourceColumn: precio_max
+
+		annotation SummarizationSetBy = Automatic
+
+	column dispersion_pct
+		dataType: double
+		formatString: 0.0
+		lineageTag: 19b2803e-21cb-4ae4-b3e7-5ed54cbb0344
+		summarizeBy: none
+		sourceColumn: dispersion_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column tienda_mas_barata
+		dataType: string
+		lineageTag: 62cbcc0d-e485-4906-8ae4-4c85f75618b1
+		summarizeBy: none
+		sourceColumn: tienda_mas_barata
+
+		annotation SummarizationSetBy = Automatic
+
+	column tienda_mas_cara
+		dataType: string
+		lineageTag: 18bdef20-b3b0-426f-a924-cca347f3ae24
+		summarizeBy: none
+		sourceColumn: tienda_mas_cara
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_precios_producto = m
+		mode: import
+		source =
+				// ===== mart_precios_producto (3,049 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_precios_producto.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"item", type text},
+				        {"categoria", type text},
+				        {"departamento", type text},
+				        {"precio_min", type number},
+				        {"precio_max", type number},
+				        {"dispersion_pct", type number},
+				        {"tienda_mas_barata", type text},
+				        {"tienda_mas_cara", type text}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

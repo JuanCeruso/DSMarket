@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "272b6c042fcc5cd48cb4",
+  "position": {
+    "x": 230,
+    "y": 135,
+    "z": 40,
+    "height": 234,
+    "width": 415,
+    "tabOrder": 40
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Incremento fin de semana %"
+                }
+              },
+              "queryRef": "_Medidas.Incremento fin de semana %",
+              "nativeQueryRef": "Incremento fin de semana %"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Más ventas en fin de semana que entre semana'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

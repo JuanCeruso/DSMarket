@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.4.0/schema.json",
+  "displayName": "Ocultar filtros · Grupos de producto",
+  "name": "c9a2f149e5c1d88896c8",
+  "options": {
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "da0828bb718448d28070",
+    "sections": {
+      "da0828bb718448d28070": {
+        "visualContainers": {},
+        "visualContainerGroups": {
+          "d88495a913e17e9013ef": {
+            "isHidden": true
+          }
+        }
+      }
+    }
+  }
+}

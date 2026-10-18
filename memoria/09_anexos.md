@@ -6,13 +6,10 @@ incluirse.
 
 ## Anexo A. Cuadernos de análisis
 
-Cinco cuadernos Jupyter, uno por etapa. Los cuadernos 02, 04 y 05 se generan a partir de un
-guion de construcción versionado (`build_notebook_0X.py`) y se ejecutan de principio a fin, de
-modo que el cuaderno entregado y el código que lo produce no pueden divergir. El 03 conserva las
-salidas de su primera versión, cuyos ficheros intermedios no se pueden regenerar desde el
-repositorio; las secciones 15 y 16, añadidas en la revisión, son autocontenidas y se ejecutan con
-`actualizar_notebooks.py` a partir de `forecast_segmentacion.py`, `forecast_semanal.py` y
-`modelo_final.py`. Las ampliaciones del 01 (apartado 11.1) se añaden con `actualizar_eda.py`.
+Cinco cuadernos Jupyter, uno por etapa. Los cuadernos son la fuente: se editan y se ejecutan de principio a fin
+directamente como cuadernos. El 03 conserva las salidas de su primera versión, cuyos ficheros intermedios no se
+pueden regenerar desde el repositorio; sus secciones 15 y 16, añadidas en la revisión, se apoyan en
+`forecast_segmentacion.py`, `forecast_semanal.py` y `modelo_final.py`.
 
 | Cuaderno | Contenido | Sección |
 |---|---|---|

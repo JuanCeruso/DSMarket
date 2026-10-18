@@ -1,0 +1,57 @@
+table mart_arquetipo_dia_semana
+	lineageTag: 66ea3dbe-3604-4e93-81f4-610334da28fa
+
+	column arquetipo
+		dataType: string
+		lineageTag: 2b58a900-a5f6-4760-badf-44ecbf123062
+		summarizeBy: none
+		sourceColumn: arquetipo
+
+		annotation SummarizationSetBy = Automatic
+
+	column dia_semana
+		dataType: string
+		lineageTag: 8efb3418-3842-4006-a8fe-2a304c987509
+		summarizeBy: none
+		sourceColumn: dia_semana
+		sortByColumn: orden
+
+		annotation SummarizationSetBy = Automatic
+
+	column orden
+		dataType: int64
+		lineageTag: 5600aa8d-2cb2-4213-aa19-f411f2a1c12a
+		summarizeBy: none
+		sourceColumn: orden
+
+		annotation SummarizationSetBy = Automatic
+
+	column indice
+		dataType: double
+		formatString: 0.00
+		lineageTag: eececdec-6227-40d8-8825-86e9dab31815
+		summarizeBy: none
+		sourceColumn: indice
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_arquetipo_dia_semana = m
+		mode: import
+		source =
+				// ===== mart_arquetipo_dia_semana (42 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_arquetipo_dia_semana.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"arquetipo", type text},
+				        {"dia_semana", type text},
+				        {"orden", Int64.Type},
+				        {"indice", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

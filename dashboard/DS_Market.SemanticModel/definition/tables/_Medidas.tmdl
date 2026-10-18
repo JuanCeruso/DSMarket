@@ -1,0 +1,274 @@
+table _Medidas
+	lineageTag: 06f0516c-15ee-42da-a041-675ae9470da1
+
+	measure 'Unidades vendidas' = SUM (mart_ventas_dia[unidades])
+		formatString: #,0
+		lineageTag: 27c75018-780c-4432-b805-1023ac552ca1
+
+	measure Facturación = SUM (mart_ventas_dia[importe])
+		formatString: \$#,0
+		lineageTag: 772cd377-7b4b-495c-b4d4-29f82767dcc5
+
+	measure 'Precio medio' = DIVIDE([Facturación], [Unidades vendidas])
+		formatString: \$#,0.00
+		lineageTag: 02b5f0cb-c4e3-4e92-b0a2-fc308d7e0a89
+
+	measure 'Unidades año anterior' = CALCULATE([Unidades vendidas], SAMEPERIODLASTYEAR(dim_calendario[fecha]))
+		formatString: #,0
+		lineageTag: 71eda80b-9d0a-4821-8985-ef7570ee658b
+
+	measure 'Variación interanual %' = DIVIDE([Unidades vendidas] - [Unidades año anterior], [Unidades año anterior])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: b4ab36da-9451-4dd4-bf76-0ad49d289a92
+
+	measure 'Unidades período anterior' =
+			// 4 semanas (28 días) inmediatamente anteriores a las últimas 4 semanas con ventas
+			VAR fin = CALCULATE ( MAX ( mart_ventas_dia[fecha] ), ALL ( dim_calendario ) )
+			RETURN
+			    CALCULATE ( [Unidades vendidas], DATESINPERIOD ( dim_calendario[fecha], fin - 28, -28, DAY ) )
+		formatString: #,0
+		lineageTag: b097a5b2-1c30-4ba4-9873-3ef1630572bb
+
+	measure 'Variación vs período anterior %' =
+			// últimas 4 semanas frente a las 4 anteriores
+			DIVIDE ( [Unidades últimas 4 semanas] - [Unidades período anterior], [Unidades período anterior] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 7b8348db-5bf0-4034-8513-96ddd1e03365
+
+	measure 'Tiendas activas' = DISTINCTCOUNT (mart_ventas_dia[store_code])
+		formatString: 0
+		lineageTag: 5b6b72b8-6d2f-4039-b043-718a7fe3233b
+
+	measure Series = DISTINCTCOUNT ( dim_serie[serie_id] )
+		formatString: 0
+		lineageTag: cc28c9f4-2eb7-4665-8ceb-d44ba0c86c6d
+
+	measure 'Facturación 90 días' = SUM ( dim_serie[facturacion_90d] )
+		formatString: \$#,0
+		lineageTag: a73aab8f-75c4-4bb8-9d74-790024b65126
+
+	measure '% de la facturación' =
+			
+			DIVIDE ( [Facturación 90 días], CALCULATE ( [Facturación 90 días], ALL ( dim_serie ) ) )
+		formatString: 0.0%
+		lineageTag: 1dfa9117-4767-4f07-9131-4d43a6950769
+
+	measure '% del catálogo' =
+			
+			DIVIDE ( [Series], CALCULATE ( [Series], ALL ( dim_serie ) ) )
+		formatString: 0.0%
+		lineageTag: 11c0fada-a2f3-447f-9109-59a8eb9c11c7
+
+	measure 'Ciudad líder' =
+			
+			CALCULATE (
+			    FIRSTNONBLANK ( dim_tienda[ciudad], 1 ),
+			    TOPN ( 1, ALL ( dim_tienda[ciudad] ), [Unidades vendidas], DESC )
+			)
+		lineageTag: ef21c431-d9aa-4c90-aac1-4deba3ca1084
+
+	measure 'Unidades últimas 4 semanas' =
+			VAR fin = CALCULATE ( MAX ( mart_ventas_dia[fecha] ), ALL ( dim_calendario ) )
+			RETURN
+			    CALCULATE ( [Unidades vendidas], DATESINPERIOD ( dim_calendario[fecha], fin, -28, DAY ) )
+		formatString: #,0
+		lineageTag: d15bbece-2fff-4674-9a99-8916ddc8e58c
+
+	measure 'Unidades previstas' =
+			SUM ( fact_predicciones[prediccion_media] )
+		formatString: #,0
+		lineageTag: dbde29e3-0d1c-4675-a0c3-04028665306b
+
+	measure 'Unidades previstas p90' =
+			SUM ( fact_predicciones[prediccion_p90] )
+		formatString: #,0
+		lineageTag: 0415318b-9fe4-44e2-b185-0f83bb304211
+
+	measure 'Incremento fin de semana %' =
+			VAR u_fds = CALCULATE ( DIVIDE ( [Unidades vendidas], DISTINCTCOUNT ( mart_ventas_dia[fecha] ) ), dim_calendario[es_fin_de_semana] = TRUE () )
+			VAR u_sem = CALCULATE ( DIVIDE ( [Unidades vendidas], DISTINCTCOUNT ( mart_ventas_dia[fecha] ) ), dim_calendario[es_fin_de_semana] = FALSE () )
+			RETURN
+			    DIVIDE ( u_fds, u_sem ) - 1
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: cc2e9539-7ee1-4bb3-804b-517b48b93a18
+
+	measure 'Demanda esperada' =
+			SUM ( fact_reposicion[demanda_esperada] )
+		formatString: #,0
+		lineageTag: f4e92eb4-ef66-45ca-b29a-f06964f99ca0
+
+	measure 'Nivel objetivo' =
+			SUM ( fact_reposicion[nivel_objetivo] )
+		formatString: #,0
+		lineageTag: 206b9899-93af-48bd-a0cf-9f4ab877953c
+
+	measure 'Stock de seguridad' =
+			SUM ( fact_reposicion[stock_seguridad] )
+		formatString: #,0
+		lineageTag: 033a952c-3d97-4630-9390-6dd84201106f
+
+	measure 'Colchón sobre demanda %' =
+			DIVIDE ( [Stock de seguridad], [Demanda esperada] )
+		formatString: 0.0%
+		lineageTag: 2432f616-2e48-474f-a5f6-3b3bde172e18
+
+	measure 'Nivel de servicio medio' =
+			AVERAGE ( fact_reposicion[nivel_servicio] )
+		formatString: 0.0%
+		lineageTag: 926bc43e-4e90-4c36-a0ed-84a1335e5473
+
+	measure 'Revisión de referencia' =
+			CALCULATE ( MAX ( fact_reposicion[fecha_revision] ), ALL ( fact_reposicion ), fact_reposicion[ventana_completa] = TRUE () )
+		formatString: dd/mm/yyyy
+		lineageTag: 84c95ed7-89a9-4924-ab77-62c7080d0178
+
+	measure 'Colchón sobre demanda % (última revisión)' =
+			VAR f = CALCULATE ( MAX ( fact_reposicion[fecha_revision] ), ALL ( fact_reposicion ) )
+			RETURN
+			    DIVIDE (
+			        CALCULATE ( [Stock de seguridad], fact_reposicion[fecha_revision] = f ),
+			        CALCULATE ( [Demanda esperada], fact_reposicion[fecha_revision] = f ) )
+		formatString: 0.0%
+		lineageTag: 4d19325a-8b5f-4b27-9777-3319c2eaec30
+
+	measure 'Unidades por día' =
+			DIVIDE ( [Unidades vendidas], DISTINCTCOUNT ( mart_ventas_dia[fecha] ) )
+		formatString: #,0
+		lineageTag: 189f55cd-8b29-4028-88f9-e2f6ab510a89
+
+	measure 'Por día laborable' =
+			IF ( SELECTEDVALUE ( dim_calendario[es_fin_de_semana] ) = FALSE (), [Unidades por día] )
+		formatString: #,0
+		lineageTag: 5baa2ddd-3c84-4576-b7ca-0c30ae00e374
+
+	measure 'Por día de fin de semana' =
+			IF ( SELECTEDVALUE ( dim_calendario[es_fin_de_semana] ) = TRUE (), [Unidades por día] )
+		formatString: #,0
+		lineageTag: dfdbba86-6659-42a9-8a3d-07836f485bf5
+
+	measure 'Facturación total' =
+			SUM ( mart_producto_tienda[facturacion_total] )
+		formatString: \$#,0
+		lineageTag: 6e094c20-6531-40a5-9abc-5c4643e19b30
+
+	measure '% facturación por grupo' =
+			DIVIDE ( [Facturación total], CALCULATE ( [Facturación total], ALL ( dim_producto ) ) )
+		formatString: 0.0%
+		lineageTag: 304d905a-85f7-4299-881f-4f8ea35f29c8
+
+	measure 'Previsión vs últimas 4 semanas %' =
+			DIVIDE ( [Unidades previstas] - [Unidades últimas 4 semanas], [Unidades últimas 4 semanas] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: befc5a25-30cb-4528-b34a-c4ff242a7a91
+
+	measure 'Demanda esperada (revisión)' =
+			VAR f = [Revisión de referencia]
+			RETURN
+			    CALCULATE ( [Demanda esperada], fact_reposicion[fecha_revision] = f )
+		formatString: #,0
+		lineageTag: 96103be3-1612-4821-9e89-724f9dbab820
+
+	measure 'Stock de seguridad (revisión)' =
+			VAR f = [Revisión de referencia]
+			RETURN
+			    CALCULATE ( [Stock de seguridad], fact_reposicion[fecha_revision] = f )
+		formatString: #,0
+		lineageTag: 1cccbd86-4de9-40c6-b77b-d7a3efd83ec2
+
+	measure 'Colchón sobre demanda % (revisión)' =
+			DIVIDE ( [Stock de seguridad (revisión)], [Demanda esperada (revisión)] )
+		formatString: 0.0%
+		lineageTag: 8cb6cff0-abf8-4945-9436-d9ca3f2bd59e
+
+	partition _Medidas = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Columna1 = _t]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(Origen,{{"Columna1", type text}}),
+				    #"Columnas quitadas" = Table.RemoveColumns(#"Tipo cambiado",{"Columna1"})
+				in
+				    #"Columnas quitadas"
+
+	annotation PBI_ResultType = Table
+
+
+	measure 'Precio de venta medio' =
+			AVERAGE ( mart_precios[precio_medio] )
+		formatString: \$#,0.00
+		lineageTag: db9ad949-d378-4df9-9ad9-0b11e27b2d21
+
+	measure 'Dispersión de precio (mediana) %' =
+			MEDIAN ( mart_precios_producto[dispersion_pct] ) / 100
+		formatString: 0.00%
+		lineageTag: 950ba9a6-d655-454b-8466-22b06c079b52
+
+	measure 'Índice de precio %' =
+			AVERAGE ( mart_precios_tienda[indice_precio_pct] ) / 100
+		formatString: +0.00%;-0.00%;0.00%
+		lineageTag: f0ce8945-862c-4751-8a69-98921a580329
+
+	measure '% productos más caros que el promedio' =
+			AVERAGE ( mart_precios_tienda[pct_productos_mas_caros] ) / 100
+		formatString: 0.0%
+		lineageTag: b5e7eeca-b850-459b-9ac2-ea87a9c06d0b
+
+	measure 'Productos comparados' =
+			COUNTROWS ( mart_precios_producto )
+		formatString: #,0
+		lineageTag: b9d8b6c0-d90b-4c9a-917f-bcd1e7f06327
+
+	measure 'Peso en el catálogo %' =
+			SUM ( dim_arquetipo[pct_catalogo] ) / 100
+		formatString: 0.0%
+		lineageTag: d6a9d4cb-562c-45af-86f3-e0fe8ba36185
+
+	measure 'Peso en la facturación %' =
+			SUM ( dim_arquetipo[pct_facturacion] ) / 100
+		formatString: 0.0%
+		lineageTag: e2883873-aa0d-4ad6-bbfc-d62cdf78d82e
+
+	measure 'Fin de semana frente a entre semana' =
+			AVERAGE ( dim_arquetipo[fin_semana_vs_semana] ) - 1
+		formatString: +0%;-0%;0%
+		lineageTag: 0649f740-7ae8-4ccf-b012-117b5782b20f
+
+	measure 'Diciembre frente al resto del año' =
+			AVERAGE ( dim_arquetipo[diciembre_vs_resto] ) - 1
+		formatString: +0%;-0%;0%
+		lineageTag: e08b80ac-0474-488d-afe0-793230304488
+
+	measure 'Eventos frente a día normal' =
+			AVERAGE ( dim_arquetipo[eventos_vs_normal] ) - 1
+		formatString: +0%;-0%;0%
+		lineageTag: e11e6ba2-e4b9-4454-9962-4336fd5a9b6d
+
+	measure 'Índice por día de la semana' =
+			AVERAGE ( mart_arquetipo_dia_semana[indice] )
+		formatString: 0.00
+		lineageTag: 99e6d6e5-3aa1-44b7-9cf9-c983c872a5c4
+
+	measure 'Índice por mes' =
+			AVERAGE ( mart_arquetipo_mes[indice] )
+		formatString: 0.00
+		lineageTag: 43b71d83-ef22-469b-8567-8f46e41aa0f8
+
+	measure 'Índice mensual del producto' =
+			AVERAGE ( mart_producto_mes[indice] )
+		formatString: 0.00
+		lineageTag: 5f68f499-d0a8-4d23-b8f6-3e10285893c6
+
+	measure 'Productos seleccionados' =
+			COUNTROWS ( mart_producto_perfil )
+		formatString: #,0
+		lineageTag: e22aee08-d25e-436e-a68e-b9a956aeafd1
+
+	measure 'Subida media en diciembre' =
+			AVERAGE ( mart_producto_perfil[diciembre_vs_resto] ) - 1
+		formatString: +0%;-0%;0%
+		lineageTag: aa3b399e-d81c-4dcc-a8b6-b0399c09f73a
+
+	measure 'Efecto medio del fin de semana' =
+			AVERAGE ( mart_producto_perfil[fin_semana_vs_semana] ) - 1
+		formatString: +0%;-0%;0%
+		lineageTag: c0587c3c-9392-4aee-8f87-f4bf9cae70a7

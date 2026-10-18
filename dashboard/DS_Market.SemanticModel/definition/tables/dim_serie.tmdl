@@ -1,0 +1,128 @@
+table dim_serie
+	lineageTag: 47f1f6ed-eef8-420d-bef6-2ea763f9ed45
+
+	column serie_id
+		dataType: string
+		lineageTag: 5983be41-af26-4502-9ff6-5adc50bf2f1b
+		summarizeBy: none
+		sourceColumn: serie_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column item
+		dataType: string
+		lineageTag: 273864ca-dfdf-4490-aa41-7bdcbd67023b
+		summarizeBy: none
+		sourceColumn: item
+
+		annotation SummarizationSetBy = Automatic
+
+	column store_code
+		dataType: string
+		lineageTag: 745c9319-35a8-401a-9b42-6aa316636533
+		summarizeBy: none
+		sourceColumn: store_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column unidades_90d
+		dataType: double
+		lineageTag: 358906c8-fa28-439d-bbb3-8bb357687dc2
+		summarizeBy: sum
+		sourceColumn: unidades_90d
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column facturacion_90d
+		dataType: double
+		lineageTag: ac7165d7-cacd-4790-aec3-891e546228dc
+		summarizeBy: sum
+		sourceColumn: facturacion_90d
+
+		annotation SummarizationSetBy = Automatic
+
+	column media_dia
+		dataType: double
+		lineageTag: 4f08eea7-34a1-401c-a302-7b8c79b04ca6
+		summarizeBy: sum
+		sourceColumn: media_dia
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column desvio_dia
+		dataType: double
+		lineageTag: 913961cb-c184-4d83-9b14-14b4cd644dc5
+		summarizeBy: sum
+		sourceColumn: desvio_dia
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column frac_dias_sin_venta
+		dataType: double
+		lineageTag: c352b207-0b09-4f4d-ad52-df5a6e3696e1
+		summarizeBy: sum
+		sourceColumn: frac_dias_sin_venta
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column coef_variacion
+		dataType: double
+		lineageTag: 145a1f31-c9b1-4e99-a669-e7ab3ab83f46
+		summarizeBy: sum
+		sourceColumn: coef_variacion
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column clase_abc
+		dataType: string
+		lineageTag: c519b4c3-579f-4676-9483-8d77db2821c1
+		summarizeBy: none
+		sourceColumn: clase_abc
+
+		annotation SummarizationSetBy = Automatic
+
+	column clase_xyz
+		dataType: string
+		lineageTag: a1570c77-064c-4b5f-a335-f93faaa33149
+		summarizeBy: none
+		sourceColumn: clase_xyz
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_serie = m
+		mode: import
+		source =
+				// ===== dim_serie (30,490 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\dim_serie.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"serie_id", type text},
+				        {"item", type text},
+				        {"store_code", type text},
+				        {"unidades_90d", type number},
+				        {"facturacion_90d", type number},
+				        {"media_dia", type number},
+				        {"desvio_dia", type number},
+				        {"frac_dias_sin_venta", type number},
+				        {"coef_variacion", type number},
+				        {"clase_abc", type text},
+				        {"clase_xyz", type text}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

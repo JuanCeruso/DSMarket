@@ -17,14 +17,10 @@ import numpy as np, pandas as pd
 from scipy.stats import norm
 from base import GOLD, conectar
 
-# Nivel de servicio objetivo (Tarea 4, secciones 5.1 y 7): lo decide la merma, no el segmento.
-# Lo fresco (SUPERMARKET) se queda en el 90%; lo no perecedero, cuyo sobrante se vende la semana
-# siguiente, al 95%. Son parámetros de negocio: cuando DSMarket mida la merma real se ajustan aquí.
-NIVEL_POR_CATEGORIA = {"SUPERMARKET": .90, "ACCESORIES": .95, "HOME_&_GARDEN": .95}
-
-
-def nivel_servicio(item: str) -> float:
-    return NIVEL_POR_CATEGORIA["SUPERMARKET"] if item.startswith("SUPERMARKET") else .95
+# La política vive en politica.py, donde no tiene un almacén alrededor y por tanto se puede
+# probar. Aquí se importa: dos copias de la misma tabla de niveles de servicio acabarían
+# divergiendo, y la que estuviera mal sería siempre la que corre en producción.
+from politica import NIVEL_POR_CATEGORIA, ALFA_CUANTIL, nivel_servicio
 
 
 def main(dias_revision, lead_time):
@@ -58,7 +54,7 @@ def main(dias_revision, lead_time):
     z = norm.ppf(df["nivel_servicio"].to_numpy())
 
     # sigma del modelo cuantílico: (p90 - media) / z_{0.90}, agregado en cuadratura
-    sigma_modelo = df["sigma_modelo"].to_numpy() / norm.ppf(0.90)
+    sigma_modelo = df["sigma_modelo"].to_numpy() / norm.ppf(ALFA_CUANTIL)
     sigma_hist = df["desvio_dia"].to_numpy() * np.sqrt(cobertura)
     es_x = (df["clase_xyz"] == "X").to_numpy()
 

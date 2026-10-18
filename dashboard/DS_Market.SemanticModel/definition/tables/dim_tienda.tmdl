@@ -1,0 +1,71 @@
+table dim_tienda
+	lineageTag: 8d440b2e-e6a8-4256-80cb-c34c90e08944
+
+	column store_code
+		dataType: string
+		lineageTag: 3c842dc8-ef30-4e17-b96a-3ca4263f0fff
+		summarizeBy: none
+		sourceColumn: store_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column tienda
+		dataType: string
+		lineageTag: 48322534-1d31-47f0-b0d1-7f5e820aeed8
+		summarizeBy: none
+		sourceColumn: tienda
+
+		annotation SummarizationSetBy = Automatic
+
+	column ciudad
+		dataType: string
+		lineageTag: bdbeea09-adb1-48a5-b6ff-8c630d6475e0
+		summarizeBy: none
+		sourceColumn: ciudad
+
+		annotation SummarizationSetBy = Automatic
+
+	column tienda_mas_parecida
+		dataType: string
+		lineageTag: 2a8f27c0-ee50-42ea-8bb1-a3086e543afc
+		summarizeBy: none
+		sourceColumn: tienda_mas_parecida
+
+		annotation SummarizationSetBy = Automatic
+
+	column tienda_parecida =
+			LOOKUPVALUE ( dim_tienda[tienda], dim_tienda[store_code], dim_tienda[tienda_mas_parecida] )
+		dataType: string
+		lineageTag: 8f2f8bcc-61ac-4bd7-8c86-c81f8e5634df
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column ciudad_parecida =
+			LOOKUPVALUE ( dim_tienda[ciudad], dim_tienda[store_code], dim_tienda[tienda_mas_parecida] )
+		dataType: string
+		lineageTag: 9dbd818e-1507-49ae-b482-8f787259c264
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_tienda = m
+		mode: import
+		source =
+				// ===== dim_tienda (10 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\dim_tienda.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"store_code", type text},
+				        {"tienda", type text},
+				        {"ciudad", type text},
+				        {"tienda_mas_parecida", type text}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

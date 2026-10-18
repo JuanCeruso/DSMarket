@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "aa94d0d45d0e308dcffd",
+  "position": {
+    "x": 665,
+    "y": 135,
+    "z": 50,
+    "height": 234,
+    "width": 415,
+    "tabOrder": 50
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Unidades vendidas"
+                }
+              },
+              "queryRef": "_Medidas.Unidades vendidas",
+              "nativeQueryRef": "Unidades vendidas"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Unidades vendidas'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

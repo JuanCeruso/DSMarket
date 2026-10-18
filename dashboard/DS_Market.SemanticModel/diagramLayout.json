@@ -1,0 +1,113 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 50,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 987.68397807440351,
+            "y": 21.855916927099997
+          },
+          "nodeIndex": "dim_calendario",
+          "nodeLineageTag": "b5ad452a-da33-4d05-8bbb-a364dc4da5fb",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 477.7118338542
+          },
+          "nodeIndex": "dim_producto",
+          "nodeLineageTag": "aa51fe95-c5a1-4d06-9115-0b06d4b6189d",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 538.522584235715,
+            "y": -50
+          },
+          "nodeIndex": "dim_serie",
+          "nodeLineageTag": "47f1f6ed-eef8-420d-bef6-2ea763f9ed45",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 825.68397807440363,
+            "y": 450.58255049101524
+          },
+          "nodeIndex": "dim_tienda",
+          "nodeLineageTag": "8d440b2e-e6a8-4256-80cb-c34c90e08944",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 538.77268676347421,
+            "y": 376.68222406827113
+          },
+          "nodeIndex": "mart_producto_tienda",
+          "nodeLineageTag": "95c688b5-eaa6-4725-afaa-7740828d1e12",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 234.42307316397856,
+            "y": 164.37599019159302
+          },
+          "nodeIndex": "mart_ventas_dia",
+          "nodeLineageTag": "bfa8a00f-e296-4ece-b529-21e1b4157022",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 1221.6839780744035,
+            "y": 323.8559169271
+          },
+          "nodeIndex": "_Medidas",
+          "nodeLineageTag": "06f0516c-15ee-42da-a041-675ae9470da1",
+          "size": {
+            "height": 270,
+            "width": 234
+          },
+          "zIndex": 7
+        }
+      ],
+      "name": "Todas las tablas",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas las tablas",
+  "defaultDiagram": "Todas las tablas"
+}

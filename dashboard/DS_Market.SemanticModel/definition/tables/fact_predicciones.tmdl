@@ -1,0 +1,74 @@
+table fact_predicciones
+	lineageTag: 889d33be-5b90-4dda-b4b4-bb2e7a16088c
+
+	column serie_id
+		dataType: string
+		lineageTag: 559672b2-3442-45fd-8505-e904e0cde01a
+		summarizeBy: none
+		sourceColumn: serie_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column item
+		dataType: string
+		lineageTag: 6b86b6a6-9f9a-4292-9b1f-94e83b0b02b9
+		summarizeBy: none
+		sourceColumn: item
+
+		annotation SummarizationSetBy = Automatic
+
+	column store_code
+		dataType: string
+		lineageTag: f117bcde-c18b-4d7c-b1ed-794931a2168a
+		summarizeBy: none
+		sourceColumn: store_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2af6de18-e74a-4161-bf1d-c0adedc346e9
+		summarizeBy: none
+		sourceColumn: fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column prediccion_media
+		dataType: double
+		lineageTag: d18bd290-1871-4987-b2b4-7d7c14acada6
+		summarizeBy: sum
+		sourceColumn: prediccion_media
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column prediccion_p90
+		dataType: double
+		lineageTag: 0af753ab-c350-4a4e-b706-6f0cc415dde6
+		summarizeBy: sum
+		sourceColumn: prediccion_p90
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fact_predicciones = m
+		mode: import
+		source =
+				// ===== fact_predicciones (853.720 filas, en 4 ficheros: una semana cada uno, por el límite de tamaño)
+				let
+				    Leer = (n) => Table.PromoteHeaders(Csv.Document(File.Contents(RutaGold & "\fact_predicciones_" & Text.From(n) & ".csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]), [PromoteAllScalars=true]),
+				    Unido = Table.Combine({Leer(1), Leer(2), Leer(3), Leer(4)}),
+				    Tipos = Table.TransformColumnTypes(Unido, {
+				        {"serie_id", type text}, {"item", type text}, {"store_code", type text},
+				        {"fecha", type date}, {"prediccion_media", type number}, {"prediccion_p90", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table
+

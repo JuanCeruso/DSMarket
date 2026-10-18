@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "9f2606ac14384a16f2e2",
+  "position": {
+    "x": 790,
+    "y": 124,
+    "z": 20,
+    "height": 130,
+    "width": 540,
+    "tabOrder": 20
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Subida media en diciembre"
+                }
+              },
+              "queryRef": "_Medidas.Subida media en diciembre",
+              "nativeQueryRef": "Subida media en diciembre"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Subida media en diciembre'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

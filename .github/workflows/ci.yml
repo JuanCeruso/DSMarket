@@ -1,0 +1,71 @@
+# =============================================================================
+#  Integración continua de DSMarket
+#
+#  Se ejecuta en cada push y en cada pull request. No necesita los datos: la suite
+#  está escrita para no necesitarlos —construye un almacén de juguete en memoria—
+#  y eso es deliberado. Unas pruebas que exigen 469 MB de CSV propiedad de la
+#  escuela son unas pruebas que no se ejecutan nunca.
+#
+#  Tres trabajos, del más rápido al más lento, para que el fallo barato llegue antes:
+#    1. compila   — ¿todo el proyecto es Python válido?        (~20 s)
+#    2. pruebas   — las 73 pruebas de lógica                   (~1 min)
+#    3. seco      — el orquestador enumera sus etapas sin datos (~30 s)
+# =============================================================================
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  compila:
+    name: El proyecto compila
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Comprobar la sintaxis de todo el árbol
+        run: python -m compileall -q operacion app api avanzado figuras lakehouse
+
+  pruebas:
+    name: Pruebas
+    runs-on: ubuntu-latest
+    needs: compila
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Instalar lo que necesitan las pruebas
+        # Ni lightgbm ni prophet: la suite prueba la política, las métricas y los
+        # contratos, que no entrenan nada. Instalarlos costaría tres minutos por
+        # ejecución y no cubriría una línea más.
+        run: pip install -r requirements-ci.txt
+      - name: Ejecutar la suite
+        # pytest-randomly baraja el orden en cada ejecución: una prueba que solo pasa
+        # en su orden habitual depende de un estado que no declaró, y sale más barato
+        # descubrirlo aquí que en la defensa.
+        run: pytest pruebas -v --tb=short
+      - name: Repetir en otro orden
+        run: pytest pruebas -q --tb=line
+
+  seco:
+    name: El pipeline se describe sin datos
+    runs-on: ubuntu-latest
+    needs: compila
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-ci.txt
+      - name: Enumerar las etapas
+        run: python3 operacion/orquestador.py --simular
+      - name: Comprobar que la procedencia se calcula
+        run: python3 operacion/procedencia.py

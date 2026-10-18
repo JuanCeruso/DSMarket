@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.4.0/schema.json",
+  "displayName": "Mostrar filtros · Colchón de seguridad",
+  "name": "980472325a87fa5b994f",
+  "options": {
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "7adf8ce764eac71faaac",
+    "sections": {
+      "7adf8ce764eac71faaac": {
+        "visualContainers": {},
+        "visualContainerGroups": {
+          "f5d941e2669f18f5d256": {
+            "isHidden": false
+          }
+        }
+      }
+    }
+  }
+}

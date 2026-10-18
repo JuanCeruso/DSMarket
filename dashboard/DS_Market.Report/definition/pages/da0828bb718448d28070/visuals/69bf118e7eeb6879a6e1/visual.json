@@ -1,0 +1,97 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "69bf118e7eeb6879a6e1",
+  "position": {
+    "x": 230,
+    "y": 444,
+    "z": 30,
+    "height": 300,
+    "width": 810,
+    "tabOrder": 30
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_arquetipo_dia_semana"
+                    }
+                  },
+                  "Property": "dia_semana"
+                }
+              },
+              "queryRef": "mart_arquetipo_dia_semana.dia_semana",
+              "nativeQueryRef": "dia_semana",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_arquetipo_dia_semana"
+                    }
+                  },
+                  "Property": "arquetipo"
+                }
+              },
+              "queryRef": "mart_arquetipo_dia_semana.arquetipo",
+              "nativeQueryRef": "arquetipo"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Índice por día de la semana"
+                }
+              },
+              "queryRef": "_Medidas.Índice por día de la semana",
+              "nativeQueryRef": "Índice por día de la semana"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Venta por día de la semana (1,00 = media del grupo)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

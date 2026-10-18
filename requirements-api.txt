@@ -1,0 +1,14 @@
+# Lo que necesita el servicio de reposición, y nada más.
+#
+# La imagen del servicio no lleva jupyter, ni streamlit, ni prophet, ni matplotlib:
+# son 1,2 GB que no sirven una sola petición. Separar los requisitos del servicio
+# de los del análisis es lo que convierte una imagen de 1,5 GB en una de 400 MB.
+#
+# Versiones con ~= : se aceptan parches, no cambios menores.
+fastapi~=0.115
+uvicorn[standard]~=0.32
+pandas~=2.2
+numpy~=2.1
+scipy~=1.14
+duckdb~=1.1
+pyarrow~=17.0

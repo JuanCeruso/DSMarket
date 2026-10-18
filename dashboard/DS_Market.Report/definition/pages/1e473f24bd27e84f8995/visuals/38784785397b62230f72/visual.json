@@ -1,0 +1,97 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "38784785397b62230f72",
+  "position": {
+    "x": 1050,
+    "y": 274,
+    "z": 50,
+    "height": 380,
+    "width": 835,
+    "tabOrder": 50
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_producto_mes"
+                    }
+                  },
+                  "Property": "mes"
+                }
+              },
+              "queryRef": "mart_producto_mes.mes",
+              "nativeQueryRef": "mes",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_producto_mes"
+                    }
+                  },
+                  "Property": "item"
+                }
+              },
+              "queryRef": "mart_producto_mes.item",
+              "nativeQueryRef": "item"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Índice mensual del producto"
+                }
+              },
+              "queryRef": "_Medidas.Índice mensual del producto",
+              "nativeQueryRef": "Índice mensual del producto"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Venta por mes del año (1,00 = media del producto)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

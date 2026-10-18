@@ -1,0 +1,184 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "f1d01c4fb2904bb05954",
+  "position": {
+    "x": 1050,
+    "y": 124,
+    "z": 20,
+    "height": 300,
+    "width": 835,
+    "tabOrder": 20
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_arquetipo"
+                    }
+                  },
+                  "Property": "arquetipo"
+                }
+              },
+              "queryRef": "dim_arquetipo.arquetipo",
+              "nativeQueryRef": "arquetipo",
+              "displayName": "Grupo"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_arquetipo"
+                    }
+                  },
+                  "Property": "productos"
+                }
+              },
+              "queryRef": "dim_arquetipo.productos",
+              "nativeQueryRef": "productos",
+              "displayName": "Productos"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_arquetipo"
+                    }
+                  },
+                  "Property": "unidades_dia"
+                }
+              },
+              "queryRef": "dim_arquetipo.unidades_dia",
+              "nativeQueryRef": "unidades_dia",
+              "displayName": "Unidades por día"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_arquetipo"
+                    }
+                  },
+                  "Property": "pct_dias_sin_venta"
+                }
+              },
+              "queryRef": "dim_arquetipo.pct_dias_sin_venta",
+              "nativeQueryRef": "pct_dias_sin_venta",
+              "displayName": "% días sin venta"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_arquetipo"
+                    }
+                  },
+                  "Property": "precio_medio"
+                }
+              },
+              "queryRef": "dim_arquetipo.precio_medio",
+              "nativeQueryRef": "precio_medio",
+              "displayName": "Precio medio ($)"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_arquetipo"
+                    }
+                  },
+                  "Property": "pct_alimentacion"
+                }
+              },
+              "queryRef": "dim_arquetipo.pct_alimentacion",
+              "nativeQueryRef": "pct_alimentacion",
+              "displayName": "% alimentación"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_arquetipo"
+                    }
+                  },
+                  "Property": "pct_hogar"
+                }
+              },
+              "queryRef": "dim_arquetipo.pct_hogar",
+              "nativeQueryRef": "pct_hogar",
+              "displayName": "% hogar"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_arquetipo"
+                    }
+                  },
+                  "Property": "pct_accesorios"
+                }
+              },
+              "queryRef": "dim_arquetipo.pct_accesorios",
+              "nativeQueryRef": "pct_accesorios",
+              "displayName": "% accesorios"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "dim_arquetipo"
+                  }
+                },
+                "Property": "productos"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Ficha de los grupos'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

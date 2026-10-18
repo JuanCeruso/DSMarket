@@ -1,0 +1,70 @@
+table dim_producto
+	lineageTag: aa51fe95-c5a1-4d06-9115-0b06d4b6189d
+
+	measure 'Unidades por producto' = SUM(mart_producto_tienda[unidades_total])
+		lineageTag: eff5e471-da28-467f-b23a-9cb2903bbf93
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column item
+		dataType: string
+		lineageTag: c6dcb321-6c7e-4d5b-b98b-6a372ddfcd21
+		summarizeBy: none
+		sourceColumn: item
+
+		annotation SummarizationSetBy = Automatic
+
+	column categoria
+		dataType: string
+		lineageTag: 5b4ef6a2-49a5-4b7d-9111-ce77b4af5e8d
+		summarizeBy: none
+		sourceColumn: categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column departamento
+		dataType: string
+		lineageTag: 4e0ac93f-2c81-4767-a52b-78a7a25415cb
+		summarizeBy: none
+		sourceColumn: departamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column arquetipo
+		dataType: string
+		lineageTag: b74a9654-d64e-462b-9b91-1806e32afaba
+		summarizeBy: none
+		sourceColumn: arquetipo
+
+		annotation SummarizationSetBy = Automatic
+
+	column grupo_producto
+		dataType: int64
+		formatString: 0
+		lineageTag: 538cc5e5-598a-467a-8511-3242e3e2fe91
+		summarizeBy: sum
+		sourceColumn: grupo_producto
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_producto = m
+		mode: import
+		source =
+				// ===== dim_producto (3,049 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\dim_producto.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"item", type text},
+				        {"categoria", type text},
+				        {"departamento", type text},
+				        {"grupo_producto", Int64.Type},
+				        {"arquetipo", type text}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

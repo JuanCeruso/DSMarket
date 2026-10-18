@@ -1,0 +1,79 @@
+relationship AutoDetected_4ac5cc3b-8de7-4180-9a6b-0780112c1348
+	fromColumn: dim_serie.item
+	toColumn: dim_producto.item
+
+relationship AutoDetected_6f7e6132-429f-4f24-91ae-3e7edb62706e
+	fromColumn: dim_serie.store_code
+	toColumn: dim_tienda.store_code
+
+relationship AutoDetected_4b30ad6e-a0a5-489f-8385-dd72943a8880
+	fromColumn: mart_ventas_dia.store_code
+	toColumn: dim_tienda.store_code
+
+relationship AutoDetected_e4b7db24-336a-4077-babd-89e1617dc041
+	fromColumn: mart_producto_tienda.serie_id
+	toColumn: dim_serie.serie_id
+
+relationship 90d74b97-aae8-533d-8614-b090a658c7ee
+	fromColumn: mart_ventas_dia.fecha
+	toColumn: dim_calendario.fecha
+
+relationship e5d0e41c-fcf5-4999-8f83-08f46d8ec820
+	fromColumn: fact_predicciones.fecha
+	toColumn: dim_calendario.fecha
+
+relationship d6aacde4-0577-4066-9563-ac8f55b88dfd
+	fromColumn: fact_reposicion.fecha_revision
+	toColumn: dim_calendario.fecha
+
+relationship AutoDetected_8c00941c-a3d2-4aaa-9855-9f0bc3ad297b
+	fromColumn: fact_predicciones.serie_id
+	toColumn: dim_serie.serie_id
+
+relationship AutoDetected_55f4d261-fc25-4474-9a22-00cd97db1db4
+	fromColumn: fact_reposicion.serie_id
+	toColumn: dim_serie.serie_id
+
+relationship f2a609eb-dda4-4de2-8325-328cac63a4dc
+	fromColumn: dim_producto.categoria
+	toColumn: dim_categoria.categoria
+
+relationship 8eb191cc-5363-4629-838c-2d5ab043347d
+	fromColumn: mart_ventas_dia.categoria
+	toColumn: dim_categoria.categoria
+
+relationship c86689bd-df9b-48ad-b7ad-d9f4e99c5307
+	fromColumn: mart_precios.serie_id
+	toColumn: dim_serie.serie_id
+
+relationship 0df75730-62d1-4dea-93da-9f16ee0d5e11
+	fromColumn: mart_precios_producto.item
+	toColumn: dim_producto.item
+
+relationship e7d64039-ff92-4756-9301-9b2dca84029d
+	fromColumn: mart_precios_tienda.store_code
+	toColumn: dim_tienda.store_code
+
+relationship 1fcda47c-9595-4dd4-9e41-52598cf784fa
+	fromColumn: dim_producto.arquetipo
+	toColumn: dim_arquetipo.arquetipo
+
+relationship 418cd8a4-bfd0-40de-85fc-b99109a48996
+	fromColumn: mart_producto_perfil.item
+	toColumn: dim_producto.item
+
+relationship 2463c3cd-141b-48af-a74d-8babd704bb90
+	fromColumn: mart_arquetipo_dia_semana.arquetipo
+	toColumn: dim_arquetipo.arquetipo
+
+relationship 6d773af3-290a-49e9-b383-ab0f6f8843bd
+	fromColumn: mart_arquetipo_mes.arquetipo
+	toColumn: dim_arquetipo.arquetipo
+
+relationship 4e09e1ac-201a-4128-9da3-ad4c5824c6a1
+	fromColumn: mart_producto_mes.item
+	toColumn: dim_producto.item
+
+relationship 2ad5d78d-c847-4e28-b0ea-2803e20018cd
+	fromColumn: mart_producto_top_dias.item
+	toColumn: dim_producto.item

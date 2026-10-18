@@ -82,6 +82,23 @@ CONTRATOS = [
      "GROUP BY 1,2,3 HAVING n > 1)",
      "El grano de fact_ventas es una fila por producto, tienda y día."),
 
+    # Contrato añadido a raíz de un defecto real: `es_fin_de_semana` marcaba miércoles y jueves.
+    # La causa fue suponer que weekday_int era 0=lunes cuando en este calendario es 1=sábado, y
+    # nadie se entera porque la columna es booleana y siempre tiene valores plausibles. Un
+    # contrato que cruza la bandera con el NOMBRE del día no depende de ninguna convención.
+    ("el fin de semana cae en sábado y domingo", BLOQUEA,
+     "SELECT count(*) AS malas FROM dim_calendario WHERE dia_semana IS NOT NULL AND "
+     "es_fin_de_semana <> (lower(dia_semana) IN ('saturday', 'sunday'))",
+     "La bandera de fin de semana debe coincidir con el nombre del día, no con un índice."),
+
+    # El mismo defecto, en su forma peligrosa: que la bandera signifique una cosa en los días con
+    # los que se entrena y otra en los días que se predicen. El modelo aprende con una definición
+    # y sirve con otra, y el sesgo resultante es invisible y permanente.
+    ("la bandera de fin de semana no cambia de significado en el futuro", BLOQUEA,
+     "SELECT count(*) AS malas FROM dim_calendario WHERE es_fin_de_semana <> "
+     "(dayofweek(fecha) IN (0, 6))",
+     "Histórico y horizonte deben usar la misma definición de fin de semana."),
+
     ("cobertura de segmentación", AVISA,
      "SELECT count(*) AS malas FROM dim_serie WHERE clase_abc IS NULL OR clase_xyz IS NULL",
      "Toda serie debe tener su clasificación ABC/XYZ para que la política pueda aplicarse."),

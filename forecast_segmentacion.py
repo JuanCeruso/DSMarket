@@ -88,6 +88,23 @@ def cargar():
     return V, P, cumsum, cal, meta, folds
 
 
+def cargar_precios_futuros(meta, semanas=4):
+    """Precios de las semanas posteriores al fin de los datos (filas de item_prices.csv sin yearweek).
+
+    Son siempre las 8 últimas filas de cada serie, posteriores a la semana 201617 (EDA, sección 4.3).
+    Devuelve una matriz (series, semanas): la columna k es el precio de la semana siguiente número k+1.
+    """
+    prices = pd.read_csv(f"{DATA_DIR}/item_prices.csv")
+    prices = prices[prices['yearweek'].isna()].copy()
+    prices['k'] = prices.groupby(['item', 'store_code']).cumcount()
+    fila_de = pd.Series(np.arange(len(meta)), index=(meta['item'] + '|' + meta['store_code']).values)
+    prices['row'] = (prices['item'] + '|' + prices['store_code']).map(fila_de).astype(np.int32)
+    prices = prices[prices['k'] < semanas]
+    PF = np.full((len(meta), semanas), np.nan, dtype=np.float32)
+    PF[prices['row'].values, prices['k'].values] = prices['sell_price'].values.astype(np.float32)
+    return PF
+
+
 def construir_matriz(dias, V, P, cumsum, cal, meta, extra, min_lag=28):
     lags = LAGS_BASE(min_lag)
     ev = pd.factorize(cal['event_final'].fillna('none'))[0].astype(np.int8)

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.4.0/schema.json",
+  "displayName": "Colchón · ver todo",
+  "name": "065ab9a656f39a41d13d",
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "7adf8ce764eac71faaac",
+    "sections": {
+      "7adf8ce764eac71faaac": {
+        "visualContainers": {},
+        "filters": {
+          "byExpr": []
+        }
+      }
+    }
+  }
+}

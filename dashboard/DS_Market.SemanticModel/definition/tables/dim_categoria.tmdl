@@ -1,0 +1,16 @@
+table dim_categoria
+	lineageTag: 56aa47a9-c13c-4928-87d0-f65b6dad0eb8
+
+	column categoria
+		dataType: string
+		lineageTag: 378ee074-6f2b-4a0e-b4a2-abaab91ff513
+		summarizeBy: none
+		sourceColumn: [categoria]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_categoria = calculated
+		mode: import
+		source = DATATABLE ( "categoria", STRING, { { "ACCESORIES" }, { "HOME_&_GARDEN" }, { "SUPERMARKET" } } )
+
+	annotation PBI_Id = ceed3e952701424e8fd51efb8624bcae

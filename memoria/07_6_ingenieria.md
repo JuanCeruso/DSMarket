@@ -117,6 +117,46 @@ ejemplo más claro de por qué los contratos de datos se ejecutan también **des
 las predicciones y no solo sobre los datos de entrada: este defecto no está en el origen, lo
 produce el propio sistema.
 
+**El fin de semana corrido dos días.** La columna `es_fin_de_semana` de la dimensión temporal
+se calculaba como `weekday_int IN (5, 6)`, que es la fórmula correcta si el índice del día
+empieza en cero el lunes. En este conjunto de datos no empieza ahí: la columna de origen numera
+**1 = sábado … 7 = viernes**. El resultado es que la bandera marcaba como fin de semana el
+**miércoles y el jueves**, en 1.094 de los 1.913 días del histórico.
+
+El defecto es representativo de una clase entera, y por eso se documenta. No produce excepción
+ni valores imposibles: la columna es booleana y siempre tiene un valor plausible. No lo detecta
+ninguna comprobación de tipos, ni de nulos, ni de rangos. Y `is_weekend` es **una de las
+variables de entrada del modelo**, de modo que el efecto no se queda en un gráfico descriptivo.
+
+Su forma peligrosa es la segunda mitad del hallazgo. Los días futuros de la dimensión, que no
+existen en el fichero de origen, se rellenaban con una expresión distinta —`dayofweek(fecha) IN
+(0, 6)`, esta vez correcta—, de modo que la bandera significaba **una cosa en los días con los
+que se entrena y otra en los días que se predicen**. Es un desajuste entre entrenamiento y
+servicio en su forma más pura: sin error, sin alerta, y permanente.
+
+La corrección deriva la bandera del **nombre** del día en lugar del índice, que es lo único que
+no depende de una convención, y usa la misma definición para el histórico y para el horizonte.
+Se añadieron además dos contratos bloqueantes —uno por cada mitad del defecto— y sus dos pruebas
+de regresión. El efecto colateral fue confirmar la segmentación del catálogo: con la bandera
+corregida, el arquetipo «Fin de semana/hogar» pasa a encabezar la elevación de fin de semana con
+un ×1,42, cifra que antes quedaba invisible y que es la que justifica su nombre (§7.2.3).
+
+**La ventana predicha, corrida un horizonte entero.** El contrato que exige que toda predicción
+se apoye en una fila de la dimensión temporal falló sobre las 853.720 filas de
+`fact_predicciones`, es decir sobre todas. El último día con venta es el 24 de abril de 2016 y
+la dimensión llega, correctamente, veintiocho días más allá, al 22 de mayo. Las predicciones
+cubrían del **23 de mayo al 19 de junio**: los días 29 a 56, no los 28 primeros.
+
+La causa es que el cuaderno tomaba como origen el final de la dimensión temporal —que ya
+incluye el horizonte— en lugar del último día con venta. El resultado es un pronóstico
+perfectamente válido para las cuatro semanas equivocadas, y con él unos niveles de reposición
+igualmente corridos. La etapa `predecir.py` de la capa de operación ancla el horizonte en el
+último día observado y no en el final del calendario, que es lo que corresponde.
+
+Ninguno de los dos defectos se descubrió mirando los datos: los descubrieron los contratos, uno
+de ellos escrito después y a propósito de una figura que no salía. Es el argumento de esta
+sección entera.
+
 **La dimensión temporal incompleta.** La tabla de calendario terminaba en el último día con
 venta, de modo que las predicciones a veintiocho días no tenían fila de dimensión donde
 apoyarse. Se extendió con los días futuros y una bandera que los distingue.
@@ -138,11 +178,12 @@ cronometra cada una, se detiene ante el primer fallo bloqueante y registra el re
 tabla de ejecuciones. Permite además reanudar desde la etapa que falló, que es lo que convierte
 un fallo en una incidencia y no en una repetición completa.
 
-**Contratos de datos.** Trece comprobaciones que **detienen** el proceso en lugar de advertir: el
+**Contratos de datos.** Quince comprobaciones que **detienen** el proceso en lugar de advertir: el
 panel producto-tienda completo, ausencia de ventas sin precio, coherencia entre importe y
 producto de unidades por precio, integridad referencial con las dimensiones, cobertura de la
 dimensión temporal sobre el horizonte, ausencia de duplicados en el grano y no negatividad y
-ordenación de los cuantiles predichos. La distinción entre un contrato y una comprobación de
+ordenación de los cuantiles predichos, y la coherencia de la bandera de fin de semana con el
+nombre del día tanto en el histórico como en el horizonte. La distinción entre un contrato y una comprobación de
 calidad está en qué ocurre cuando falla: un almacén que publica datos rotos porque la
 comprobación escribió una advertencia en un registro que nadie lee es peor que uno que no
 comprueba nada, porque produce una falsa sensación de control. Los contratos se ejecutan dos

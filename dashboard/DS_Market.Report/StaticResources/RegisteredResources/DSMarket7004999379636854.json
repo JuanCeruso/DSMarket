@@ -1,0 +1,229 @@
+{
+  "name": "DSMarket",
+  "dataColors": [
+    "#0A2A5C",
+    "#2A78D6",
+    "#6A9F1F",
+    "#EDA100",
+    "#9DB7DE",
+    "#E8743B",
+    "#CD443F",
+    "#8B8B8B",
+    "#DEE5EF"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#0A2A5C",
+  "tableAccent": "#0A2A5C",
+  "good": "#6A9F1F",
+  "neutral": "#EDA100",
+  "bad": "#CD443F",
+  "maximum": "#0A2A5C",
+  "center": "#9DB7DE",
+  "minimum": "#DEE5EF",
+  "textClasses": {
+    "callout": {
+      "fontSize": 40,
+      "fontFace": "Segoe UI Light",
+      "color": "#0A2A5C"
+    },
+    "title": {
+      "fontSize": 14,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#0A2A5C"
+    },
+    "header": {
+      "fontSize": 12,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#0A2A5C"
+    },
+    "label": {
+      "fontSize": 11,
+      "fontFace": "Segoe UI",
+      "color": "#8B8B8B"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "general": [
+          {
+            "responsive": true
+          }
+        ],
+        "background": [
+          {
+            "show": false
+          }
+        ],
+        "border": [
+          {
+            "show": false
+          }
+        ],
+        "title": [
+          {
+            "show": true,
+            "fontColor": {
+              "solid": {
+                "color": "#0A2A5C"
+              }
+            },
+            "fontSize": 14,
+            "fontFamily": "Segoe UI Semibold",
+            "alignment": "left"
+          }
+        ],
+        "categoryAxis": [
+          {
+            "labelColor": {
+              "solid": {
+                "color": "#8B8B8B"
+              }
+            },
+            "fontSize": 11,
+            "showAxisTitle": false,
+            "lineColor": {
+              "solid": {
+                "color": "#DEE5EF"
+              }
+            }
+          }
+        ],
+        "valueAxis": [
+          {
+            "labelColor": {
+              "solid": {
+                "color": "#8B8B8B"
+              }
+            },
+            "fontSize": 11,
+            "showAxisTitle": false,
+            "gridlineColor": {
+              "solid": {
+                "color": "#E9ECF2"
+              }
+            },
+            "gridlineThickness": 1
+          }
+        ],
+        "legend": [
+          {
+            "labelColor": {
+              "solid": {
+                "color": "#8B8B8B"
+              }
+            },
+            "fontSize": 11,
+            "position": "Top"
+          }
+        ],
+        "dataLabels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#0A2A5C"
+              }
+            },
+            "fontSize": 11
+          }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          {
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "outspace": [
+          {
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#0A2A5C"
+              }
+            },
+            "fontSize": 40,
+            "fontFamily": "Segoe UI Light"
+          }
+        ],
+        "categoryLabels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#8B8B8B"
+              }
+            },
+            "fontSize": 12
+          }
+        ]
+      }
+    },
+    "slicer": {
+      "*": {
+        "header": [
+          {
+            "fontColor": {
+              "solid": {
+                "color": "#0A2A5C"
+              }
+            },
+            "textSize": 12
+          }
+        ],
+        "items": [
+          {
+            "fontColor": {
+              "solid": {
+                "color": "#0A2A5C"
+              }
+            },
+            "textSize": 11
+          }
+        ]
+      }
+    },
+    "lineChart": {
+      "*": {
+        "lineStyles": [
+          {
+            "strokeWidth": 3
+          }
+        ],
+        "markers": [
+          {
+            "show": false
+          }
+        ]
+      }
+    },
+    "columnChart": {
+      "*": {
+        "general": [
+          {
+            "responsive": true
+          }
+        ]
+      }
+    }
+  }
+}

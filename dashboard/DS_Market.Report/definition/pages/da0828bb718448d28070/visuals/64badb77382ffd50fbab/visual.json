@@ -1,0 +1,97 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "64badb77382ffd50fbab",
+  "position": {
+    "x": 1065,
+    "y": 444,
+    "z": 40,
+    "height": 300,
+    "width": 820,
+    "tabOrder": 40
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_arquetipo_mes"
+                    }
+                  },
+                  "Property": "mes"
+                }
+              },
+              "queryRef": "mart_arquetipo_mes.mes",
+              "nativeQueryRef": "mes",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_arquetipo_mes"
+                    }
+                  },
+                  "Property": "arquetipo"
+                }
+              },
+              "queryRef": "mart_arquetipo_mes.arquetipo",
+              "nativeQueryRef": "arquetipo"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Índice por mes"
+                }
+              },
+              "queryRef": "_Medidas.Índice por mes",
+              "nativeQueryRef": "Índice por mes"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Venta por mes del año (1,00 = media del grupo)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

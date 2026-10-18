@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.4.0/schema.json",
+  "displayName": "Mostrar filtros · Previsión de ventas",
+  "name": "74d2e7fa2c93f1680230",
+  "options": {
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "31c14a5333008ee235e0",
+    "sections": {
+      "31c14a5333008ee235e0": {
+        "visualContainers": {},
+        "visualContainerGroups": {
+          "9b8ae7c37e07fa2d366e": {
+            "isHidden": false
+          }
+        }
+      }
+    }
+  }
+}

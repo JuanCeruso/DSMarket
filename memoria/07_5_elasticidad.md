@@ -35,8 +35,8 @@ variable, y se estima $\beta$ sobre los residuos.
 La estimación arroja una elasticidad de **−0,395** con un estadístico $t$ de **−19,3**. El signo
 es el correcto, la magnitud es plausible para bienes de alimentación, la significación
 estadística es abrumadora y la descomposición por grupo de producto de §7.2 tiene sentido: la
-alimentación de consumo diario, barata y de compra frecuente, es la más sensible (−0,62); los
-accesorios y hogar de precio alto, de los menos (−0,26); y la compra ocasional y la Navidad, que
+alta rotación diaria, barata y de compra frecuente, es la más sensible (−0,62); el grupo de
+precio alto y pocas unidades, de los menos (−0,26); y la venta esporádica con pico en eventos y el pico de diciembre, que
 se compran por la fecha, no reaccionan.
 
 Es exactamente el tipo de resultado que una memoria presentaría como hallazgo principal y sobre

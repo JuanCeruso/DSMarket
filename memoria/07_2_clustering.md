@@ -80,21 +80,21 @@ de compra.
 
 | Grupo | Productos | % facturación | Rasgo que lo define |
 |---|---|---|---|
-| **Alimentación de consumo diario** | 679 | 42,4 % | 72 % alimentación, el precio más bajo (2,6 $). Venta muy alta (37 unidades al día entre las diez tiendas) y casi diaria: 5 % de días sin venta. |
-| **Hogar de fin de semana** | 882 | 25,4 % | 45 % hogar y jardín. La mayor elevación en fin de semana (+42 %), y también sube en los eventos. |
-| **Básicos de rotación lenta** | 745 | 14,7 % | Mixto. Venta baja (6 unidades al día) y sin picos: los que menos reaccionan al fin de semana, a diciembre y a los eventos. |
-| **Accesorios y hogar de precio alto** | 218 | 11,1 % | 48 % accesorios y 43 % hogar. Precio medio de 17,4 $, más del triple que el resto. |
-| **Compra ocasional en fechas señaladas** | 405 | 4,2 % | Mixto. No venden nada en el 39 % de los días en que están a la venta, pero venden un 26 % más en los días de evento. |
-| **Temporada de Navidad** | 120 | 2,1 % | Mixto (accesorios, alimentación y hogar: mesa y regalo). Venden casi el doble en diciembre (1,89 veces). |
+| **Alta rotación diaria** | 679 | 42,4 % | 72 % alimentación, el precio más bajo (2,6 $). Venta muy alta (37 unidades al día entre las diez tiendas) y casi diaria: 5 % de días sin venta. |
+| **Pico de fin de semana** | 882 | 25,4 % | 45 % hogar y jardín. La mayor elevación en fin de semana (+42 %), y también sube en los eventos. |
+| **Rotación baja sin picos** | 745 | 14,7 % | Mixto. Venta baja (6 unidades al día) y sin picos: los que menos reaccionan al fin de semana, a diciembre y a los eventos. |
+| **Precio alto, pocas unidades** | 218 | 11,1 % | 48 % accesorios y 43 % hogar. Precio medio de 17,4 $, más del triple que el resto. |
+| **Venta esporádica con pico en eventos** | 405 | 4,2 % | Mixto. No venden nada en el 39 % de los días en que están a la venta, pero venden un 26 % más en los días de evento. |
+| **Pico de diciembre** | 120 | 2,1 % | Mixto (accesorios, alimentación y hogar: mesa y regalo). Venden casi el doble en diciembre (1,89 veces). |
 
-Los dos primeros grupos reúnen el 68 % de la facturación. La compra ocasional ocupa el 13 % del
+Los dos primeros grupos reúnen el 68 % de la facturación. El grupo de venta esporádica con pico en eventos ocupa el 13 % del
 catálogo y aporta el 4 %: es el grupo donde la pregunta pertinente no es solo cuánto reponer sino
 si mantener la referencia.
 
 > **[FIGURA 7.6]** *Proyección PCA de los productos coloreados por grupo, y peso de cada grupo en el catálogo y en la facturación.*
 > `Fuente: Cuaderno 02, sección 4.6.`
 
-Dentro del grupo de Navidad destaca **`SUPERMARKET_3_069`**, con una elevación en diciembre de
+Dentro del grupo «Pico de diciembre» destaca **`SUPERMARKET_3_069`**, con una elevación en diciembre de
 **7,66**, la mayor del catálogo. Sus cuatro mejores días en cinco años son cuatro 31 de diciembre
 consecutivos: se trata, con toda probabilidad, de un artículo de Nochevieja. El caso ilustra un
 límite del enfoque predictivo que se desarrolla en §7.3: un modelo entrenado sobre una ventana de
@@ -153,8 +153,8 @@ erráticas donde, además de cuánto reponer, la pregunta pertinente es si mante
 Las dos segmentaciones responden a preguntas distintas y se complementan: el grupo de
 comportamiento dice *cómo* se vende un producto (diario, fin de semana, Navidad, eventos), y la
 clase XYZ dice *cuánto se puede fiar* la previsión de cada serie. En los extremos cuentan casi la
-misma historia —la alimentación de consumo diario es el único grupo con mayoría de series estables
-(53 % X) y la compra ocasional es casi toda errática (77 % Z)—, y en el medio se complementan.
+misma historia —el grupo de alta rotación diaria es el único con mayoría de series estables
+(53 % X) y el de venta esporádica es casi todo errático (77 % Z)—, y en el medio se complementan.
 
 > **[FIGURA 7.9]** *Matriz ABC/XYZ: recuento de series y peso en la facturación.*
 > `Fuente: Cuaderno 04. Dos mapas de calor 3x3 con los valores impresos.`

@@ -1,0 +1,184 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "29afdd59674ea66fb95b",
+  "position": {
+    "x": 230,
+    "y": 274,
+    "z": 40,
+    "height": 776,
+    "width": 800,
+    "tabOrder": 40
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_producto_perfil"
+                    }
+                  },
+                  "Property": "item"
+                }
+              },
+              "queryRef": "mart_producto_perfil.item",
+              "nativeQueryRef": "item",
+              "displayName": "Producto"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_producto"
+                    }
+                  },
+                  "Property": "categoria"
+                }
+              },
+              "queryRef": "dim_producto.categoria",
+              "nativeQueryRef": "categoria",
+              "displayName": "Categoría"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_producto"
+                    }
+                  },
+                  "Property": "arquetipo"
+                }
+              },
+              "queryRef": "dim_producto.arquetipo",
+              "nativeQueryRef": "arquetipo",
+              "displayName": "Grupo"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_producto_perfil"
+                    }
+                  },
+                  "Property": "unidades_dia"
+                }
+              },
+              "queryRef": "mart_producto_perfil.unidades_dia",
+              "nativeQueryRef": "unidades_dia",
+              "displayName": "Unidades por día"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_producto_perfil"
+                    }
+                  },
+                  "Property": "diciembre_vs_resto"
+                }
+              },
+              "queryRef": "mart_producto_perfil.diciembre_vs_resto",
+              "nativeQueryRef": "diciembre_vs_resto",
+              "displayName": "Diciembre / resto"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_producto_perfil"
+                    }
+                  },
+                  "Property": "fin_semana_vs_semana"
+                }
+              },
+              "queryRef": "mart_producto_perfil.fin_semana_vs_semana",
+              "nativeQueryRef": "fin_semana_vs_semana",
+              "displayName": "Fin de semana / semana"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_producto_perfil"
+                    }
+                  },
+                  "Property": "eventos_vs_normal"
+                }
+              },
+              "queryRef": "mart_producto_perfil.eventos_vs_normal",
+              "nativeQueryRef": "eventos_vs_normal",
+              "displayName": "Eventos / normal"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_producto_perfil"
+                    }
+                  },
+                  "Property": "precio_medio"
+                }
+              },
+              "queryRef": "mart_producto_perfil.precio_medio",
+              "nativeQueryRef": "precio_medio",
+              "displayName": "Precio medio ($)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "mart_producto_perfil"
+                  }
+                },
+                "Property": "diciembre_vs_resto"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Productos (selecciona uno para ver su detalle; ordenados por subida en diciembre)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

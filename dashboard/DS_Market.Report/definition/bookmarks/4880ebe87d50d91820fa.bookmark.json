@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.4.0/schema.json",
+  "displayName": "Ocultar filtros · Explorador de productos",
+  "name": "4880ebe87d50d91820fa",
+  "options": {
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "1e473f24bd27e84f8995",
+    "sections": {
+      "1e473f24bd27e84f8995": {
+        "visualContainers": {},
+        "visualContainerGroups": {
+          "ede8ef22656a0dc67c0f": {
+            "isHidden": true
+          }
+        }
+      }
+    }
+  }
+}

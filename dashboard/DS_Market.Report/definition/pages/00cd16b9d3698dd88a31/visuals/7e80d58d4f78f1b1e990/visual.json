@@ -1,0 +1,116 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "7e80d58d4f78f1b1e990",
+  "position": {
+    "x": 230,
+    "y": 135,
+    "z": 30,
+    "height": 870,
+    "width": 1067,
+    "tabOrder": 30
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_tienda"
+                    }
+                  },
+                  "Property": "tienda"
+                }
+              },
+              "queryRef": "dim_tienda.tienda",
+              "nativeQueryRef": "tienda"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_tienda"
+                    }
+                  },
+                  "Property": "ciudad"
+                }
+              },
+              "queryRef": "dim_tienda.ciudad",
+              "nativeQueryRef": "ciudad"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_tienda"
+                    }
+                  },
+                  "Property": "tienda_parecida"
+                }
+              },
+              "queryRef": "dim_tienda.tienda_parecida",
+              "nativeQueryRef": "tienda_parecida"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_tienda"
+                    }
+                  },
+                  "Property": "ciudad_parecida"
+                }
+              },
+              "queryRef": "dim_tienda.ciudad_parecida",
+              "nativeQueryRef": "ciudad_parecida"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Unidades vendidas"
+                }
+              },
+              "queryRef": "_Medidas.Unidades vendidas",
+              "nativeQueryRef": "Unidades vendidas"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Tienda y su tienda más parecida'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

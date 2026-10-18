@@ -297,7 +297,7 @@ de trabajo futuro:
 1. **Temporada alta.** Con 400 días de historia diciembre mejora un 5,7%, pero sigue siendo el
    mes con más error: el modelo aún no capta del todo el pico del 31 de diciembre, y la política
    de reposición no se ha simulado en esos meses.
-2. **Demanda errática.** En las series de clase Z y en la compra ocasional el error de
+2. **Demanda errática.** En las series de clase Z y en la venta esporádica el error de
    predicción es el más alto. Los métodos específicos para demanda intermitente son la
    referencia obligada.
 3. **Sesgo inestable.** La corrección con la ventana reciente es una solución práctica, no una
