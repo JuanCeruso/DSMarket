@@ -27,11 +27,11 @@ def metricas(y, yhat, V, P, s):
 
 # ------------------------------------------------------------------ modelos sencillos
 def ma28_por_dia_semana(V, P, cal, meta, s, e):
-    """Media móvil de 28 días multiplicada por un factor de día de la semana por grupo de producto (últimas 13 semanas)."""
+    """Media móvil de 28 días multiplicada por un factor de día de la semana por departamento (últimas 13 semanas)."""
     nivel = V[:, s - 28:s].mean(axis=1)
     wd = cal['date'].dt.weekday.values
     hist = V[:, s - 91:s].astype(np.float32)
-    g = meta['grupo_producto'].to_numpy()
+    g = meta['dept_id'].to_numpy()
     f = np.ones((g.max() + 1, 7), np.float32)
     for k in range(g.max() + 1):
         filas = hist[g == k]
@@ -45,7 +45,7 @@ def ma28_por_dia_semana(V, P, cal, meta, s, e):
     return np.where(np.isnan(P[:, s:e]), 0, pred)
 
 
-SMALL_FEATS = ['lag_0', 'lag_1', 'rmean_7', 'rmean_28', 'weekday', 'is_weekend', 'sell_price', 'grupo_producto']
+SMALL_FEATS = ['lag_0', 'lag_1', 'rmean_7', 'rmean_28', 'weekday', 'is_weekend', 'sell_price']
 SMALL_PARAMS = dict(objective='tweedie', tweedie_variance_power=1.1, learning_rate=0.1, num_leaves=15,
                     min_data_in_leaf=200, feature_fraction=0.8, bagging_fraction=0.8, bagging_freq=1,
                     num_threads=os.cpu_count(), verbose=-1, seed=42, max_bin=63)
@@ -56,13 +56,13 @@ def gbm_pequeno(V, P, cs, cal, meta, s, e):
     M = np.zeros((V.shape[0], e - s), np.float32)
     for b in range(4):
         ml = 7 * (b + 1)
-        Xtr = fs.construir_matriz(range(s - 180, s - 28), V, P, cs, cal, meta, ['grupo_producto'], ml)
+        Xtr = fs.construir_matriz(range(s - 180, s - 28), V, P, cs, cal, meta, [], ml)
         A, y = fs.a_float32(Xtr, SMALL_FEATS), Xtr['y'].to_numpy(np.float32)
         del Xtr; gc.collect()
         m = lgb.train(SMALL_PARAMS, lgb.Dataset(A, label=y, feature_name=SMALL_FEATS,
-                      categorical_feature=['weekday', 'grupo_producto']), num_boost_round=300)
+                      categorical_feature=['weekday']), num_boost_round=300)
         del A, y; gc.collect()
-        Xte = fs.construir_matriz(range(s + 7 * b, min(s + 7 * (b + 1), e)), V, P, cs, cal, meta, ['grupo_producto'], ml)
+        Xte = fs.construir_matriz(range(s + 7 * b, min(s + 7 * (b + 1), e)), V, P, cs, cal, meta, [], ml)
         M[Xte['serie'], Xte['dia'] - s] = np.maximum(m.predict(fs.a_float32(Xte, SMALL_FEATS)), 0)
         del Xte, m; gc.collect()
     return np.where(np.isnan(P[:, s:e]), 0, M)

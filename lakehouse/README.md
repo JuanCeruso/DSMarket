@@ -36,8 +36,9 @@ columnar comprimido). El grano atómico completo de ventas (58,3 millones de fil
 2. **Eventos derivados por regla de fecha.** Christmas (25/12) y Labor Day (primer lunes de
    septiembre) no vienen en el calendario original y se añaden. Black Friday se evaluó y se
    descartó por no mostrar patrón.
-3. **Días de cierre.** Navidad y Thanksgiving se marcan con `es_dia_cierre`, porque la tienda
-   no abre y ningún modelo debería intentar predecir ventas esos días.
+3. **Días de cierre.** Solo Navidad se marca con `es_dia_cierre`, porque la tienda no abre y ningún
+   modelo debería intentar predecir ventas ese día. Thanksgiving no cierra (vende un 28 % menos que un
+   jueves normal) y no se marca.
 
 ## Tablas de gold
 

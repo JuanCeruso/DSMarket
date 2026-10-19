@@ -75,14 +75,19 @@ de reposición aplica métodos distintos según la clase.
 
 El fichero de calendario etiqueta días con eventos de cuatro tipos (deportivos, culturales,
 nacionales y religiosos). Para cada evento se calculó un coeficiente de elevación —el cociente
-entre la venta media de los días con ese evento y la venta media general, controlando por día de
-la semana— y se retuvieron únicamente aquellos con efecto consistente y de magnitud apreciable.
+entre la venta media de los días con ese evento y la venta media de un día normal— y se
+retuvieron únicamente aquellos con efecto consistente y de magnitud apreciable.
 
-Tres eventos superaron el criterio con elevaciones de entre el 15% y el 22%: **Labor Day**,
-**SuperBowl** y **Easter**. Un cuarto candidato, incorporado inicialmente por expectativa
+Frente a un día cualquiera, tres eventos mostraron elevaciones de entre el 15% y el 22%: **Labor
+Day**, **SuperBowl** y **Easter**. Esa comparación no controla el día de la semana: SuperBowl y
+Easter caen siempre en domingo y los domingos ya se vende un 20% más que la media. Al comparar cada
+evento con el mismo día de la semana de las dos semanas anteriores y las dos siguientes, solo
+**Labor Day** sube de verdad (+28 %); **SuperBowl** queda en torno al 0 % y **Easter** en −12 %.
+Un cuarto candidato, incorporado inicialmente por expectativa
 comercial más que por evidencia, fue **Black Friday**. El examen del histórico no solo no mostró
 un pico: en los cinco años, Black Friday vende un **24 % menos** que los viernes de alrededor
-(entre −17 % y −29 % según el año), probablemente porque sigue a Thanksgiving, día de cierre. Se
+(entre −17 % y −29 % según el año), sin que se conozca la causa: Thanksgiving no cierra (vende un 28 % menos que un jueves normal,
+pero vende; el único día de cierre es el 25 de diciembre). Se
 retiró del conjunto de eventos de pico. La decisión ilustra un criterio que el trabajo aplica de
 forma general: un hallazgo que resulta atractivo para la narrativa comercial pero que el dato no
 sostiene no entra en el informe.

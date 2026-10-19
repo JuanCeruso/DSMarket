@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Recalculo por pasos de la sección 6 del notebook 03 con el grupo de producto actual (6 grupos).
+Recalculo por pasos de la sección 6 del notebook 03 sin la variable de grupo de producto.
 Cada ejecución trabaja unos 130 s, guarda el progreso en cache_forecast/rec6/ y sale; se repite hasta 'COMPLETO'.
 Unidad de trabajo: (ventana, modo, bloque) con LightGBM y XGBoost. Al terminar escribe pred_fold*.pkl (modelo único)
 y pred2_fold*.pkl (bloques semanales), el formato que lee el notebook.
@@ -11,7 +11,7 @@ import forecast_segmentacion as fs
 
 T0 = time.time(); LIM = int(os.environ.get('LIM', 130))
 D = f"{fs.CACHE}/rec6"; os.makedirs(D, exist_ok=True)
-EXTRA = ['grupo_producto']; FEAT = fs.BASE + EXTRA; CAT = fs.CAT_BASE + EXTRA
+EXTRA = []; FEAT = fs.BASE + EXTRA; CAT = fs.CAT_BASE + EXTRA
 PL = dict(fs.PARAMS_LGB, num_threads=4)
 PX = dict(objective='reg:tweedie', tweedie_variance_power=1.1, eval_metric='rmse', eta=0.05, max_depth=8,
           subsample=0.8, colsample_bytree=0.8, tree_method='hist', max_bin=127, nthread=4, seed=42)

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 Modelo final de la Tarea 3 tras la revisión: LightGBM por bloques semanales, entrenado con
-400 días de historia, con las variables de evento semanal y el grupo de producto actual.
+400 días de historia, con las variables de evento semanal y sin la variable de grupo de producto.
 
 Produce dos cosas, cada una con predicción media (objetivo tweedie) y percentil 90 (objetivo
 cuantílico):
 
-    cache_forecast/final_eval_media.npy, final_eval_p90.npy
+    cache_forecast_sin_clusters/final_eval_media.npy, final_eval_p90.npy
         la última ventana de validación (28-mar a 24-abr de 2016), que usa el notebook 04
         para simular las políticas de reposición;
-    cache_forecast/final_futuro_media.npy, final_futuro_p90.npy
+    cache_forecast_sin_clusters/final_futuro_media.npy, final_futuro_p90.npy
         los 28 días siguientes al último día con datos (25-abr a 22-may de 2016): la entrega.
 
 Precio de los días futuros, dos variantes:
@@ -29,7 +29,7 @@ import forecast_semanal as fw
 
 CACHE = fs.CACHE
 TRAIN_DAYS = 400
-EXTRA = ['grupo_producto']
+EXTRA = []        # sin grupo de producto (notebook 03b)
 FEATURES = fs.BASE + EXTRA + fw.EXTRA_SEMANAL
 CATEGORICAS = fs.CAT_BASE + EXTRA + ['evento_semana']
 _P90 = {k: v for k, v in fs.PARAMS_LGB.items() if k != 'tweedie_variance_power'}

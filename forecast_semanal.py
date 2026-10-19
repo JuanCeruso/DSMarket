@@ -16,7 +16,7 @@ Se evalúa en las 3 ventanas de validación (feb-abr 2016) y en las 2 de tempora
 (nov y dic 2015), que es donde los eventos pesan de verdad.
 
 Autocontenido: usa forecast_segmentacion.py y los CSV originales. Guarda los resultados en
-cache_forecast/semanal_<config>_<ventana>.pkl.
+cache_forecast_sin_clusters/semanal_<config>_<ventana>.pkl.
 """
 import os, gc, pickle, time
 import numpy as np
@@ -27,11 +27,11 @@ import forecast_segmentacion as fs
 CACHE = fs.CACHE
 EXTRA_SEMANAL = ['sem_evento', 'evento_semana', 'dias_hasta_evento', 'dias_desde_evento']
 CONFIGS = {
-    'actual': dict(extra=['grupo_producto'], semanal=False),
-    'eventos_semanales': dict(extra=['grupo_producto'], semanal=True),
+    'actual': dict(extra=[], semanal=False),
+    'eventos_semanales': dict(extra=[], semanal=True),
     # mismo modelo aprendiendo de 400 días en lugar de 180, para que vea al menos un ejemplo de cada evento
-    'actual_400d': dict(extra=['grupo_producto'], semanal=False, train_days=400),
-    'eventos_semanales_400d': dict(extra=['grupo_producto'], semanal=True, train_days=400),
+    'actual_400d': dict(extra=[], semanal=False, train_days=400),
+    'eventos_semanales_400d': dict(extra=[], semanal=True, train_days=400),
 }
 
 

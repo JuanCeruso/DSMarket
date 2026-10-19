@@ -20,7 +20,7 @@ import forecast_segmentacion as fs
 import forecast_semanal as fw
 import modelo_final as mf
 
-CACHE_SC = "cache_forecast_sin_clusters"
+CACHE_SC = fs.CACHE   # = cache_forecast_sin_clusters
 os.makedirs(CACHE_SC, exist_ok=True)
 
 # misma definición que fw.CONFIGS, pero sin variables extra de segmentación

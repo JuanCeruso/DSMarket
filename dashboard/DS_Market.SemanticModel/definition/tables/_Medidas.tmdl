@@ -190,7 +190,8 @@ table _Medidas
 
 	measure 'Campana: demanda esperada' =
 			// Última revisión completa; suma de las series filtradas
-			CALCULATE ( [Demanda esperada], fact_reposicion[fecha_revision] = [Revisión de referencia] )
+			VAR ref = [Revisión de referencia]
+			RETURN CALCULATE ( [Demanda esperada], fact_reposicion[fecha_revision] = ref )
 		formatString: #,0
 		lineageTag: 781fdf96-60da-459e-8c73-fe616442d8f4
 
@@ -209,9 +210,9 @@ table _Medidas
 
 	measure 'Campana: densidad' =
 			VAR z = SELECTEDVALUE ( eje_campana[z] )
-			VAR mu = [Campana: demanda esperada]
+			// Campana estándar: el eje es z (desviaciones típicas respecto a la demanda esperada); solo se dibuja si hay series
 			VAR sg = [Campana: desviación típica]
-			RETURN IF ( NOT ISBLANK ( z ) && sg > 0, NORM.DIST ( mu + z * sg, mu, sg, FALSE ) )
+			RETURN IF ( NOT ISBLANK ( z ) && sg > 0, NORM.S.DIST ( z, FALSE ) )
 		formatString: 0.0000
 		lineageTag: 70054382-23ab-4874-a888-b14bf61d965b
 

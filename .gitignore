@@ -77,3 +77,6 @@ first_steps_dsmarket.ipynb
 
 # CSV exportados del gold para Power BI (se regeneran, no se versionan)
 lakehouse/gold_csv/
+
+# caché del forecasting sin clusters (regenerable)
+cache_forecast_sin_clusters/

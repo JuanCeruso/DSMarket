@@ -203,7 +203,7 @@ Responde el pedido de Michelle sobre si los productos populares varían entre ti
 ### Página 4 · Estacionalidad y eventos
 - Barras: `Unidades vendidas` promedio por `dim_calendario[evento]` frente al día normal.
 - Barras: promedio por día de la semana y por mes.
-- Nota: Christmas y Thanksgiving aparecen con ventas casi nulas porque **la tienda cierra** — la columna `es_dia_cierre` los marca. Black Friday se evaluó y se descartó por no mostrar ningún patrón.
+- Nota: Christmas aparece con ventas casi nulas porque **la tienda cierra** (la columna `es_dia_cierre` lo marca). Thanksgiving **no** cierra: vende un 28 % menos que un jueves normal. Black Friday se evaluó y se descartó por no mostrar ningún patrón.
 
 ### Página 5 · Previsión de demanda *(nueva)*
 - Líneas: `Unidades vendidas` histórico y `Demanda prevista` en el horizonte, con banda hasta `Demanda prevista p90`. Es el visual que muestra que hay un modelo detrás.

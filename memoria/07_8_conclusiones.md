@@ -4,8 +4,9 @@
 
 **OE1 — Caracterizar la estructura de la demanda.** La demanda de DSMarket no es homogénea en
 ninguna de las dimensiones examinadas. Solo cinco de los quince productos más vendidos son
-comunes a las tres ciudades, y Filadelfia se aparta del resto con solo cuatro. Tres eventos del
-calendario tienen efecto medible —Labor Day, SuperBowl y Easter, entre el 15% y el 22%— y uno
+comunes a las tres ciudades, y Filadelfia se aparta del resto con solo cuatro. Un evento del
+calendario tiene un pico medible frente al mismo día de la semana —Labor Day, +28 %; SuperBowl queda en torno
+al 0 % y Easter en −12 %— y uno
 que se esperaba relevante, Black Friday, va en sentido contrario: vende un 24 % menos que un
 viernes normal. Medidos por semanas, los eventos mueven también las semanas vecinas: las dos
 semanas previas a Navidad venden un 4-5 % más. La categoría con mayor dispersión de

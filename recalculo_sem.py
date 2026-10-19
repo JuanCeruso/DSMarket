@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Recalculo por pasos de la sección de temporada alta del notebook 03 (eventos semanales y 400 días) con el grupo de producto
-actual. Cada ejecución trabaja unos 160 s y guarda el progreso en cache_forecast/rec_sem/.
-Escribe cache_forecast/semanal_{config}_{ventana}.pkl con el formato que lee forecast_semanal.entrenar().
+Recalculo por pasos de la sección de temporada alta del notebook 03 (eventos semanales y 400 días) sin la variable de grupo de producto. Cada ejecución trabaja unos 160 s y guarda el progreso en cache_forecast_sin_clusters/rec_sem/.
+Escribe cache_forecast_sin_clusters/semanal_{config}_{ventana}.pkl con el formato que lee forecast_semanal.entrenar().
 """
 import os, sys, gc, time, json, pickle
 import numpy as np, pandas as pd, lightgbm as lgb

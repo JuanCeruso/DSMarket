@@ -91,8 +91,8 @@ def silver(con):
                b.weekday_int IN (1, 2) AS es_fin_de_semana,
                year(b.fecha) AS anio, month(b.fecha) AS mes, week(b.fecha) AS semana_iso,
                -- día de cierre conocido: la tienda no abre (hallazgo de la Tarea 3)
-               (month(b.fecha) = 12 AND day(b.fecha) = 25)
-                 OR b.evento_origen = 'Thanksgiving' AS es_dia_cierre
+               -- solo Navidad cierra; Thanksgiving vende un 28 % menos que un jueves normal, pero vende
+               (month(b.fecha) = 12 AND day(b.fecha) = 25) AS es_dia_cierre
         FROM base b ORDER BY b.fecha
     """, f"{SILVER}/calendario.parquet", "calendario")
 

@@ -16,7 +16,11 @@ import pandas as pd
 import lightgbm as lgb
 
 DATA_DIR = "data_dsmarket/data_dsmarket"
-CACHE = "cache_forecast"
+# Resultados de entrenamiento del modelo (sin la variable de grupo de producto, ver notebook 03b)
+CACHE = "cache_forecast_sin_clusters"
+# Segmentaciones (clusters_*.csv, segmentacion_productos.csv): solo lectura, para describir el error por grupo
+CACHE_SEG = "cache_forecast"
+os.makedirs(CACHE, exist_ok=True)
 HORIZON, N_FOLDS, TRAIN_DAYS = 28, 3, 180
 LAGS_BASE = lambda min_lag: [min_lag, min_lag + 7, min_lag + 14, min_lag + 21, 364]
 RMEAN_WINDOWS = [7, 28, 91, 364]
@@ -31,7 +35,7 @@ BASE = (['sell_price', 'weekday', 'month', 'day_of_month', 'week_of_year', 'is_w
 CAT_BASE = ['event', 'item_id', 'store_id', 'dept_id', 'cat_id', 'region_id', 'weekday', 'month']
 CONFIGURACIONES = {
     'anterior': ['cluster_k5', 'cluster_k10', 'store_cluster'],
-    'actual': ['grupo_producto'],
+    'actual': [],            # sin grupo de producto: el experimento 03b mostró que no mejora la predicción
 }
 
 
@@ -76,9 +80,9 @@ def cargar():
         meta[nuevo] = pd.factorize(meta[col])[0].astype(np.int16)
 
     # segmentación anterior (cluster_k5, cluster_k10 y grupos de tienda) y actual (6 grupos de producto)
-    ant = pd.read_csv(f"{CACHE}/clusters_producto.csv", index_col=0)
-    tie = pd.read_csv(f"{CACHE}/clusters_tienda.csv", index_col=0)
-    act = pd.read_csv(f"{CACHE}/segmentacion_productos.csv", index_col=0)
+    ant = pd.read_csv(f"{CACHE_SEG}/clusters_producto.csv", index_col=0)
+    tie = pd.read_csv(f"{CACHE_SEG}/clusters_tienda.csv", index_col=0)
+    act = pd.read_csv(f"{CACHE_SEG}/segmentacion_productos.csv", index_col=0)
     meta['cluster_k5'] = meta['item'].map(ant['cluster_k5']).astype(np.int8)
     meta['cluster_k10'] = meta['item'].map(ant['cluster_k10']).astype(np.int8)
     meta['store_cluster'] = meta['store_code'].map(tie['cluster_k3']).astype(np.int8)
