@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Cada tienda y la tienda con el perfil de venta más parecido",
+                    "value": "Se compara la forma de vender de cada tienda (variabilidad, fin de semana, diciembre, precio y peso de cada categoría), sin tener en cuenta su tamaño",
                     "textStyle": {
                       "fontSize": "12pt",
                       "fontWeight": "normal",

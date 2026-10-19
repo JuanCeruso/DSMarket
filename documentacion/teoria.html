@@ -229,7 +229,7 @@ td.n,th.n{text-align:right;padding-right:0;font-family:"Fira Mono",monospace;
   <h3>La solución: bloques semanales</h3>
   <p>Cuatro modelos, uno por semana del horizonte. El de la primera semana puede mirar hasta hace 7 días, el de la segunda hasta hace 14, y así. Cada uno usa <strong>la información más fresca que realmente tendría disponible</strong> en el momento de predecir.</p>
   <div class="clave">
-    <p><strong>Este cambio rindió veinte veces más que elegir la librería.</strong> LightGBM pasó de un WRMSSE de 1,0628 a 1,0414 solo por reorganizar el horizonte — un 2%. La diferencia entre LightGBM y XGBoost con la misma estrategia fue de 0,001, que es ruido.</p>
+    <p><strong>Este cambio rindió unas diez veces más que elegir la librería.</strong> LightGBM pasó de un WRMSSE de 1,0626 a 1,0407 solo por reorganizar el horizonte — un 2%. La diferencia entre LightGBM y XGBoost con la misma estrategia fue de 0,002, que es ruido.</p>
     <p>Y hay un detalle que importa más de lo que parece: con la estrategia ingenua, <em>los modelos no le ganaban a una media móvil de 28 días</em>. La ventaja apareció solo al organizar bien el horizonte.</p>
   </div>
 </section>
@@ -291,8 +291,8 @@ td.n,th.n{text-align:right;padding-right:0;font-family:"Fira Mono",monospace;
     <span class="expl">W es la matriz de covarianza de los errores de predicción. Con W = I se obtiene OLS, que trata todas las series por igual. Con W diagonal se pondera por la varianza de cada una. MinT (Minimum Trace) usa la covarianza completa con encogimiento, aprovechando también las correlaciones entre errores.</span>
   </div>
   <div class="clave">
-    <p><strong>MinT ganó en los seis niveles</strong>, bajando el error medio del 15,12% al 13,71% — un 9,3% de mejora sin entrenar un solo modelo nuevo, solo combinando mejor lo que ya teníamos. Y OLS fue el peor de todos (21,04%): tratar por igual al total de la compañía y a una serie de tienda-departamento, que difieren en tres órdenes de magnitud, destruye la reconciliación.</p>
-    <p>La respuesta completa a Paul, entonces, no es «sumá» ni «modelá cada nivel», sino <strong>«no hace falta elegir»</strong>.</p>
+    <p>En un ejercicio complementario sobre los seis niveles de la jerarquía, con otra medida de error, <strong>MinT ganó en todos</strong>, bajando el error medio del 15,12% al 13,71% — un 9,3% de mejora sin entrenar un solo modelo nuevo, solo combinando mejor lo que ya teníamos. Y OLS fue el peor de todos (21,04%): tratar por igual al total de la compañía y a una serie de tienda-departamento, que difieren en tres órdenes de magnitud, destruye la reconciliación.</p>
+    <p>La respuesta completa a Paul, entonces, no es «sume» ni «modele cada nivel», sino <strong>«no hace falta elegir»</strong>.</p>
   </div>
 </section>
 
@@ -349,7 +349,7 @@ td.n,th.n{text-align:right;padding-right:0;font-family:"Fira Mono",monospace;
   </div>
 
   <h3>La prueba que lo tiró abajo</h3>
-  <p>La estimación dio −0,395 con un estadístico t de −19,3, y un patrón por arquetipo perfectamente creíble. Antes de construir nada encima, la sometimos a un <strong>placebo temporal</strong>: usar el precio de la semana <em>siguiente</em> para explicar las ventas de esta semana.</p>
+  <p>La estimación dio −0,395 con un estadístico t de −19,3, y un patrón por grupo de producto perfectamente creíble. Antes de construir nada encima, la sometimos a un <strong>placebo temporal</strong>: usar el precio de la semana <em>siguiente</em> para explicar las ventas de esta semana.</p>
   <div class="clave">
     <p><strong>El placebo dio −0,398.</strong> Idéntico. Y el futuro no puede causar el pasado. Lo que medíamos no era una respuesta al precio sino una correlación entre el nivel de precio de un período y su volumen.</p>
     <p>La causa está en los datos: cada serie tiene apenas 2,7 precios distintos en 274 semanas, y el 28% no cambia nunca. Con esa persistencia, «el precio de esta semana» y «el de la próxima» son casi la misma variable, y los efectos fijos no alcanzan a separarlas.</p>

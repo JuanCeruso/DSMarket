@@ -1,0 +1,11 @@
+# Tema de la app: la misma paleta que el dashboard de Power BI (dashboard/DSMarket_tema.json)
+[theme]
+base = "light"
+primaryColor = "#2A78D6"
+backgroundColor = "#F3F5F8"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#0A2A5C"
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false

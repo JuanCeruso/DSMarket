@@ -1,0 +1,16 @@
+{
+  "name": "dace2372e11959a60540",
+  "position": {
+    "x": 1070,
+    "y": 170,
+    "z": 3000,
+    "height": 880,
+    "width": 814,
+    "tabOrder": 3000
+  },
+  "visualGroup": {
+    "displayName": "Vista unidades",
+    "groupMode": "ScaleMode"
+  },
+  "isHidden": true
+}

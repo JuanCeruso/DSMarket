@@ -1,0 +1,22 @@
+table 'param_confianza'
+	lineageTag: d79f68f6-1575-4794-8058-a0a9dd885649
+
+	column 'Nivel de confianza'
+		dataType: double
+		formatString: 0%
+		lineageTag: 4426585e-a694-443b-a939-82084c1a5e9e
+		summarizeBy: none
+		sourceColumn: Nivel de confianza
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'param_confianza' = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromColumns({List.Transform({50..99}, each _ / 100)}, {"Nivel de confianza"}),
+				    Tipo = Table.TransformColumnTypes(Origen, {{"Nivel de confianza", type number}})
+				in
+				    Tipo
+
+	annotation PBI_ResultType = Table

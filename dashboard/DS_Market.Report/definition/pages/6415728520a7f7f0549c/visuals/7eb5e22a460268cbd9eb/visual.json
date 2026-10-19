@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Ventas por día de la semana y facturación por grupo de producto",
+                    "value": "Qué días se vende más, cuánto más en fin de semana y qué categorías y grupos de producto concentran la facturación",
                     "textStyle": {
                       "fontSize": "12pt",
                       "fontWeight": "normal",

@@ -3,11 +3,11 @@
   "name": "41a8d0b04dac1d2aac89",
   "position": {
     "x": 230,
-    "y": 369,
-    "z": 70,
-    "height": 681,
-    "width": 850,
-    "tabOrder": 70
+    "y": 294,
+    "z": 250,
+    "height": 376,
+    "width": 900,
+    "tabOrder": 250
   },
   "visual": {
     "visualType": "clusteredColumnChart",
@@ -95,6 +95,20 @@
                   "Value": "true"
                 }
               }
+            },
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "labelPrecision": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
             }
           }
         }
@@ -134,6 +148,26 @@
           },
           "selector": {
             "metadata": "_Medidas.Stock de seguridad"
+          }
+        }
+      ],
+      "valueAxis": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            }
           }
         }
       ]

@@ -30,8 +30,8 @@ de la tienda, y lo que queda no supera el nivel de ruido medido entre establecim
 (1,27% frente al 1,00% esperable por azar).
 
 **OE3 — Predecir la demanda.** El mejor resultado corresponde a LightGBM con objetivo Tweedie y
-estrategia por bloques semanales, con un WRMSSE de 1,0414. El hallazgo metodológico es que **la
-estrategia de horizonte pesó unas veinte veces más que la elección de biblioteca**: con la
+estrategia por bloques semanales, con un WRMSSE de 1,0407. El hallazgo metodológico es que **la
+estrategia de horizonte pesó unas diez veces más que la elección de biblioteca**: con la
 formulación ingenua ningún modelo supera a una media móvil. Una búsqueda de hiperparámetros
 posterior confirmó que el margen restante no estaba en la configuración del modelo —mejora
 del −0,02% en WRMSSE—, mientras que **reformular el objetivo como el total del ciclo redujo el
@@ -41,13 +41,13 @@ dirección: el rendimiento estaba en el planteamiento, no en el modelo.
 La revisión de la tutoría añadió dos cambios al modelo final. Medido **por semanas** (WAPE semanal),
 que es como se repone, el error baja del 76% al 40%, porque más de la mitad de los días no hay
 ventas. Y entrenar con **400 días de historia** en lugar de 180, con variables de evento a nivel
-semanal, mejora el WRMSSE un 5,7% en diciembre y un 3,4% en noviembre sin empeorar el resto del año
-(1,0376 de media en febrero-abril), y el modelo aprende por sí solo el cierre del 25 de diciembre.
+semanal, mejora el WRMSSE un 5,7% en diciembre y un 3,3% en noviembre sin empeorar el resto del año
+(1,0378 de media en febrero-abril), y el modelo aprende por sí solo el cierre del 25 de diciembre.
 
-**OE4 — Los agregados.** Sumar es válido y preferible a modelar cada nivel por separado, pero
-reconciliar con MinT es mejor que sumar: mejora el error en los seis niveles de la jerarquía, de
-un 15,12% a un 13,71% de error porcentual absoluto medio, y garantiza además la coherencia entre
-informes.
+**OE4 — Los agregados.** Sumar las predicciones individuales es válido y preferible a modelar
+cada nivel por separado: el enfoque ascendente gana en los cuatro niveles evaluados (error del
+5,5% en la compañía, 6,8% en ciudad, 8,0% en tienda y 9,9% en departamento) a Prophet, SARIMA y
+a la media móvil. Basta un único modelo a nivel tienda-producto.
 
 **OE5 — La política de reposición.** La política de partida pierde casi quince dólares de margen por
 cada dólar de inventario inmovilizado. La política propuesta, híbrida según la clase XYZ, eleva el
@@ -91,7 +91,7 @@ evaluada en el ratio crítico— es la aportación metodológica que el trabajo 
 transferible a otros problemas.
 
 **Tercera. Un coeficiente significativo no es una identificación creíble.** Una elasticidad de
-−0,40, con un estadístico $t$ de −19 y una descomposición por arquetipo perfectamente razonable,
+−0,40, con un estadístico $t$ de −19 y una descomposición por grupo de producto perfectamente razonable,
 quedó desmontada por una prueba placebo que cuesta cinco líneas de código. Sin esa prueba, la
 memoria habría construido una recomendación de precios sobre una correlación espuria.
 
@@ -186,5 +186,5 @@ intervalo ya estaba bien calibrado, aportando garantía formal pero no rendimien
 de afinidad entre productos** se ejecutó y no encontró señal por encima del ruido. Y quedan
 descartadas sin ejecutar, por diagnóstico previo, las **arquitecturas neuronales genéricas**,
 superadas por los ensambles de árboles en problemas de esta estructura, y un **modelo de mayor
-capacidad**, dado que la media móvil de 28 días concentra el 71,7% de la importancia y el techo
+capacidad**, dado que la media móvil de 28 días concentra el 56,6% de la importancia y el techo
 lo pone el ruido de la serie.

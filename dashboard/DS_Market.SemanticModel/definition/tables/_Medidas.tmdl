@@ -13,7 +13,11 @@ table _Medidas
 		formatString: \$#,0.00
 		lineageTag: 02b5f0cb-c4e3-4e92-b0a2-fc308d7e0a89
 
-	measure 'Unidades año anterior' = CALCULATE([Unidades vendidas], SAMEPERIODLASTYEAR(dim_calendario[fecha]))
+	measure 'Unidades año anterior' =
+			// Mismas fechas un año antes, aunque haya filtros por año en la página
+			VAR f = SELECTCOLUMNS ( VALUES ( dim_calendario[fecha] ), "f", EDATE ( dim_calendario[fecha], -12 ) )
+			RETURN
+			    CALCULATE ( [Unidades vendidas], REMOVEFILTERS ( dim_calendario ), TREATAS ( f, dim_calendario[fecha] ) )
 		formatString: #,0
 		lineageTag: 71eda80b-9d0a-4821-8985-ef7570ee658b
 
@@ -179,6 +183,151 @@ table _Medidas
 			DIVIDE ( [Stock de seguridad (revisión)], [Demanda esperada (revisión)] )
 		formatString: 0.0%
 		lineageTag: 8cb6cff0-abf8-4945-9436-d9ca3f2bd59e
+
+	measure 'Nivel de confianza elegido' = SELECTEDVALUE ( param_confianza[Nivel de confianza], 0.9 )
+		formatString: 0%
+		lineageTag: 975733b2-63bd-4af3-85fb-f9be8291c35c
+
+	measure 'Campana: demanda esperada' =
+			// Última revisión completa; suma de las series filtradas
+			CALCULATE ( [Demanda esperada], fact_reposicion[fecha_revision] = [Revisión de referencia] )
+		formatString: #,0
+		lineageTag: 781fdf96-60da-459e-8c73-fe616442d8f4
+
+	measure 'Campana: desviación típica' =
+			// σ equivalente de cada serie = stock de seguridad / z del nivel de servicio aplicado.
+			// El colchón se fija serie a serie, así que el total es la suma de las σ (no se compensan entre series).
+			// Con un solo producto-tienda seleccionado es exactamente la σ de esa serie.
+			VAR ref = [Revisión de referencia]
+			RETURN
+			    SUMX (
+			        FILTER ( fact_reposicion, fact_reposicion[fecha_revision] = ref && fact_reposicion[nivel_servicio] > 0.5 ),
+			        DIVIDE ( fact_reposicion[stock_seguridad], NORM.S.INV ( fact_reposicion[nivel_servicio] ) )
+			    )
+		formatString: #,0.0
+		lineageTag: cd7d4f97-300f-41e4-847d-43e441e1ed05
+
+	measure 'Campana: densidad' =
+			VAR z = SELECTEDVALUE ( eje_campana[z] )
+			VAR mu = [Campana: demanda esperada]
+			VAR sg = [Campana: desviación típica]
+			RETURN IF ( NOT ISBLANK ( z ) && sg > 0, NORM.DIST ( mu + z * sg, mu, sg, FALSE ) )
+		formatString: 0.0000
+		lineageTag: 70054382-23ab-4874-a888-b14bf61d965b
+
+	measure 'Campana: zona cubierta' =
+			// Parte de la campana que queda cubierta con el nivel de confianza elegido
+			VAR z = SELECTEDVALUE ( eje_campana[z] )
+			RETURN IF ( z <= NORM.S.INV ( [Nivel de confianza elegido] ), [Campana: densidad] )
+		formatString: 0.0000
+		lineageTag: f0b809dd-c7c9-421f-9a0e-93679bb72fa1
+
+	measure 'Campana: nivel objetivo' =
+			[Campana: demanda esperada] + NORM.S.INV ( [Nivel de confianza elegido] ) * [Campana: desviación típica]
+		formatString: #,0
+		lineageTag: 8105e5f0-29f9-451b-90e1-fe2a895ef0cf
+
+	measure 'Campana: stock de seguridad' =
+			[Campana: nivel objetivo] - [Campana: demanda esperada]
+		formatString: #,0
+		lineageTag: 0c3af6dc-58e5-4444-af8b-5f28f25b9630
+
+	measure 'Campana: riesgo de rotura' =
+			1 - [Nivel de confianza elegido]
+		formatString: 0%
+		lineageTag: dc2b7456-c9a4-4179-b751-187d16038009
+
+	measure 'Facturación año anterior' =
+			VAR f = SELECTCOLUMNS ( VALUES ( dim_calendario[fecha] ), "f", EDATE ( dim_calendario[fecha], -12 ) )
+			RETURN
+			    CALCULATE ( [Facturación], REMOVEFILTERS ( dim_calendario ), TREATAS ( f, dim_calendario[fecha] ) )
+		formatString: \$#,0
+		lineageTag: 62635a96-591a-4d8c-8edf-3fe54c2a7182
+
+	measure 'Variación facturación %' =
+			DIVIDE ( [Facturación] - [Facturación año anterior], [Facturación año anterior] )
+		formatString: +0.0%;-0.0%;0.0%
+		lineageTag: cdcf6622-cab2-449b-8bc0-b3848f3b7780
+
+	measure 'Unidades por día (fin de semana)' =
+			CALCULATE ( [Unidades por día], dim_calendario[es_fin_de_semana] = TRUE () )
+		formatString: #,0
+		lineageTag: 8da683e1-40f9-4edb-a9dc-6d795b2230a8
+
+	measure 'Unidades por día (entre semana)' =
+			CALCULATE ( [Unidades por día], dim_calendario[es_fin_de_semana] = FALSE () )
+		formatString: #,0
+		lineageTag: a5c485a3-b4dd-4cf4-b1cf-772be1b2834f
+
+	measure 'Categoría líder en facturación' =
+			VAR t = TOPN ( 1, ALL ( dim_categoria[categoria] ), [Facturación], DESC )
+			VAR c = MAXX ( t, dim_categoria[categoria] )
+			VAR v = MAXX ( t, [Facturación] )
+			RETURN c & " · " & FORMAT ( v, "$#,0" )
+		lineageTag: f48842a1-c2dd-4e7c-86a9-5a79d5fe829c
+
+	measure 'Promedio diario de unidades' =
+			CALCULATE ( [Unidades por día], REMOVEFILTERS ( dim_calendario[dia_corto] ), REMOVEFILTERS ( dim_calendario[orden_dia] ), REMOVEFILTERS ( dim_calendario[dia_semana] ) )
+		formatString: #,0
+		lineageTag: 8c7b0042-15a6-4fd8-aae1-84ba1c30090d
+
+	measure 'Día por encima del promedio' =
+			IF ( [Unidades por día] > [Promedio diario de unidades], [Unidades por día] )
+		formatString: #,0
+		lineageTag: 52be8dea-1499-4759-a58d-d78fa0fec974
+
+	measure 'Día en el promedio o por debajo' =
+			IF ( [Unidades por día] <= [Promedio diario de unidades], [Unidades por día] )
+		formatString: #,0
+		lineageTag: a7de509e-4d55-429c-ad00-c5446b0bd21a
+
+	measure 'Perfil de la tienda (z)' =
+			AVERAGE ( mart_tienda_perfil[z] )
+		formatString: 0.0
+		lineageTag: 18031fe5-5d82-4c4d-901e-4ebd444cd9a7
+
+	measure 'Color del perfil' =
+			VAR z = [Perfil de la tienda (z)]
+			RETURN
+			    SWITCH ( TRUE (), ISBLANK ( z ), BLANK (), z >= 1.5, "#6FA3E6", z >= 0.5, "#B9CDEA", z > -0.5, "#F3F5F8", z > -1.5, "#F6D98B", "#EDA100" )
+		lineageTag: 53cfe062-c69a-4505-b1ba-a64c6bdac52f
+
+	measure 'Distancia entre tiendas' =
+			MIN ( mart_tienda_distancia[distancia] )
+		formatString: 0.0
+		lineageTag: 16402c85-7084-453c-9a89-271f590d0d0d
+
+	measure 'Color de la distancia' =
+			VAR d = [Distancia entre tiendas]
+			RETURN
+			    SWITCH ( TRUE (), ISBLANK ( d ), BLANK (), d = 0, "#DDE3EC", d < 1.5, "#6FA3E6", d < 2.5, "#B9CDEA", d < 3.5, "#E3ECF8", "#FFFFFF" )
+		lineageTag: bbb74a4f-edc3-4788-958c-e8d510596cf8
+
+	measure 'Distancia a la más parecida' =
+			CALCULATE ( MIN ( mart_tienda_distancia[distancia] ), mart_tienda_distancia[orden_parecido] = 1 )
+		formatString: 0.0
+		lineageTag: 1786604f-02ec-4d92-85d9-dc56912e0abf
+
+	measure 'Nivel objetivo (revisión)' =
+			VAR f = [Revisión de referencia]
+			RETURN
+			    CALCULATE ( [Nivel objetivo], fact_reposicion[fecha_revision] = f )
+		formatString: #,0
+		lineageTag: 0321eda3-f6cd-4740-ba35-6a6b10fec36c
+
+	measure 'Series en la revisión' =
+			VAR f = [Revisión de referencia]
+			RETURN
+			    CALCULATE ( DISTINCTCOUNT ( fact_reposicion[serie_id] ), fact_reposicion[fecha_revision] = f )
+		formatString: #,0
+		lineageTag: f6f05329-4434-4e9f-b8c7-b265864452e5
+
+	measure 'Nivel de servicio (revisión)' =
+			VAR f = [Revisión de referencia]
+			RETURN
+			    CALCULATE ( AVERAGE ( fact_reposicion[nivel_servicio] ), fact_reposicion[fecha_revision] = f )
+		formatString: 0%
+		lineageTag: 9d359f74-4038-462f-ae16-c48fd471f486
 
 	partition _Medidas = m
 		mode: import

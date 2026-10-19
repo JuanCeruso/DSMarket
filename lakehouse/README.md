@@ -63,7 +63,13 @@ todos de la misma fuente en vez de ficheros sueltos.
 python3 scripts/pipeline.py all           # bronze + silver + gold
 python3 scripts/carga_predicciones.py     # carga las salidas de los modelos a gold
 python3 scripts/carga_clusters.py         # análisis de grupos de producto (Tarea 2): fichas, índices y mejores días
+python3 scripts/carga_precios.py          # marts de precios (página «Precios» del panel)
+python3 scripts/carga_similitud.py        # perfil y distancia entre tiendas (página «Similitud de tiendas»)
+python3 scripts/exportar_powerbi.py       # gold -> gold_csv, los CSV que importa Power BI
 ```
+
+El orden importa: `exportar_powerbi.py` va siempre el último, porque es el único camino de `gold/` a
+`gold_csv/`. Si se ejecuta antes que una carga, el panel se alimenta de una copia vieja del almacén.
 
 ```python
 from scripts.pipeline import conectar
@@ -95,7 +101,29 @@ GROUP BY 1,2 ORDER BY 1, 3 DESC;
 
 ## Conexión desde PowerBI
 
-PowerBI lee Parquet de forma nativa: *Obtener datos → Carpeta* apuntando a `gold/`, o
-*Parquet* fichero a fichero. Se recomienda cargar los `mart_*` y las `dim_*` (livianos) y
-dejar `fact_ventas` en DirectQuery o pre-agregado, porque 58 millones de filas no hacen
-falta para la capa ejecutiva.
+El panel (`dashboard/`) importa los **CSV de `gold_csv/`** mediante el parámetro `RutaGold`; no lee
+Parquet. Los CSV se generan siempre con `scripts/exportar_powerbi.py`. `fact_ventas` (58 millones de
+filas) no se exporta: el panel solo necesita los `mart_*` y las `dim_*`. `fact_predicciones` se parte
+en cuatro ficheros, uno por semana, por el límite de tamaño de Power BI.
+
+Si se prefiere leer Parquet de forma nativa, *Obtener datos → Parquet* sobre `gold/` también funciona,
+con los mismos nombres de tabla.
+
+## Controles de calidad que pasa el almacén
+
+| Control | Resultado |
+|---|---|
+| Ventas con unidades > 0 y sin precio | 0 |
+| Claves duplicadas en `dim_serie`, `dim_producto`, `fact_predicciones` | 0 |
+| Series de `fact_ventas` sin fila en `dim_serie` o `dim_producto` | 0 |
+| Predicciones con p90 menor que la media | 0 |
+| Fechas de predicción ausentes en `dim_calendario` | 0 |
+| `mart_ventas_dia` frente a `fact_ventas` (unidades) | coinciden |
+
+Dos puntos que conviene conocer:
+
+- **`dim_serie` calcula ABC/XYZ con los últimos 90 días de datos** (hasta el 24 de abril de 2016), que es
+  lo que necesita la reposición en producción. El notebook 04 clasifica con los 90 días anteriores a la
+  ventana que simula (hasta el 27 de marzo), por eso sus recuentos difieren algo (AX: 5.494 frente a 5.634).
+- **El 20 % de los días de `fact_ventas` no tiene precio**: son los días anteriores a que el producto
+  empiece a venderse en esa tienda. Ninguno tiene ventas.

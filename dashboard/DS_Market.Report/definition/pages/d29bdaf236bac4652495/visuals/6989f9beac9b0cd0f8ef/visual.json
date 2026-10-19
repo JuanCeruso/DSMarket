@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "6989f9beac9b0cd0f8ef",
+  "position": {
+    "x": 230,
+    "y": 1000,
+    "z": 190,
+    "height": 50,
+    "width": 1660,
+    "tabOrder": 190
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Eje horizontal en desviaciones típicas respecto a la demanda esperada (0 = demanda esperada). Cuanto mayor el nivel de confianza, más a la derecha el nivel objetivo y mayor el stock de seguridad. Aproximación normal; con varias series la σ es la suma de las σ de cada serie (el colchón se fija serie a serie). Seleccione un producto y una tienda para ver la campana de una serie.",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "fontWeight": "normal",
+                      "color": "#0A2A5C",
+                      "fontFamily": "Segoe UI"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "Left"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

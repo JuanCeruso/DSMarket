@@ -5,8 +5,8 @@ ejecutados**: la máquina donde se escribieron tiene 3,8 GB de RAM y estos scrip
 En tu Mac, con 24 GB, corren sin problema.
 
 Todos leen del lakehouse (`lakehouse/gold/`), no de ficheros temporales, así que siguen
-funcionando aunque se borre cualquier caché. Colocá esta carpeta como `PROYECTO/avanzado/` y
-ejecutá desde `PROYECTO/`.
+funcionando aunque se borre cualquier caché. Esta carpeta va en `PROYECTO/avanzado/` y
+se ejecuta desde `PROYECTO/`.
 
 ---
 
@@ -236,7 +236,7 @@ y 90 minutos; con las 30.490 haría falta una GPU dedicada.
 
 **Expectativa honesta:** en la competición M5 —que tiene exactamente esta estructura de
 datos— ganaron los ensambles de árboles, no las redes. Lo más probable es que LightGBM gane
-también acá, y eso está bien: poder escribir «probamos las arquitecturas de referencia y
+también aquí, y eso está bien: poder escribir «probamos las arquitecturas de referencia y
 confirmamos el hallazgo de la literatura con nuestros propios datos» es más sólido que no
 haberlo probado.
 

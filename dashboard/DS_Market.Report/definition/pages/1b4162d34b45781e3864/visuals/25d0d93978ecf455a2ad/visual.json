@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "25d0d93978ecf455a2ad",
   "position": {
-    "x": 236.1,
-    "y": 541.4,
-    "z": 4000,
-    "height": 508.7,
-    "width": 816.2,
-    "tabOrder": 4000
+    "x": 230,
+    "y": 294,
+    "z": 210,
+    "height": 756,
+    "width": 1070,
+    "tabOrder": 210
   },
   "visual": {
     "visualType": "lineChart",
@@ -88,6 +88,28 @@
         "isDefaultSort": true
       }
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Unidades vendidas por día y ciudad (2016)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   }
 }

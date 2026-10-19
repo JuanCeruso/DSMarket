@@ -254,11 +254,11 @@ code{font-family:"JetBrains Mono",monospace;font-size:.87em;background:var(--sup
     <div class="cap-cuerpo">
       <p class="pregunta-guia">«¿Sigue siendo válido sumar las predicciones para obtener los agregados?» — Paul Rogers, CFO</p>
       <p>El capítulo más técnico y el que más honestidad exige. Se comparan baselines, LightGBM, XGBoost, Prophet y SARIMA con validación <em>walk-forward</em>. La conclusión incómoda que hay que contar: <strong>con la estrategia ingenua los modelos no le ganan a una media móvil</strong>, y solo la organización por bloques semanales abre una ventaja real.</p>
-      <p>La respuesta a Paul se da en dos niveles: sumar es mejor que modelar cada nivel por separado, y <strong>reconciliar con MinT es mejor que sumar</strong> — y además garantiza que todos los informes cierren entre sí.</p>
+      <p>La respuesta a Paul se da en dos niveles: sumar es mejor que modelar cada nivel por separado (Prophet, SARIMA): <strong>el ascendente gana en los cuatro niveles evaluados</strong>, y basta un único modelo tienda-producto.</p>
       <div class="cifras">
-        <span class="cifra">WRMSSE <b>1,0414</b></span>
-        <span class="cifra"><code>rmean_28</code> explica el <b>71,7%</b></span>
-        <span class="cifra">MinT mejora <b>9,3%</b> sobre bottom-up</span>
+        <span class="cifra">WRMSSE <b>1,0407</b></span>
+        <span class="cifra"><code>rmean_28</code> explica el <b>56,6%</b></span>
+        <span class="cifra">error del total <b>5,5%</b> · departamento <b>9,9%</b></span>
         <span class="cifra">cobertura p90 real <b>90,0%</b></span>
       </div>
     </div>

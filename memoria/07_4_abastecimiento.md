@@ -48,8 +48,8 @@ realmente se observó. El primer resultado describe el punto de partida:
 
 | Componente del coste | Importe (28 días) |
 |---|---|
-| Margen perdido por rotura | **164.496 USD** |
-| Coste de mantenimiento de inventario | **11.158 USD** |
+| Margen perdido por rotura | **164.543 USD** |
+| Coste de mantenimiento de inventario | **11.156 USD** |
 
 La proporción es lo relevante: **casi quince dólares de venta perdida por cada dólar de inventario
 inmovilizado**. La política de partida no es cara porque acumule existencias; es cara porque
@@ -60,8 +60,8 @@ optimización posterior en una única dirección: subir el nivel de servicio.
 > `Fuente: Cuaderno 04. La desproporción entre margen perdido y mantenimiento es el mensaje.`
 
 Aplicando la política híbrida con un objetivo del 90%, el nivel de servicio pasa del **86,6% al
-96,2%** y el coste total desciende un **62,5%**, de 175.654 a 65.852 dólares. La híbrida mejora
-también a las dos alternativas puras —solo histórico (70.414 USD) y solo modelo (67.587 USD)— con
+96,2%** y el coste total desciende un **62,5%**, de 175.699 a 65.856 dólares. La híbrida mejora
+también a las dos alternativas puras —solo histórico (70.414 USD) y solo modelo (67.595 USD)— con
 cualquier objetivo entre el 85% y el 98%.
 
 Las predicciones que alimentan la simulación son las del modelo final de §7.3 (400 días de
@@ -191,7 +191,7 @@ Mientras tanto, la política propuesta fija el nivel por categoría con la propi
 para ACCESORIES y HOME_&_GARDEN**, cuyo sobrante se vende la semana siguiente (óptimo con una
 merma en torno al 5%). Son valores provisionales: el código los lee de una única tabla, de modo
 que medir la merma real basta para ajustarlos. Con la política híbrida, un objetivo del 95% da un
-servicio real del 97,3% y un coste de 55.699 dólares en las cuatro semanas.
+servicio real del 97,3% y un coste de 55.701 dólares en las cuatro semanas.
 
 > **[FIGURA 7.18]** *Coste total por nivel de servicio objetivo y supuesto de merma.*
 > `Fuente: Cuaderno 04. Barras apiladas por componente, con el óptimo marcado en cada escenario.`
@@ -248,9 +248,9 @@ no cambia, de modo que:
 
 | | Margen perdido | Mantenimiento | Proporción |
 |---|---|---|---|
-| Medido en la simulación | 164.496 USD | 11.158 USD | 15 : 1 |
-| Con la cota inferior de censura | 186.821 USD | 11.158 USD | **17 : 1** |
-| Con la cota superior de censura | 338.520 USD | 11.158 USD | **30 : 1** |
+| Medido en la simulación | 164.543 USD | 11.156 USD | 15 : 1 |
+| Con la cota inferior de censura | 186.821 USD | 11.156 USD | **17 : 1** |
+| Con la cota superior de censura | 338.520 USD | 11.156 USD | **30 : 1** |
 
 La proporción de quince a uno entre venta perdida y capital inmovilizado es, por tanto, un
 mínimo, y en el peor escenario la asimetría se duplica. El diagnóstico del capítulo —que la

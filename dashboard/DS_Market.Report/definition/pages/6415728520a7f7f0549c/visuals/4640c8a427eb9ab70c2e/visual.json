@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "4640c8a427eb9ab70c2e",
+  "position": {
+    "x": 1072,
+    "y": 124,
+    "z": 230,
+    "height": 150,
+    "width": 396,
+    "tabOrder": 230
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Incremento fin de semana %"
+                }
+              },
+              "queryRef": "_Medidas.Incremento fin de semana %",
+              "nativeQueryRef": "Incremento fin de semana %"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'El fin de semana se vende más en'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -77,3 +77,12 @@ relationship 4e09e1ac-201a-4128-9da3-ad4c5824c6a1
 relationship 2ad5d78d-c847-4e28-b0ea-2803e20018cd
 	fromColumn: mart_producto_top_dias.item
 	toColumn: dim_producto.item
+
+relationship 88f3ad73-9ec0-4339-bf75-61a13677e312
+	fromColumn: mart_tienda_perfil.store_code
+	toColumn: dim_tienda.store_code
+
+
+relationship d5c275d3-a53d-45ac-ba9f-7269503fbe7c
+	fromColumn: mart_tienda_distancia.store_code
+	toColumn: dim_tienda.store_code

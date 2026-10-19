@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "3924b5f530226b9960ab",
+  "position": {
+    "x": 1070,
+    "y": 224,
+    "z": 160,
+    "height": 150,
+    "width": 400,
+    "tabOrder": 160
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Campana: stock de seguridad"
+                }
+              },
+              "queryRef": "_Medidas.Campana: stock de seguridad",
+              "nativeQueryRef": "Campana: stock de seguridad"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Stock de seguridad'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

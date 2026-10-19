@@ -7,9 +7,9 @@ incluirse.
 ## Anexo A. Cuadernos de análisis
 
 Cinco cuadernos Jupyter, uno por etapa. Los cuadernos son la fuente: se editan y se ejecutan de principio a fin
-directamente como cuadernos. El 03 conserva las salidas de su primera versión, cuyos ficheros intermedios no se
-pueden regenerar desde el repositorio; sus secciones 15 y 16, añadidas en la revisión, se apoyan en
-`forecast_segmentacion.py`, `forecast_semanal.py` y `modelo_final.py`.
+directamente como cuadernos. El 03 se apoya en los entrenamientos auxiliares `forecast_segmentacion.py`, `forecast_semanal.py`,
+`experimentos_t3.py`, `exp_precios_paso.py` y `modelo_final.py`, que guardan sus resultados en
+`cache_forecast/` (no versionada, regenerable).
 
 | Cuaderno | Contenido | Sección |
 |---|---|---|

@@ -2,13 +2,15 @@
 """Acceso a datos de la app. Única puerta al lakehouse: la app no toca Parquet directamente."""
 import os
 import numpy as np, pandas as pd, duckdb
-from scipy.stats import norm
+import sys
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GOLD = os.path.join(RAIZ, "lakehouse", "gold")
 
-# nivel de servicio por categoría (Tarea 4): fresco al 90%, no perecedero al 95%
-NIVEL_POR_CATEGORIA = {"SUPERMARKET": .90, "ACCESORIES": .95, "HOME_&_GARDEN": .95}
+# La política vive en operacion/politica.py (una sola copia, compartida con la API y el almacén)
+sys.path.insert(0, os.path.join(RAIZ, "operacion"))
+import politica as pol
+from historia import historia_reciente
 PALETA = {"navy": "#0a2a5c", "azul": "#2a78d6", "dorado": "#eda100",
           "verde": "#6a9f1f", "gris": "#8a8a8a"}
 
@@ -38,23 +40,30 @@ def historico(tienda: str, item: str, dias: int = 120) -> pd.DataFrame:
     con.close()
     return df.sort_values("fecha")
 
+_HIST = {}
+
+def _historia():
+    """Matriz de ventas recientes de todas las series (se lee una vez por proceso)."""
+    if not _HIST:
+        _HIST["datos"] = historia_reciente(GOLD, pol.VENTANA_HISTORIA)
+    return _HIST["datos"]
+
 def sugerir(pred_serie: pd.DataFrame, serie: pd.Series, stock: float, en_transito: float,
             dias_revision: int, lead_time: int, nivel_servicio: float | None):
-    """Misma política que la API: híbrida por segmento, nivel objetivo = demanda + stock de seguridad."""
+    """Misma política que la API y el almacén (operacion/politica.py): híbrida por segmento."""
     cobertura = dias_revision + lead_time
+    item, tienda = str(pred_serie["item"].iloc[0]), str(pred_serie["store_code"].iloc[0])
+    servicio = nivel_servicio if nivel_servicio is not None else pol.nivel_servicio(item)
     bloque = pred_serie.head(cobertura)
-    servicio = nivel_servicio if nivel_servicio is not None else (
-        NIVEL_POR_CATEGORIA["SUPERMARKET"] if str(serie["item"] if "item" in serie.index else serie.name).startswith("SUPERMARKET") else .95)
-    z = norm.ppf(servicio)
-    media = float(bloque["prediccion_media"].sum())
-    sigma_dia = (bloque["prediccion_p90"] - bloque["prediccion_media"]).clip(lower=0) / norm.ppf(0.90)
-    if serie["clase_xyz"] == "X":
-        metodo = "percentil empírico (histórico)"
-        nivel = serie["media_dia"] * cobertura + z * serie["desvio_dia"] * np.sqrt(cobertura)
-    else:
-        metodo = "modelo cuantílico"
-        nivel = media + z * float(np.sqrt((sigma_dia ** 2).sum()))
-    nivel = max(float(nivel), 0.0)
+    media_dia = pol.completar_ventana(bloque["prediccion_media"].to_numpy(), cobertura)
+    p90_dia = pol.completar_ventana(bloque["prediccion_p90"].to_numpy(), cobertura)
+    media = float(media_dia.sum())
+    sigma = float(np.sqrt((pol.sigma_desde_cuantil(p90_dia, media_dia) ** 2).sum()))
+    es_x = serie["clase_xyz"] == "X"
+    fila_de, hist = _historia()
+    empirico = float(pol.percentil_empirico(hist[fila_de[f"{item}|{tienda}"]], cobertura, servicio)[0])
+    metodo = "percentil empírico (histórico)" if es_x else "modelo cuantílico"
+    nivel = max(float(pol.nivel_hibrido(media, sigma, servicio, es_x, empirico)), 0.0)
     posicion = stock + en_transito
     return {"demanda_esperada": media, "nivel_objetivo": nivel,
             "stock_seguridad": max(nivel - media, 0.0), "posicion": posicion,

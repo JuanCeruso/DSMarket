@@ -69,20 +69,19 @@ El bloque más largo y el que decide la nota. Tiene tres momentos.
 > existe.»
 
 Y entonces la solución: cuatro modelos, uno por semana del horizonte, cada uno con el retardo
-mínimo que le corresponde. WRMSSE 1,0414. **La frase que hay que decir:** la estrategia de
-horizonte pesó unas veinte veces más que la elección de biblioteca.
+mínimo que le corresponde. WRMSSE 1,0407. **La frase que hay que decir:** la estrategia de
+horizonte pesó unas diez veces más que la elección de biblioteca.
 
 Después, lo que pidió la tutoría, en una frase cada cosa: medido **por semanas** (WAPE semanal) el
 error baja del 76 % al 40 %, porque más de la mitad de los días no se vende nada; y el modelo final
 aprende con **400 días** de historia en lugar de 180, de modo que ya ha visto una Navidad: mejora
-un 5,7 % en diciembre y un 3,4 % en noviembre, y aprende solo que el 25 de diciembre la tienda
+un 5,7 % en diciembre y un 3,3 % en noviembre, y aprende solo que el 25 de diciembre la tienda
 cierra. Mostrar el gráfico del producto de ejemplo: por semanas, vendió 51, 53, 57 y 41 y el modelo
-dijo 52, 57, 50 y 44.
+dijo 49, 54, 52 y 45.
 
-**Momento 2 — la respuesta al director financiero.** Sumar es válido. Reconciliar con MinT es
-mejor: mejora en los seis niveles, del 15,12% al 13,71%. Y añade algo que importa más que el
-punto de error — la coherencia garantizada: el informe de dirección no puede contradecir al de
-operaciones.
+**Momento 2 — la respuesta al director financiero.** Sumar es válido: el ascendente gana a Prophet y
+SARIMA en los cuatro niveles, del 5,5 % de error en la compañía al 9,9 % en departamento. Un solo
+modelo a nivel tienda-producto basta, y todos los informes salen de sumarlo.
 
 **Momento 3 — la refutación.** Es el minuto más valioso de toda la defensa. Decirlo despacio:
 
@@ -105,7 +104,7 @@ Treinta segundos para el precio: elasticidad de −0,395 con t de −19, placebo
 semana siguiente −0,398, efecto desaparecido. «Con estos datos no se puede responder; con
 cuatrocientas cincuenta y una series por brazo durante ocho semanas, sí.»
 
-- 6 diapositivas: la estrategia de horizonte · comparación de modelos · MinT por nivel · el
+- 6 diapositivas: la estrategia de horizonte · comparación de modelos · ascendente frente a directo por nivel · el
   cambio de signo por segmento · la curva de servicio · el placebo.
 
 ### 14:00 — 18:00 · Persona B · Cómo se sostiene, y el cierre

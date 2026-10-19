@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "6605976d250e7e2ff66e",
   "position": {
-    "x": 1337,
-    "y": 135,
-    "z": 40,
-    "height": 870,
-    "width": 553,
-    "tabOrder": 40
+    "x": 1180,
+    "y": 614,
+    "z": 240,
+    "height": 436,
+    "width": 710,
+    "tabOrder": 240
   },
   "visual": {
     "visualType": "barChart",
@@ -118,7 +118,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Unidades vendidas por tienda'"
+                  "Value": "'Tamaño de cada tienda (unidades vendidas; no interviene en el parecido)'"
                 }
               }
             }

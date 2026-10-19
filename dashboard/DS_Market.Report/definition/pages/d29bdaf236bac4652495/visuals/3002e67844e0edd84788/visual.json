@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "3002e67844e0edd84788",
+  "position": {
+    "x": 1490,
+    "y": 224,
+    "z": 170,
+    "height": 150,
+    "width": 400,
+    "tabOrder": 170
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Campana: riesgo de rotura"
+                }
+              },
+              "queryRef": "_Medidas.Campana: riesgo de rotura",
+              "nativeQueryRef": "Campana: riesgo de rotura"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Riesgo de rotura'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

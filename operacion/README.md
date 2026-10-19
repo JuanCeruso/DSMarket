@@ -1,7 +1,7 @@
 # Capa de operación
 
-Lo que convierte cuatro cuadernos en un sistema. Colocá esta carpeta como `PROYECTO/operacion/`
-y ejecutá desde `PROYECTO/`.
+Lo que convierte cinco cuadernos en un sistema. Esta carpeta va en `PROYECTO/operacion/`
+y se ejecuta desde `PROYECTO/`.
 
 ```bash
 python3 operacion/orquestador.py              # todo, de principio a fin

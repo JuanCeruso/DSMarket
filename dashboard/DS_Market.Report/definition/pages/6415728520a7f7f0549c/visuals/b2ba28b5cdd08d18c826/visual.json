@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "b2ba28b5cdd08d18c826",
   "position": {
-    "x": 1119,
-    "y": 135,
-    "z": 70,
-    "height": 915,
-    "width": 771,
-    "tabOrder": 70
+    "x": 1230,
+    "y": 294,
+    "z": 260,
+    "height": 756,
+    "width": 660,
+    "tabOrder": 260
   },
   "visual": {
     "visualType": "clusteredBarChart",

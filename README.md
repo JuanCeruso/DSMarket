@@ -16,7 +16,7 @@ bruto hasta la cantidad que debe pedirse de cada producto en cada tienda.
 | Carpeta | Contenido |
 |---|---|
 | `*.ipynb` | Los cinco cuadernos de análisis, uno por etapa |
-| `forecast_segmentacion.py`, `forecast_semanal.py`, `modelo_final.py` | Reentrenamientos de la revisión del forecasting (secciones 15 y 16 del cuaderno 03) y el modelo final: 400 días de historia y eventos semanales |
+| `forecast_segmentacion.py`, `forecast_semanal.py`, `modelo_final.py` | Entrenamientos auxiliares del cuaderno 03 (secciones 6, 9 y 11) y el modelo final (sección 12): 400 días de historia y eventos semanales |
 | `predicciones_28dias*.csv` | La entrega: predicción media y percentil 90 de los 28 días siguientes, con el modelo final |
 | `lakehouse/scripts/` | Construcción del almacén analítico en tres capas |
 | `operacion/` | La capa que hace que esto sea un sistema y no un conjunto de cuadernos |
@@ -96,11 +96,11 @@ reglas.
 
 - La demanda no es homogénea: **solo 5 de los 15 productos más vendidos** son comunes a las tres
   ciudades, y el parecido entre tiendas no respeta las fronteras de ciudad.
-- **La estrategia de horizonte pesó veinte veces más que la elección de biblioteca.** Con la
+- **La estrategia de horizonte pesó unas diez veces más que la elección de biblioteca.** Con la
   formulación ingenua ningún modelo supera a una media móvil.
 - Reformular el objetivo como el total del ciclo reduce el error un **15,7%** y elimina un sesgo
   del −7,4%.
-- La reconciliación jerárquica con MinT mejora el error en los seis niveles de agregación.
+- Sumar las predicciones individuales es válido: el enfoque ascendente gana en los cuatro niveles de agregación a Prophet y SARIMA.
 - La política de reposición eleva el nivel de servicio del **86,6% al 96,2%** con un 62,5% menos de
   coste; el óptimo lo decide la merma, no el margen.
 - La elasticidad precio **no es identificable** con estos datos, y se demuestra con una prueba de
@@ -115,9 +115,9 @@ era obligatoria.
 
 ## Reproducibilidad
 
-Los cuadernos son la fuente: se editan y se ejecutan directamente como cuadernos Jupyter. El 03 conserva las
-salidas originales (reejecutarlo entero lleva varias horas) y sus secciones 15 y 16 se apoyan en
-`forecast_segmentacion.py`, `forecast_semanal.py` y `modelo_final.py`. Las semillas aleatorias están fijadas. El almacén se reconstruye
+Los cuadernos son la fuente: se editan y se ejecutan directamente como cuadernos Jupyter. El 03 lee los
+resultados de los entrenamientos auxiliares guardados en `cache_forecast/` (reentrenar todo lleva varias horas) que generan
+`forecast_segmentacion.py`, `forecast_semanal.py`, `experimentos_t3.py`, `exp_precios_paso.py` y `modelo_final.py`. Las semillas aleatorias están fijadas. El almacén se reconstruye
 íntegro desde los ficheros de origen con un solo comando, y trece contratos de datos detienen el
 proceso si algo no cuadra.
 

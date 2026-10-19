@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "5b4647def228d60aa976",
+  "position": {
+    "x": 651,
+    "y": 124,
+    "z": 220,
+    "height": 150,
+    "width": 396,
+    "tabOrder": 220
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Unidades por día (entre semana)"
+                }
+              },
+              "queryRef": "_Medidas.Unidades por día (entre semana)",
+              "nativeQueryRef": "Unidades por día (entre semana)"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Unidades por día entre semana'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

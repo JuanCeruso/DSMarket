@@ -101,3 +101,51 @@ def pinball(y: np.ndarray, pred: np.ndarray, tau: float) -> np.ndarray:
     y, pred = np.asarray(y, float), np.asarray(pred, float)
     d = y - pred
     return np.maximum(tau * d, (tau - 1) * d)
+
+
+# --------------------------------------------------------------------------- política híbrida
+VENTANA_HISTORIA = 180       # días de historia que se usan para el percentil empírico
+
+
+def completar_ventana(valores: np.ndarray, cobertura: int) -> np.ndarray:
+    """Devuelve exactamente `cobertura` días por serie (último eje).
+
+    Si el horizonte predicho termina antes de que acabe la cobertura —la última revisión de un
+    horizonte de 28 días cubre 9 días y solo quedan 7 predichos—, los días que faltan se rellenan
+    con la media de los últimos 7 días disponibles. Sin esto, esa revisión cubriría menos días de
+    los que debe y su nivel objetivo saldría bajo.
+    """
+    v = np.asarray(valores, float)
+    if v.shape[-1] >= cobertura:
+        return v[..., :cobertura]
+    falta = cobertura - v.shape[-1]
+    relleno = np.repeat(v[..., -7:].mean(axis=-1, keepdims=True), falta, axis=-1)
+    return np.concatenate([v, relleno], axis=-1)
+
+
+def percentil_empirico(historia: np.ndarray, cobertura: int, nivel) -> np.ndarray:
+    """Percentil `nivel` de las ventas acumuladas en ventanas móviles de `cobertura` días.
+
+    `historia` es una matriz (series x días) con las ventas recientes. Es la regla de las series
+    estables (clase X): con mucho volumen y comportamiento regular, el histórico bruto estima el
+    nivel necesario mejor que el modelo (Tarea 4, sección 6). `nivel` es un escalar o un vector
+    con un nivel por serie.
+    """
+    h = np.atleast_2d(np.asarray(historia, float))
+    ventanas = np.lib.stride_tricks.sliding_window_view(h, cobertura, axis=1).sum(axis=2)
+    niveles = np.broadcast_to(np.asarray(nivel, float), (h.shape[0],))
+    salida = np.empty(h.shape[0])
+    for n in np.unique(niveles):
+        k = niveles == n
+        salida[k] = np.percentile(ventanas[k], n * 100, axis=1)
+    return salida
+
+
+def nivel_hibrido(demanda: np.ndarray, sigma: np.ndarray, nivel: np.ndarray,
+                  es_x: np.ndarray, empirico: np.ndarray) -> np.ndarray:
+    """Nivel objetivo de la política híbrida (Tarea 4, sección 7).
+
+    Series estables (clase X): percentil empírico del histórico. Series variables y erráticas
+    (clases Y y Z): demanda predicha más stock de seguridad del modelo cuantílico.
+    """
+    return np.where(np.asarray(es_x, bool), empirico, nivel_objetivo(demanda, sigma, nivel))

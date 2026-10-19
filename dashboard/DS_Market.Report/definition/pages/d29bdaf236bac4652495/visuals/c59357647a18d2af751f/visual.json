@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "c59357647a18d2af751f",
+  "position": {
+    "x": 230,
+    "y": 224,
+    "z": 140,
+    "height": 150,
+    "width": 400,
+    "tabOrder": 140
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Campana: demanda esperada"
+                }
+              },
+              "queryRef": "_Medidas.Campana: demanda esperada",
+              "nativeQueryRef": "Campana: demanda esperada"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Demanda esperada (9 días)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

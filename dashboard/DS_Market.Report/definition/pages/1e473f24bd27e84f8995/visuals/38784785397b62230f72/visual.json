@@ -39,14 +39,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "mart_producto_mes"
+                      "Entity": "dim_producto"
                     }
                   },
-                  "Property": "item"
+                  "Property": "arquetipo"
                 }
               },
-              "queryRef": "mart_producto_mes.item",
-              "nativeQueryRef": "item"
+              "queryRef": "dim_producto.arquetipo",
+              "nativeQueryRef": "arquetipo"
             }
           ]
         },
@@ -85,7 +85,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Venta por mes del año (1,00 = media del producto)'"
+                  "Value": "'Mes a mes: cómo varía la venta de los productos de cada grupo (1 = media del año)'"
                 }
               }
             }

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "e66f376455c57e6fb01d",
+  "position": {
+    "x": 902,
+    "y": 124,
+    "z": 240,
+    "height": 150,
+    "width": 316,
+    "tabOrder": 240
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Variación interanual %"
+                }
+              },
+              "queryRef": "_Medidas.Variación interanual %",
+              "nativeQueryRef": "Variación interanual %"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Variación interanual'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

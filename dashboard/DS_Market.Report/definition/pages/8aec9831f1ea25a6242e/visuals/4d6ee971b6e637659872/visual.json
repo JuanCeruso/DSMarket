@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Ventas por ciudad y por tienda",
+                    "value": "Ventas por ciudad y por tienda; el gráfico de la derecha alterna entre reparto porcentual y unidades",
                     "textStyle": {
                       "fontSize": "12pt",
                       "fontWeight": "normal",

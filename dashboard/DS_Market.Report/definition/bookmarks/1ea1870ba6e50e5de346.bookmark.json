@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.4.0/schema.json",
-  "displayName": "Mostrar filtros · Similitud de tiendas",
+  "displayName": "Mostrar filtros · Parecido de tiendas",
   "name": "1ea1870ba6e50e5de346",
   "options": {
     "suppressData": true

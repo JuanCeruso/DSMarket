@@ -3,11 +3,11 @@
   "name": "3dfe7480749f9e096eec",
   "position": {
     "x": 1070,
-    "y": 124,
-    "z": 1000,
-    "height": 926,
+    "y": 170,
+    "z": 210,
+    "height": 880,
     "width": 814,
-    "tabOrder": 1000
+    "tabOrder": 210
   },
   "visual": {
     "visualType": "hundredPercentStackedBarChart",
@@ -88,6 +88,29 @@
         "isDefaultSort": true
       }
     },
-    "drillFilterOtherVisuals": true
-  }
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Reparto de unidades por departamento (% de cada ciudad)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "parentGroupName": "c078700722bdad29a764"
 }

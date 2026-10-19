@@ -154,3 +154,52 @@ def test_pinball_es_el_error_absoluto_en_la_mediana():
     y = np.array([1.0, 5.0, -3.0])
     p = np.array([2.0, 2.0, 2.0])
     assert 2 * pol.pinball(y, p, 0.5) == pytest.approx(np.abs(y - p))
+
+
+# --------------------------------------------------------------------------- política híbrida
+def test_completar_ventana_rellena_con_la_media_de_la_ultima_semana():
+    v = np.array([[1.0, 1, 1, 1, 1, 1, 1, 8, 8, 8, 8, 8, 8, 8]])      # 14 días
+    c = pol.completar_ventana(v, 16)
+    assert c.shape == (1, 16)
+    assert c[0, 14:] == pytest.approx([8.0, 8.0])
+
+
+def test_completar_ventana_recorta_si_sobra():
+    assert pol.completar_ventana(np.ones((2, 28)), 9).shape == (2, 9)
+
+
+def test_ultima_revision_cubre_los_dias_que_debe():
+    # con 28 días predichos, la revisión del día 21 cubre 9 días y solo hay 7: sin completar
+    # la ventana el nivel saldría un 22 % más bajo
+    diaria = np.full((1, 28), 10.0)
+    assert pol.completar_ventana(diaria[:, 21:], 9).sum() == pytest.approx(90.0)
+
+
+def test_percentil_empirico_serie_constante():
+    h = np.full((1, 60), 3.0)
+    assert pol.percentil_empirico(h, 9, 0.9)[0] == pytest.approx(27.0)
+
+
+def test_percentil_empirico_crece_con_el_nivel():
+    h = np.random.default_rng(0).poisson(4, size=(5, 180)).astype(float)
+    assert np.all(pol.percentil_empirico(h, 9, 0.95) >= pol.percentil_empirico(h, 9, 0.80))
+
+
+def test_percentil_empirico_admite_un_nivel_por_serie():
+    h = np.random.default_rng(1).poisson(4, size=(2, 180)).astype(float)
+    mixto = pol.percentil_empirico(h, 9, [0.9, 0.95])
+    assert mixto[0] == pytest.approx(pol.percentil_empirico(h[:1], 9, 0.9)[0])
+    assert mixto[1] == pytest.approx(pol.percentil_empirico(h[1:], 9, 0.95)[0])
+
+
+def test_nivel_hibrido_elige_metodo_por_clase():
+    demanda, sigma, nivel = np.array([50.0, 50.0]), np.array([10.0, 10.0]), np.array([0.9, 0.9])
+    res = pol.nivel_hibrido(demanda, sigma, nivel, np.array([True, False]), np.array([77.0, 77.0]))
+    assert res[0] == pytest.approx(77.0)                                 # clase X: empírico
+    assert res[1] == pytest.approx(50.0 + 1.2816 * 10.0, rel=1e-3)       # Y/Z: modelo
+
+
+def test_nivel_servicio_por_categoria():
+    assert pol.nivel_servicio("SUPERMARKET_3_511") == 0.90
+    assert pol.nivel_servicio("ACCESORIES_1_354") == 0.95
+    assert pol.nivel_servicio("HOME_&_GARDEN_2_100") == 0.95

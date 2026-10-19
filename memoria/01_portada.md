@@ -49,10 +49,10 @@ por avance y se simula una política de reposición derivada de la teoría del *
 Los resultados principales son los siguientes. La demanda no es homogénea: solo cinco de los
 quince productos más vendidos son comunes a las tres ciudades, y el parecido entre tiendas no
 coincide con las fronteras geográficas. El mejor modelo de previsión alcanza un
-WRMSSE de 1,0414 (1,0376 con 400 días de historia), y la estrategia de horizonte resulta unas veinte veces más influyente que la
+WRMSSE de 1,0407 (0,9994 en la última ventana con el modelo final de 400 días de historia), y la estrategia de horizonte resulta unas diez veces más influyente que la
 elección de biblioteca; reformular el objetivo como el total del ciclo de reposición reduce el
-error un 15,7% adicional y elimina un sesgo del −7,4%. La reconciliación jerárquica con el
-método MinT mejora el error en los seis niveles de agregación, del 15,12% al 13,71%. La política
+error un 15,7% adicional y elimina un sesgo del −7,4%. Sumar las predicciones individuales
+mejora a modelar cada agregado por separado (Prophet, SARIMA) en los cuatro niveles evaluados. La política
 de reposición propuesta eleva el nivel de servicio del 86,6% al 96,2% con una reducción del
 coste total del 62,5%, y la comparación de candidatos por coste revela que el nivel de servicio
 uniforme del 90% resultaba 2,45 veces más caro que el óptimo. La elasticidad precio, en cambio,

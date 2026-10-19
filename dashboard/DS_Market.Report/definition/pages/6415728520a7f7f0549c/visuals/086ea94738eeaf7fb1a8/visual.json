@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "086ea94738eeaf7fb1a8",
+  "position": {
+    "x": 230,
+    "y": 124,
+    "z": 210,
+    "height": 150,
+    "width": 396,
+    "tabOrder": 210
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Unidades por día (fin de semana)"
+                }
+              },
+              "queryRef": "_Medidas.Unidades por día (fin de semana)",
+              "nativeQueryRef": "Unidades por día (fin de semana)"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Unidades por día en fin de semana'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

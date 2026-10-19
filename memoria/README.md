@@ -1,6 +1,6 @@
 # Memoria DSMarket — borrador
 
-Un fichero por sección. **Editad los `.md`, no el `.docx`**: el Word se regenera desde ellos con
+Un fichero por sección. **Editar los `.md`, no el `.docx`**: el Word se regenera desde ellos con
 un comando y así no hay dos versiones que puedan divergir.
 
 ```bash
@@ -13,7 +13,7 @@ pandoc _completa.md -o Memoria_DSMarket_borrador.docx --toc --toc-depth=3 \
 ```
 
 > **Las fórmulas solo se ven en Word.** Van embebidas como OMML, que es el formato nativo de
-> Word. Si convertís el `.docx` a PDF con LibreOffice desaparecen sin avisar: exportad el PDF
+> Word. Si se convierte el `.docx` a PDF con LibreOffice desaparecen sin avisar: exportar el PDF
 > desde Word.
 
 ## Estado
@@ -54,7 +54,7 @@ python3 figuras/generar_figuras.py               # todas
 python3 figuras/generar_figuras.py --solo 7.9 7.14
 ```
 
-Las dos que no: la **7.19** (elasticidad por arquetipo), que no está cacheada y hay que exportar
+Las dos que no: la **7.19** (elasticidad por grupo), que no está cacheada y hay que exportar
 del cuaderno, y la **7.23** (pantallas del panel), que son capturas de la aplicación en marcha a
 200 ppp.
 
@@ -79,7 +79,7 @@ y páginas contra la fuente. Y añadir DOI a todas las que lo tengan.
 |---|---|
 | `avanzado/05_seleccion_por_coste.py` | §7.4.5 pasa de propuesta a resultado, y probablemente merezca capítulo propio |
 | `avanzado/06_afinidad_sondeo.py` | Sección nueva en §7.2 si hay señal; párrafo en §7.8.4 si no |
-| `avanzado/02_objetivo_agregado.py` | §7.3.3 y el trabajo futuro de §7.8.4 |
+| `avanzado/02_objetivo_agregado.py` | §7.3.9 y el trabajo futuro de §7.8.4 |
 | `avanzado/04_conformal.py` | §7.3.6 gana una garantía formal de cobertura |
 | `avanzado/07_censura_cota.py` | §7.4.7 pasa de método descrito a cotas con cifras |
 | `avanzado/08_arranque_frio.py` | Sección nueva en §7.3 o §7.6, y el trabajo futuro se acorta |

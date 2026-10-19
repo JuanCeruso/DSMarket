@@ -16,8 +16,8 @@ Implementa el servicio diseñado en la sección 8 del notebook 04. Tres decision
 Arranque:  uvicorn api.main:app --reload    (documentación interactiva en /docs)
 """
 from __future__ import annotations
-import os
-from datetime import date
+import os, sys
+from datetime import date, timedelta
 from typing import Literal
 
 import numpy as np
@@ -25,7 +25,10 @@ import pandas as pd
 import duckdb
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
-from scipy.stats import norm
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "operacion"))
+import politica as pol               # una sola copia de la política, compartida con la app y el almacén
+from historia import historia_reciente
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GOLD = os.path.join(RAIZ, "lakehouse", "gold")
@@ -50,6 +53,7 @@ def cargar_datos() -> None:
     DATOS["productos"] = lee("dim_producto").set_index("item")
     DATOS["tiendas"] = lee("dim_tienda").set_index("store_code")
     DATOS["horizonte"] = (pred["fecha"].min(), pred["fecha"].max())
+    DATOS["historia"] = historia_reciente(GOLD, pol.VENTANA_HISTORIA)   # (serie_id -> fila, matriz) para las series X
     con.close()
 
 # ----------------------------------------------------------------- modelos
@@ -93,14 +97,6 @@ class RespuestaReposicion(BaseModel):
     resumen: dict
 
 # ----------------------------------------------------------------- lógica
-# Nivel de servicio objetivo (Tarea 4, secciones 5.1 y 7): lo decide la merma, no el segmento.
-# Lo fresco (SUPERMARKET) se queda en el 90%; lo no perecedero, cuyo sobrante se vende la semana
-# siguiente, al 95%. Son parámetros de negocio: cuando DSMarket mida la merma real se ajustan aquí.
-NIVEL_POR_CATEGORIA = {"SUPERMARKET": .90, "ACCESORIES": .95, "HOME_&_GARDEN": .95}
-
-
-def nivel_servicio(item: str) -> float:
-    return NIVEL_POR_CATEGORIA["SUPERMARKET"] if item.startswith("SUPERMARKET") else .95
 CONFIANZA = {"X": "alta", "Y": "media", "Z": "baja"}
 
 def _explicar(celda: str, arquetipo: str | None, metodo: str, servicio: float, cv: float) -> str:
@@ -130,27 +126,28 @@ def sugerir(peticion: PeticionReposicion) -> RespuestaReposicion:
     cobertura = p.dias_revision + p.lead_time
     fechas = pd.date_range(peticion.fecha_revision, periods=cobertura).date
     fechas = [f for f in fechas if f <= fin]
+    fila_de, hist = DATOS["historia"]
 
     sugerencias = []
     for entrada in peticion.productos:
         try:
             bloque = DATOS["predicciones"].loc[(peticion.tienda, entrada.item, fechas), :]
             serie = DATOS["series"].loc[(entrada.item, peticion.tienda)]
+            historia = hist[fila_de[f"{entrada.item}|{peticion.tienda}"]]
         except KeyError:
             raise HTTPException(404, f"Sin datos para {entrada.item} en {peticion.tienda}")
 
         celda = f"{serie['clase_abc']}{serie['clase_xyz']}"
-        servicio = p.nivel_servicio if p.nivel_servicio is not None else nivel_servicio(entrada.item)
-        media = float(bloque["prediccion_media"].sum())
-        sigma_dia = (bloque["prediccion_p90"] - bloque["prediccion_media"]).clip(lower=0) / norm.ppf(0.90)
-        sigma = float(np.sqrt((sigma_dia ** 2).sum()))
+        servicio = p.nivel_servicio if p.nivel_servicio is not None else pol.nivel_servicio(entrada.item)
+        # si la cobertura se sale del horizonte predicho, se completa con la media de los últimos 7 días
+        media_dia = pol.completar_ventana(bloque["prediccion_media"].to_numpy(), cobertura)
+        p90_dia = pol.completar_ventana(bloque["prediccion_p90"].to_numpy(), cobertura)
+        media = float(media_dia.sum())
+        sigma = float(np.sqrt((pol.sigma_desde_cuantil(p90_dia, media_dia) ** 2).sum()))
         # política híbrida (Tarea 4): en series estables el histórico gana al modelo
         metodo = "percentil_empirico" if serie["clase_xyz"] == "X" else "modelo_cuantilico"
-        if metodo == "percentil_empirico":
-            nivel = float(serie["media_dia"] * cobertura + norm.ppf(servicio) * serie["desvio_dia"] * np.sqrt(cobertura))
-        else:
-            nivel = media + norm.ppf(servicio) * sigma
-        nivel = max(nivel, 0.0)
+        empirico = float(pol.percentil_empirico(historia, cobertura, servicio)[0])
+        nivel = float(pol.nivel_hibrido(media, sigma, servicio, metodo == "percentil_empirico", empirico))
         posicion = entrada.stock_actual + entrada.en_transito
         arquetipo = DATOS["productos"].loc[entrada.item, "arquetipo"] if entrada.item in DATOS["productos"].index else None
         sugerencias.append(Sugerencia(
@@ -163,7 +160,7 @@ def sugerir(peticion: PeticionReposicion) -> RespuestaReposicion:
             motivo=_explicar(celda, arquetipo, metodo, servicio, float(serie["coef_variacion"]))))
 
     return RespuestaReposicion(
-        tienda=peticion.tienda, fecha_revision=peticion.fecha_revision, cobertura_hasta=fechas[-1],
+        tienda=peticion.tienda, fecha_revision=peticion.fecha_revision, cobertura_hasta=peticion.fecha_revision + timedelta(days=cobertura - 1),
         sugerencias=sugerencias,
         resumen={"productos": len(sugerencias),
                  "unidades_a_pedir": int(sum(s.pedido_sugerido for s in sugerencias)),

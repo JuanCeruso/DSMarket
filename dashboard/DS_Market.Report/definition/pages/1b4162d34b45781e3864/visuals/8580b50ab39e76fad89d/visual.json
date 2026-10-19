@@ -1,0 +1,60 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "8580b50ab39e76fad89d",
+  "position": {
+    "x": 1574,
+    "y": 124,
+    "z": 260,
+    "height": 150,
+    "width": 316,
+    "tabOrder": 260
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Tiendas activas"
+                }
+              },
+              "queryRef": "_Medidas.Tiendas activas",
+              "nativeQueryRef": "Tiendas activas"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Tiendas activas'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

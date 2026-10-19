@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "523405039c7b397e270a",
   "position": {
-    "x": 236,
+    "x": 230,
     "y": 124,
-    "z": 0,
-    "height": 926,
-    "width": 810,
-    "tabOrder": 0
+    "z": 210,
+    "height": 470,
+    "width": 820,
+    "tabOrder": 210
   },
   "visual": {
     "visualType": "clusteredBarChart",
@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "mart_producto_tienda"
+                      "Entity": "dim_tienda"
                     }
                   },
-                  "Property": "item"
+                  "Property": "tienda"
                 }
               },
-              "queryRef": "mart_producto_tienda.item",
-              "nativeQueryRef": "item",
+              "queryRef": "dim_tienda.tienda",
+              "nativeQueryRef": "tienda",
               "active": true
             }
           ]
@@ -39,14 +39,32 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "dim_producto"
+                      "Entity": "_Medidas"
                     }
                   },
-                  "Property": "Unidades por producto"
+                  "Property": "Unidades vendidas"
                 }
               },
-              "queryRef": "_Medidas.Unidades por producto",
-              "nativeQueryRef": "Unidades por producto"
+              "queryRef": "_Medidas.Unidades vendidas",
+              "nativeQueryRef": "Unidades vendidas"
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_tienda"
+                    }
+                  },
+                  "Property": "ciudad"
+                }
+              },
+              "queryRef": "dim_tienda.ciudad",
+              "nativeQueryRef": "ciudad"
             }
           ]
         }
@@ -58,19 +76,41 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "dim_producto"
+                    "Entity": "_Medidas"
                   }
                 },
-                "Property": "Unidades por producto"
+                "Property": "Unidades vendidas"
               }
             },
             "direction": "Descending"
           }
         ],
-        "isDefaultSort": true
+        "isDefaultSort": false
       }
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Unidades vendidas por tienda'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   },
   "filterConfig": {
     "filters": [

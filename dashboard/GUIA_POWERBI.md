@@ -232,7 +232,19 @@ Responde el pedido de Michelle sobre si los productos populares varían entre ti
 ```bash
 python3 lakehouse/scripts/pipeline.py all          # reconstruye bronze, silver y gold
 python3 lakehouse/scripts/carga_predicciones.py    # vuelca las predicciones al gold
+python3 lakehouse/scripts/carga_clusters.py        # grupos de producto (Tarea 2)
+python3 lakehouse/scripts/carga_precios.py         # marts de precios
+python3 lakehouse/scripts/exportar_powerbi.py      # gold -> gold_csv (lo que importa PowerBI); siempre el último
 ```
 
-Después, en PowerBI: **Inicio → Actualizar**. Los ficheros Parquet se sobrescriben en el
+Después, en PowerBI: **Inicio → Actualizar**. Los CSV de `gold_csv/` se sobrescriben en el
 mismo sitio, así que no hay que reconfigurar nada.
+
+## Campana de estimación (página nueva)
+
+Página «Campana de estimación», accesible desde el botón de la página «Colchón de seguridad». Muestra la distribución normal de la demanda de la cobertura (9 días) y sombrea la parte que cubre el nivel de confianza elegido en el desplegable.
+
+- Tablas auxiliares: `param_confianza` (niveles del 50 % al 99 %) y `eje_campana` (eje z de −4 a 4).
+- Medidas (carpeta `_Medidas`, prefijo «Campana:»): demanda esperada, desviación típica equivalente (stock de seguridad / z del nivel de servicio vigente, sumada entre series), densidad, zona cubierta, nivel objetivo, stock de seguridad y riesgo de rotura.
+- Con un producto y una tienda seleccionados es la campana exacta de esa serie; con varias series la σ es la suma de las σ de cada serie, coherente con que el colchón se fija serie a serie.
+- Es una aproximación normal: para las series X el nivel real se obtiene del percentil empírico, por lo que la σ equivalente es solo una referencia visual.

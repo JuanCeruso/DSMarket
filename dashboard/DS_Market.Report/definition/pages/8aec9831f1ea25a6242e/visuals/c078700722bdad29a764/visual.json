@@ -1,0 +1,15 @@
+{
+  "name": "c078700722bdad29a764",
+  "position": {
+    "x": 1070,
+    "y": 170,
+    "z": 3000,
+    "height": 880,
+    "width": 814,
+    "tabOrder": 3000
+  },
+  "visualGroup": {
+    "displayName": "Vista % del total",
+    "groupMode": "ScaleMode"
+  }
+}

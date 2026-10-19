@@ -9,7 +9,7 @@ model Model
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["RutaGold","dim_producto","dim_categoria","dim_calendario","dim_tienda","dim_serie","mart_ventas_dia","mart_producto_tienda","mart_precios","mart_precios_producto","mart_precios_tienda","mart_producto_top_dias","mart_producto_mes","mart_arquetipo_mes","mart_arquetipo_dia_semana","mart_producto_perfil","dim_arquetipo","_Medidas","fact_predicciones","fact_reposicion"]
+annotation PBI_QueryOrder = ["RutaGold","dim_producto","dim_categoria","dim_calendario","dim_tienda","dim_serie","mart_ventas_dia","mart_producto_tienda","mart_precios","mart_precios_producto","mart_precios_tienda","mart_producto_top_dias","mart_producto_mes","mart_arquetipo_mes","mart_arquetipo_dia_semana","mart_producto_perfil","dim_arquetipo","_Medidas","fact_predicciones","fact_reposicion","mart_tienda_perfil","mart_tienda_distancia","param_confianza","eje_campana"]
 
 annotation PBI_ProTooling = ["DaxQueryView_Desktop","DevMode"]
 
@@ -32,6 +32,10 @@ ref table dim_arquetipo
 ref table _Medidas
 ref table fact_predicciones
 ref table fact_reposicion
+ref table mart_tienda_perfil
+ref table mart_tienda_distancia
+ref table param_confianza
+ref table eje_campana
 
 ref cultureInfo es-ES
 

@@ -116,8 +116,9 @@ soluciones clásicas —ascendente, descendente y por niveles— superadas por e
 combinación óptima de Hyndman, Ahmed, Athanasopoulos y Shang (2011) y su refinamiento posterior,
 el método MinT de Wickramasuriya, Athanasopoulos y Hyndman (2019), que obtiene la reconciliación
 minimizando la traza de la matriz de covarianzas del error de reconciliación. Este último es el
-método empleado en §7.3.8, y su propiedad más valiosa para la organización no es la mejora del
-error sino la garantía de coherencia entre niveles.
+método con el que se contrastó la reconciliación en §7.3.8 como ejercicio complementario al
+enfoque ascendente, y su propiedad más valiosa para la organización no es la mejora del error
+sino la garantía de coherencia entre niveles.
 
 ### 4.4.4. Teoría de inventarios
 

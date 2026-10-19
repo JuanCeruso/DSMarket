@@ -3,14 +3,14 @@
   "name": "4755b9f12b5468257493",
   "position": {
     "x": 230,
-    "y": 403,
-    "z": 60,
-    "height": 647,
-    "width": 850,
-    "tabOrder": 60
+    "y": 294,
+    "z": 250,
+    "height": 756,
+    "width": 980,
+    "tabOrder": 250
   },
   "visual": {
-    "visualType": "columnChart",
+    "visualType": "lineStackedColumnComboChart",
     "query": {
       "queryState": {
         "Category": {
@@ -42,11 +42,11 @@
                       "Entity": "_Medidas"
                     }
                   },
-                  "Property": "Por día laborable"
+                  "Property": "Día por encima del promedio"
                 }
               },
-              "queryRef": "_Medidas.Por día laborable",
-              "nativeQueryRef": "Por día laborable"
+              "queryRef": "_Medidas.Día por encima del promedio",
+              "nativeQueryRef": "Día por encima del promedio"
             },
             {
               "field": {
@@ -56,11 +56,29 @@
                       "Entity": "_Medidas"
                     }
                   },
-                  "Property": "Por día de fin de semana"
+                  "Property": "Día en el promedio o por debajo"
                 }
               },
-              "queryRef": "_Medidas.Por día de fin de semana",
-              "nativeQueryRef": "Por día de fin de semana"
+              "queryRef": "_Medidas.Día en el promedio o por debajo",
+              "nativeQueryRef": "Día en el promedio o por debajo"
+            }
+          ]
+        },
+        "Y2": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Promedio diario de unidades"
+                }
+              },
+              "queryRef": "_Medidas.Promedio diario de unidades",
+              "nativeQueryRef": "Promedio diario de unidades"
             }
           ]
         }
@@ -81,7 +99,7 @@
             "direction": "Ascending"
           }
         ],
-        "isDefaultSort": true
+        "isDefaultSort": false
       }
     },
     "drillFilterOtherVisuals": true,
@@ -107,7 +125,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#9DB7DE'"
+                      "Value": "'#EDA100'"
                     }
                   }
                 }
@@ -115,7 +133,7 @@
             }
           },
           "selector": {
-            "metadata": "_Medidas.Por día laborable"
+            "metadata": "_Medidas.Día por encima del promedio"
           }
         },
         {
@@ -125,7 +143,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#EDA100'"
+                      "Value": "'#9DB7DE'"
                     }
                   }
                 }
@@ -133,7 +151,72 @@
             }
           },
           "selector": {
-            "metadata": "_Medidas.Por día de fin de semana"
+            "metadata": "_Medidas.Día en el promedio o por debajo"
+          }
+        },
+        {
+          "properties": {
+            "fill": {
+              "solidColor": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0A2A5C'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_Medidas.Promedio diario de unidades"
+          }
+        }
+      ],
+      "lineStyles": [
+        {
+          "properties": {
+            "lineStyle": {
+              "expr": {
+                "Literal": {
+                  "Value": "'dotted'"
+                }
+              }
+            },
+            "strokeWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "3D"
+                }
+              }
+            },
+            "showMarker": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Bottom'"
+                }
+              }
+            }
           }
         }
       ]
@@ -152,7 +235,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Unidades vendidas por día de la semana (media diaria)'"
+                  "Value": "'Unidades por día según el día de la semana: en dorado, los días por encima del promedio (línea punteada)'"
                 }
               }
             }

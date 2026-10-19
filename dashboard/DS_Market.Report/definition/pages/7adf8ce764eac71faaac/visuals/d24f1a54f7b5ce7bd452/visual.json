@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Colchón frente a la demanda esperada, por revisión y por rotación",
+                    "value": "Cuánto stock de seguridad se añade a la demanda esperada de los próximos 9 días, por revisión, por rotación y por segmento",
                     "textStyle": {
                       "fontSize": "12pt",
                       "fontWeight": "normal",

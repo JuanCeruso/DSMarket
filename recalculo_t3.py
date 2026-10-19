@@ -48,7 +48,12 @@ def tarea(f, modo, b):
                 L['fin'] = True; raise lgb.callback.EarlyStopException(env.iteration, env.evaluation_result_list)
             if time.time() - T0 > LIM:
                 raise lgb.callback.EarlyStopException(env.iteration, env.evaluation_result_list)
-        m = lgb.train(PL, d1, num_boost_round=800, valid_sets=[d2], callbacks=[control], keep_training_booster=True)
+        try:
+            m = lgb.train(PL, d1, num_boost_round=800, valid_sets=[d2], callbacks=[control], keep_training_booster=True)
+        except lgb.basic.LightGBMError:                    # fallo numérico al continuar un tramo: se reinicia la unidad
+            import glob
+            for g_ in glob.glob(base + '*'): os.remove(g_)
+            print('reinicio de', base, flush=True); return False
         n_arb = m.current_iteration()
         arch = f"{base}_l{len(L['tramos'])}.txt"; m.save_model(arch, num_iteration=n_arb)
         L['tramos'].append([arch, n_arb, m.feature_importance('gain').tolist()])
@@ -108,7 +113,68 @@ def ensamblar(f, modo):
     pickle.dump(res, open(f"{fs.CACHE}/pred{'' if modo == 'u' else '2'}_fold{f}.pkl", 'wb'))
 
 
+def tarea_q(b):
+    """Percentil 90 (objetivo cuantílico) de la última ventana, por bloques semanales; solo LightGBM, con tramos."""
+    f = 2; base = f"{D}/q{f}_{b}"
+    if os.path.exists(base + '.npz'):
+        return True
+    start, end = folds[f]; ml = 7 * (b + 1)
+    dias = range(start + 7 * b, min(start + 7 * (b + 1), end))
+    est = json.load(open(base + '.json')) if os.path.exists(base + '.json') else {'hechas': 0, 'scores': [], 'tramos': [], 'fin': False}
+    Xtr = fs.construir_matriz(range(start - fs.TRAIN_DAYS, start - 28), V, P, cs, cal, meta, EXTRA, ml)
+    Xva = fs.construir_matriz(range(start - 28, start), V, P, cs, cal, meta, EXTRA, ml)
+    Atr, ytr = fs.a_float32(Xtr, FEAT), Xtr['y'].to_numpy(np.float32)
+    Ava, yva = fs.a_float32(Xva, FEAT), Xva['y'].to_numpy(np.float32)
+    del Xtr, Xva; gc.collect()
+    pq = {k: v for k, v in PL.items() if k != 'tweedie_variance_power'}
+    pq.update(objective='quantile', alpha=0.90, metric='quantile')
+    ini_tr = np.load(base + '_tr.npy') if est['hechas'] else None
+    ini_va = np.load(base + '_va.npy') if est['hechas'] else None
+    kw = dict(feature_name=FEAT, categorical_feature=CAT, params={'max_bin': 127, 'verbose': -1})
+    d1 = lgb.Dataset(Atr, label=ytr, init_score=ini_tr, **kw)
+    d2 = lgb.Dataset(Ava, label=yva, init_score=ini_va, reference=d1, feature_name=FEAT, categorical_feature=CAT)
+    d1.construct(); d2.construct(); del Atr, Ava; gc.collect()
+
+    def control(env):
+        est['scores'].append(float(env.evaluation_result_list[0][2])); est['hechas'] += 1
+        mejor = int(np.argmin(est['scores'])) + 1
+        if est['hechas'] - mejor >= 50 or est['hechas'] >= 800:
+            est['fin'] = True; raise lgb.callback.EarlyStopException(env.iteration, env.evaluation_result_list)
+        if time.time() - T0 > LIM:
+            raise lgb.callback.EarlyStopException(env.iteration, env.evaluation_result_list)
+    m = lgb.train(pq, d1, num_boost_round=800, valid_sets=[d2], callbacks=[control], keep_training_booster=True)
+    n_arb = m.current_iteration(); arch = f"{base}_l{len(est['tramos'])}.txt"
+    m.save_model(arch, num_iteration=n_arb); est['tramos'].append([arch, n_arb])
+    if not est['fin']:
+        np.save(base + '_tr.npy', m._Booster__inner_predict(data_idx=0)); np.save(base + '_va.npy', m._Booster__inner_predict(data_idx=1))
+    json.dump(est, open(base + '.json', 'w')); del m, d1, d2; gc.collect()
+    if not est['fin']:
+        return False
+    Xte = fs.construir_matriz(dias, V, P, cs, cal, meta, EXTRA, ml); Ate = fs.a_float32(Xte, FEAT)
+    mejor = int(np.argmin(est['scores'])) + 1; resto = mejor; raw = 0
+    for arch, n in est['tramos']:
+        usar = min(n, resto)
+        if usar > 0:
+            raw = raw + lgb.Booster(model_file=arch).predict(Ate, num_iteration=usar, raw_score=True)
+        resto -= usar
+    M = np.zeros((V.shape[0], end - start), np.float32)
+    M[Xte['serie'], Xte['dia'] - start] = np.maximum(raw, 0)
+    np.savez(base + '.npz', m=M, mejor=mejor)
+    print(f"p90 bloque {b+1}: {mejor} árboles", flush=True)
+    return True
+
+
 pendiente = False
+for b in range(4) if os.environ.get('Q') else []:
+    if not tarea_q(b):
+        pendiente = True; break
+if os.environ.get('Q') and not pendiente:
+    M = sum(np.load(f"{D}/q2_{b}.npz")['m'] for b in range(4))
+    s_, e_ = folds[2]
+    np.save(f"{fs.CACHE}/p90_eval.npy", np.where(np.isnan(P[:, s_:e_]), 0, M))
+    print('p90_eval.npy escrito', flush=True)
+if os.environ.get('Q'):
+    print('PENDIENTE' if pendiente else 'COMPLETO'); sys.exit(0)
 for f in range(3):
     for modo, bl in [('s', range(4)), ('u', [0])]:
         for b in bl:

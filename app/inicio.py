@@ -12,18 +12,13 @@ import streamlit as st
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import datos as D
+import estilo
 from explicador import explicar, hay_llm
 
 st.set_page_config(page_title="DSMarket · Reposición", page_icon="🛒", layout="wide")
 P = D.PALETA
 
-st.markdown(f"""<style>
- .stApp header {{ background: transparent; }}
- h1, h2, h3 {{ color: {P['navy']}; }}
- [data-testid="stMetricValue"] {{ color: {P['navy']}; font-weight: 700; }}
- .tarjeta {{ background:#f6f8fb; border-left:4px solid {P['azul']}; padding:0.9rem 1.1rem;
-            border-radius:6px; margin:0.4rem 0; }}
-</style>""", unsafe_allow_html=True)
+estilo.aplicar("DSMarket · Reposición", "Del pronóstico al estante: pedido sugerido por tienda y producto")
 
 @st.cache_data(show_spinner="Cargando el almacén…")
 def cargar():
@@ -39,8 +34,7 @@ prod_idx = d["productos"].set_index("item")
 
 # ------------------------------------------------------------------ barra lateral
 with st.sidebar:
-    st.title("DSMarket")
-    st.caption("Panel de reposición · Tareas 2-4")
+    st.subheader("Selección")
     tiendas = d["tiendas"].sort_values("tienda")
     etiqueta = tiendas.apply(lambda r: f"{r['tienda']} · {r['ciudad']}", axis=1).tolist()
     i_tienda = st.selectbox("Tienda", range(len(tiendas)), format_func=lambda i: etiqueta[i])
@@ -146,7 +140,7 @@ with tab2:
         grafico = alt.Chart(largo).mark_rect().encode(
             x=alt.X("clase_xyz:N", title="XYZ (predictibilidad)"),
             y=alt.Y("clase_abc:N", title="ABC (valor)"),
-            color=alt.Color("v:Q", scale=alt.Scale(scheme="blues"), legend=None))
+            color=alt.Color("v:Q", scale=alt.Scale(range=estilo.RAMPA_AZULES), legend=None))
         texto = grafico.mark_text(fontSize=13).encode(
             text=alt.Text("v:Q", format=fmt),
             color=alt.condition(alt.datum.v > largo["v"].max() * 0.5, alt.value("white"), alt.value(P["navy"])))
@@ -163,7 +157,7 @@ with tab2:
         if ps.empty: continue
         rr = D.sugerir(ps, sr, sr["media_dia"] * 3, 0, dias_rev, lead, nivel)
         filas.append({"producto": it, "segmento": sr["celda"],
-                      "arquetipo": prod_idx.loc[it, "arquetipo"] if it in prod_idx.index else "—",
+                      "grupo": prod_idx.loc[it, "arquetipo"] if it in prod_idx.index else "—",
                       "demanda 9d": round(rr["demanda_esperada"], 1),
                       "nivel objetivo": round(rr["nivel_objetivo"], 1),
                       "pedido": rr["pedido"], "servicio": f"{rr['servicio']:.0%}"})
@@ -238,7 +232,7 @@ CSV / sistemas fuente
                         └─► PowerBI            → dirección
 ```
 
-Todo lo que se ve acá sale de `lakehouse/gold/`. No hay ficheros sueltos ni hojas de cálculo
+Todo lo que se ve aquí sale de `lakehouse/gold/`. No hay ficheros sueltos ni hojas de cálculo
 intermedias: el dashboard, la API y este panel leen exactamente los mismos datos.
 """)
 
@@ -322,8 +316,8 @@ haya desacuerdo.
                     f"{int((pend['excepcion']=='exceso de cobertura').sum()):,}")
 
         st.subheader("Lista de pedido")
-        st.caption("La columna «pedido final» es editable: cambiá lo que no te cuadre y confirmá "
-                   "abajo. Lo que se guarda es la diferencia entre lo sugerido y lo que pediste.")
+        st.caption("La columna «pedido final» es editable: se cambia lo que no cuadre y se confirma "
+                   "abajo. Lo que se guarda es la diferencia entre lo sugerido y lo pedido.")
         editable = con_pedido[["item", "segmento", "excepcion", "dias_de_cobertura",
                                "demanda_ciclo", "nivel_objetivo", "pedido_sugerido"]].copy()
         editable["dias_de_cobertura"] = editable["dias_de_cobertura"].round(1)
@@ -340,7 +334,7 @@ haya desacuerdo.
                 "pedido_sugerido": "sugerido",
                 "pedido_final": st.column_config.NumberColumn(
                     "pedido final", min_value=0, step=1,
-                    help="Cambiá el número si no estás de acuerdo con la sugerencia.")})
+                    help="Se cambia el número si no se está de acuerdo con la sugerencia.")})
 
         cambios = int((editado["pedido_final"] != editado["pedido_sugerido"]).sum())
         c1, c2 = st.columns([1, 3])

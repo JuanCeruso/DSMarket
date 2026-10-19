@@ -1,0 +1,74 @@
+table mart_tienda_distancia
+	lineageTag: effccda0-2aac-47b0-aea0-13bfc9eb931b
+
+	column store_code
+		dataType: string
+		lineageTag: e1e5c464-82fe-4f95-a077-dffc50bb1298
+		summarizeBy: none
+		sourceColumn: store_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column tienda
+		dataType: string
+		lineageTag: 18e45f69-79c4-4b82-9af1-6ce9d19ab73e
+		summarizeBy: none
+		sourceColumn: tienda
+
+		annotation SummarizationSetBy = Automatic
+
+	column store_code_otra
+		dataType: string
+		lineageTag: f1deab7f-cac8-4bfe-96fb-455855c17aa8
+		summarizeBy: none
+		sourceColumn: store_code_otra
+
+		annotation SummarizationSetBy = Automatic
+
+	column tienda_otra
+		dataType: string
+		lineageTag: 38c54952-843b-4787-8878-be083bdb1875
+		summarizeBy: none
+		sourceColumn: tienda_otra
+
+		annotation SummarizationSetBy = Automatic
+
+	column distancia
+		dataType: double
+		formatString: 0.0
+		lineageTag: 21aa2063-1b2b-4136-a3cf-5d811f6ab6c4
+		summarizeBy: none
+		sourceColumn: distancia
+
+		annotation SummarizationSetBy = Automatic
+
+	column orden_parecido
+		dataType: int64
+		formatString: 0
+		lineageTag: b52e665e-c4c4-4cee-a652-562b8f618311
+		summarizeBy: none
+		sourceColumn: orden_parecido
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_tienda_distancia = m
+		mode: import
+		source =
+				// ===== mart_tienda_distancia (100 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_tienda_distancia.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"store_code", type text},
+				        {"tienda", type text},
+				        {"store_code_otra", type text},
+				        {"tienda_otra", type text},
+				        {"distancia", type number},
+				        {"orden_parecido", Int64.Type}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table

@@ -168,7 +168,7 @@ Reglas:
 - Una sola sentencia SELECT. Nunca INSERT, UPDATE, DELETE, CREATE, DROP, COPY ni ATTACH.
 - Incluí siempre un LIMIT (máximo 200 filas).
 - fact_ventas tiene 58 millones de filas: filtrá por fecha o agregá siempre que puedas, y
-  usá mart_ventas_dia cuando la pregunta sea de nivel ciudad/tienda/departamento.
+  usa mart_ventas_dia cuando la pregunta sea de nivel ciudad/tienda/departamento.
 - Cuidado con el fan-out: fact_ventas es diaria y fact_reposicion semanal. Si hay que
   combinarlas, agregá cada una por separado en CTEs y unilas después.
 - Nombrá las columnas de salida en español."""

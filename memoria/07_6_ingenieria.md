@@ -138,7 +138,7 @@ La corrección deriva la bandera del **nombre** del día en lugar del índice, q
 no depende de una convención, y usa la misma definición para el histórico y para el horizonte.
 Se añadieron además dos contratos bloqueantes —uno por cada mitad del defecto— y sus dos pruebas
 de regresión. El efecto colateral fue confirmar la segmentación del catálogo: con la bandera
-corregida, el arquetipo «Fin de semana/hogar» pasa a encabezar la elevación de fin de semana con
+corregida, el grupo «Fin de semana/hogar» pasa a encabezar la elevación de fin de semana con
 un ×1,42, cifra que antes quedaba invisible y que es la que justifica su nombre (§7.2.3).
 
 **La ventana predicha, corrida un horizonte entero.** El contrato que exige que toda predicción

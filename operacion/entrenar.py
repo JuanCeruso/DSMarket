@@ -106,7 +106,7 @@ def main(dias_entrenamiento, rondas):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--dias", type=int, default=400,
-                    help="ventana de entrenamiento (400 días: incluye el año anterior completo, Tarea 3 sección 10.2)")
+                    help="ventana de entrenamiento (400 días: incluye el año anterior completo, Tarea 3 sección 9.2)")
     ap.add_argument("--rondas", type=int, default=800, help="número máximo de árboles")
     a = ap.parse_args()
     main(a.dias, a.rondas)
