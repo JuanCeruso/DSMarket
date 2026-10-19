@@ -74,15 +74,19 @@ de reposición aplica métodos distintos según la clase.
 ### 6.2.3. Eventos del calendario
 
 El fichero de calendario etiqueta días con eventos de cuatro tipos (deportivos, culturales,
-nacionales y religiosos). Para cada evento se calculó un coeficiente de elevación —el cociente
-entre la venta media de los días con ese evento y la venta media general, controlando por día de
-la semana— y se retuvieron únicamente aquellos con efecto consistente y de magnitud apreciable.
+nacionales y religiosos). Para cada evento se compararon sus ventas con las del mismo día de la
+semana de las dos semanas anteriores y las dos posteriores, y se retuvieron únicamente aquellos
+con efecto consistente y de magnitud apreciable.
 
-Tres eventos superaron el criterio con elevaciones de entre el 15% y el 22%: **Labor Day**,
-**SuperBowl** y **Easter**. Un cuarto candidato, incorporado inicialmente por expectativa
+Solo **Labor Day** superó el criterio: vende un **28 % más** que un lunes normal, en los cinco años
+(entre +22 % y +39 %). **SuperBowl** y **Easter** parecían subir entre un 15 % y un 22 % cuando se
+comparaban con la media de todos los días, pero caen siempre en domingo, que ya vende un 20 % más
+que un día medio. Frente a un domingo normal, SuperBowl vende lo mismo y Easter un 12 % menos: la
+subida era del domingo, no del evento. Un cuarto candidato, incorporado inicialmente por expectativa
 comercial más que por evidencia, fue **Black Friday**. El examen del histórico no solo no mostró
 un pico: en los cinco años, Black Friday vende un **24 % menos** que los viernes de alrededor
-(entre −17 % y −29 % según el año), probablemente porque sigue a Thanksgiving, día de cierre. Se
+(entre −17 % y −29 % según el año). Thanksgiving, la víspera, también vende menos (−28 %), pero
+no es día de cierre, así que estos datos no permiten explicar la caída. Se
 retiró del conjunto de eventos de pico. La decisión ilustra un criterio que el trabajo aplica de
 forma general: un hallazgo que resulta atractivo para la narrativa comercial pero que el dato no
 sostiene no entra en el informe.

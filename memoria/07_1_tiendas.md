@@ -29,16 +29,18 @@ que se cuantifican en §7.3.
 
 ### 7.1.2. Los eventos que importan y el que no
 
-De los eventos etiquetados en el calendario, tres muestran un efecto consistente sobre la
-demanda una vez controlado el día de la semana: **Labor Day**, **SuperBowl** y **Easter**, con
-elevaciones de entre el **15% y el 22%** sobre la venta media. Se incorporaron como variables al
-conjunto de predictores.
+De los eventos del calendario, solo uno muestra un pico consistente una vez comparado con el
+mismo día de la semana: **Labor Day**, que vende un **28 % más** que un lunes normal en los cinco
+años. **SuperBowl** y **Easter** parecían subir entre un 15 % y un 22 % sobre la venta media, pero
+caen siempre en domingo, el día de más ventas: frente a un domingo normal, SuperBowl vende lo mismo
+y Easter un 12 % menos. Todos los eventos del calendario, más Christmas y Labor Day, se
+incorporaron como variables al conjunto de predictores.
 
 Un cuarto candidato quedó fuera, y merece un párrafo porque la decisión de excluirlo es un
 resultado. **Black Friday** se había incorporado inicialmente al análisis por expectativa
 comercial: es la fecha que cualquier informe de minorista destaca. El histórico de DSMarket no
 muestra ningún pico: Black Friday vende un 24 % menos que los viernes de alrededor (entre −17 % y
-−29 % según el año), probablemente porque sigue a Thanksgiving, día de cierre (§6.2). La tentación de presentarlo como una
+−29 % según el año); Thanksgiving, la víspera, también vende menos, pero no cierra (§6.2.3). La tentación de presentarlo como una
 oportunidad comercial desaprovechada —«la cadena no está capturando el efecto Black Friday»— era
 considerable y habría dado un titular atractivo. El dato no la sostenía, y se retiró del
 conjunto de eventos relevantes. Que la ausencia de pico se deba a la política comercial de la
