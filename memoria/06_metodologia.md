@@ -74,20 +74,19 @@ de reposición aplica métodos distintos según la clase.
 ### 6.2.3. Eventos del calendario
 
 El fichero de calendario etiqueta días con eventos de cuatro tipos (deportivos, culturales,
-nacionales y religiosos). Para cada evento se calculó un coeficiente de elevación —el cociente
-entre la venta media de los días con ese evento y la venta media de un día normal— y se
-retuvieron únicamente aquellos con efecto consistente y de magnitud apreciable.
+nacionales y religiosos). Para cada evento se compararon sus ventas con las del mismo día de la
+semana de las dos semanas anteriores y las dos posteriores, y se retuvieron únicamente aquellos
+con efecto consistente y de magnitud apreciable.
 
-Frente a un día cualquiera, tres eventos mostraron elevaciones de entre el 15% y el 22%: **Labor
-Day**, **SuperBowl** y **Easter**. Esa comparación no controla el día de la semana: SuperBowl y
-Easter caen siempre en domingo y los domingos ya se vende un 20% más que la media. Al comparar cada
-evento con el mismo día de la semana de las dos semanas anteriores y las dos siguientes, solo
-**Labor Day** sube de verdad (+28 %); **SuperBowl** queda en torno al 0 % y **Easter** en −12 %.
-Un cuarto candidato, incorporado inicialmente por expectativa
+Solo **Labor Day** superó el criterio: vende un **28 % más** que un lunes normal, en los cinco años
+(entre +22 % y +39 %). **SuperBowl** y **Easter** parecían subir entre un 15 % y un 22 % cuando se
+comparaban con la media de todos los días, pero caen siempre en domingo, que ya vende un 20 % más
+que un día medio. Frente a un domingo normal, SuperBowl vende lo mismo y Easter un 12 % menos: la
+subida era del domingo, no del evento. Un cuarto candidato, incorporado inicialmente por expectativa
 comercial más que por evidencia, fue **Black Friday**. El examen del histórico no solo no mostró
 un pico: en los cinco años, Black Friday vende un **24 % menos** que los viernes de alrededor
-(entre −17 % y −29 % según el año), sin que se conozca la causa: Thanksgiving no cierra (vende un 28 % menos que un jueves normal,
-pero vende; el único día de cierre es el 25 de diciembre). Se
+(entre −17 % y −29 % según el año). Thanksgiving, la víspera, también vende menos (−28 %), pero
+no es día de cierre, así que estos datos no permiten explicar la caída. Se
 retiró del conjunto de eventos de pico. La decisión ilustra un criterio que el trabajo aplica de
 forma general: un hallazgo que resulta atractivo para la narrativa comercial pero que el dato no
 sostiene no entra en el informe.

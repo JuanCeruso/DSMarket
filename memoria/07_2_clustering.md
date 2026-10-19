@@ -19,8 +19,10 @@ departamento se reservan para describir los grupos una vez formados.
 
 Se partió de ocho variables candidatas por producto, calculadas sobre la suma de las diez tiendas:
 venta diaria media (en logaritmo), coeficiente de variación diario, proporción de días sin venta,
-elevación en fin de semana, elevación en diciembre, elevación en días de evento con pico
-confirmado (SuperBowl, Easter y Labor Day), tendencia y precio medio.
+elevación en fin de semana, elevación en diciembre, elevación en los días de SuperBowl, Easter y
+Labor Day, tendencia y precio medio. De esos tres días, solo Labor Day es un pico propio en el
+total de la empresa; los otros dos caen en domingo, por lo que esta variable recoge en parte el
+efecto fin de semana (§6.2.3 y limitación 7 de §7.8.3).
 
 **Todas se miden desde la primera venta de cada producto.** El 17,8 % de los días-producto son
 anteriores a esa primera venta: el producto aún no estaba en el catálogo. Contarlos como «días sin

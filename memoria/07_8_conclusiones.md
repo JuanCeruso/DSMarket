@@ -4,11 +4,10 @@
 
 **OE1 — Caracterizar la estructura de la demanda.** La demanda de DSMarket no es homogénea en
 ninguna de las dimensiones examinadas. Solo cinco de los quince productos más vendidos son
-comunes a las tres ciudades, y Filadelfia se aparta del resto con solo cuatro. Un evento del
-calendario tiene un pico medible frente al mismo día de la semana —Labor Day, +28 %; SuperBowl queda en torno
-al 0 % y Easter en −12 %— y uno
-que se esperaba relevante, Black Friday, va en sentido contrario: vende un 24 % menos que un
-viernes normal. Medidos por semanas, los eventos mueven también las semanas vecinas: las dos
+comunes a las tres ciudades, y Filadelfia se aparta del resto con solo cuatro. Comparado con el mismo
+día de la semana, solo un evento del calendario tiene un pico propio —Labor Day, un 28 % más— y
+uno que se esperaba relevante, Black Friday, va en sentido contrario: vende un 24 % menos que un
+viernes normal. SuperBowl y Easter, que parecían picos, solo heredan la subida del domingo. Medidos por semanas, los eventos mueven también las semanas vecinas: las dos
 semanas previas a Navidad venden un 4-5 % más. La categoría con mayor dispersión de
 precios entre tiendas es SUPERMARKET, con un 2,75%, en contra de la expectativa inicial.
 
@@ -136,6 +135,13 @@ Se enumeran las que afectan a la validez de las conclusiones, ordenadas por impo
    temporada alta se apoya en un solo año.
 6. **El calendario de eventos es el proporcionado.** No se dispone de promociones planificadas ni
    de acciones de la competencia, que son determinantes conocidos de la demanda minorista.
+7. **La variable de eventos de la segmentación mezcla evento y domingo.** `event_lift` mide la
+   venta de cada producto en SuperBowl, Easter y Labor Day frente a un día normal, y se definió
+   cuando los tres se consideraban picos. La revisión posterior mostró que solo Labor Day lo es;
+   los otros dos caen en domingo. Medida solo con Labor Day, cambiaría de grupo uno de cada cinco
+   productos, sobre todo en el de venta esporádica. No se rehízo la segmentación porque el
+   modelo de predicción apenas depende de los grupos (WRMSSE de 0,9994 con ellos y 1,0002 sin
+   ellos, cuaderno 03b), pero el nombre «con pico en eventos» debe leerse con esa cautela.
 
 ### 7.8.4. Trabajo futuro
 
