@@ -114,7 +114,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Peso de cada grupo: catálogo frente a facturación'"
+                  "Value": "'Catálogo Frente a Facturación'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

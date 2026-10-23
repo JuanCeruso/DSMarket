@@ -62,8 +62,7 @@ La estabilidad se comprobó repitiendo la segmentación con diez semillas aleato
 índice de Rand ajustado medio respecto a la primera ejecución es **0,98** (mínimo 0,96). La
 partición no depende del punto de partida del algoritmo.
 
-> **[FIGURA 7.5]** *Método del codo: inercia y silueta frente al número de grupos, con la zona del codo y K = 6 señalados.*
-> `Fuente: Cuaderno 02, sección 4.4.`
+![**Figura 7.5.** Método del codo: inercia y silueta frente al número de grupos, con la zona del codo y K = 6 señalados. *Fuente: elaboración propia.*](figuras/fig_7_5.png){width=100%}
 
 **Respuesta a la pregunta de marketing.** El encargo planteaba 5, 10 o 20 grupos. Con 5, el grupo
 de Navidad se diluye dentro de otro mayor. Con 10, la silueta empeora (0,145) y los grupos grandes
@@ -93,8 +92,7 @@ Los dos primeros grupos reúnen el 68 % de la facturación. El grupo de venta es
 catálogo y aporta el 4 %: es el grupo donde la pregunta pertinente no es solo cuánto reponer sino
 si mantener la referencia.
 
-> **[FIGURA 7.6]** *Proyección PCA de los productos coloreados por grupo, y peso de cada grupo en el catálogo y en la facturación.*
-> `Fuente: Cuaderno 02, sección 4.6.`
+![**Figura 7.6.** Proyección PCA de los productos coloreados por grupo, y peso de cada grupo en el catálogo y en la facturación. *Fuente: elaboración propia.*](figuras/fig_7_6.png){width=100%}
 
 Dentro del grupo «Pico de diciembre» destaca **`SUPERMARKET_3_069`**, con una elevación en diciembre de
 **7,66**, la mayor del catálogo. Sus cuatro mejores días en cinco años son cuatro 31 de diciembre
@@ -103,8 +101,7 @@ límite del enfoque predictivo que se desarrolla en §7.3: un modelo entrenado s
 180 días nunca ve un 31 de diciembre cuando predice diciembre. Por eso el modelo final se entrena
 con 400 días de historia, de forma que vea al menos un ejemplo de cada fecha señalada.
 
-> **[FIGURA 7.7]** *Serie diaria de SUPERMARKET_3_069 con sus mejores días señalados.*
-> `Fuente: Cuaderno 02, sección 4.8.`
+![**Figura 7.7.** Serie diaria de SUPERMARKET_3_069 con sus mejores días señalados. *Fuente: elaboración propia a partir de `fact_ventas`.*](figuras/fig_7_7.png){width=100%}
 
 ### 7.2.4. Las tiendas: comparación directa en lugar de agrupamiento
 
@@ -136,8 +133,7 @@ La lectura de negocio es que el perfil de una tienda depende más de su entorno 
 la clientela— que de su ciudad. Para una apertura, la referencia de surtido y de previsión inicial
 debería ser la tienda existente más parecida en tipo de barrio, no la media de su ciudad.
 
-> **[FIGURA 7.8]** *Perfil de cada tienda respecto a la media y matriz de parecido entre tiendas.*
-> `Fuente: Cuaderno 02, secciones 5.2 y 5.3.`
+![**Figura 7.8.** Perfil de cada tienda respecto a la media y matriz de parecido entre tiendas. *Fuente: elaboración propia.*](figuras/fig_7_8.png){width=100%}
 
 ### 7.2.5. Segmentación operativa ABC/XYZ
 
@@ -158,8 +154,7 @@ clase XYZ dice *cuánto se puede fiar* la previsión de cada serie. En los extre
 misma historia —el grupo de alta rotación diaria es el único con mayoría de series estables
 (53 % X) y el de venta esporádica es casi todo errático (77 % Z)—, y en el medio se complementan.
 
-> **[FIGURA 7.9]** *Matriz ABC/XYZ: recuento de series y peso en la facturación.*
-> `Fuente: Cuaderno 04. Dos mapas de calor 3x3 con los valores impresos.`
+![**Figura 7.9.** Matriz ABC/XYZ de las series producto-tienda. *Fuente: elaboración propia a partir de `dim_serie`.*](figuras/fig_7_9.png){width=100%}
 
 ### 7.2.6. Una hipótesis que no sobrevivió: la afinidad entre productos
 

@@ -42,11 +42,12 @@
                       "Entity": "_Medidas"
                     }
                   },
-                  "Property": "Unidades vendidas"
+                  "Property": "Unidades vendidas (producto)"
                 }
               },
-              "queryRef": "_Medidas.Unidades vendidas",
-              "nativeQueryRef": "Unidades vendidas"
+              "queryRef": "_Medidas.Unidades vendidas (producto)",
+              "nativeQueryRef": "Unidades vendidas",
+              "displayName": "Unidades vendidas"
             },
             {
               "field": {
@@ -99,7 +100,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Unidades por día: lo que se vendió y lo que prevemos'"
+                  "Value": "'Unidades por Día'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

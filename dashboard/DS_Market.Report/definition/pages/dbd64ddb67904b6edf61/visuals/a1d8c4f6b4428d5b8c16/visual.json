@@ -134,7 +134,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Lo que esperamos vender y el colchón, por categoría'"
+                  "Value": "'Venta Prevista Más Stock de Seguridad'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

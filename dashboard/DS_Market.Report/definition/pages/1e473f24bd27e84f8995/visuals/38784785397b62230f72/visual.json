@@ -85,7 +85,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Mes a mes: cómo varía la venta de los productos de cada grupo (1 = media del año)'"
+                  "Value": "'Variación Mensual Frente a la Media'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

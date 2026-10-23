@@ -6,7 +6,7 @@
     "y": 425,
     "z": 9031,
     "height": 30,
-    "width": 154,
+    "width": 166,
     "tabOrder": 9031
   },
   "visual": {
@@ -21,7 +21,7 @@
                   {
                     "value": "Explorador de productos",
                     "textStyle": {
-                      "fontSize": "12pt",
+                      "fontSize": "10.5pt",
                       "fontWeight": "normal",
                       "color": "#FFFFFF",
                       "fontFamily": "Segoe UI"

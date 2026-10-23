@@ -3,10 +3,10 @@
   "name": "f79b452a72d44c8f05c0",
   "position": {
     "x": 230,
-    "y": 614,
+    "y": 720,
     "z": 220,
-    "height": 436,
-    "width": 820,
+    "height": 330,
+    "width": 1660,
     "tabOrder": 220
   },
   "visual": {
@@ -142,7 +142,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Detalle por tienda'"
+                  "Value": "'Detalle por Tienda'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

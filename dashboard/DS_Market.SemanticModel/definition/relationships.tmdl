@@ -86,3 +86,11 @@ relationship 88f3ad73-9ec0-4339-bf75-61a13677e312
 relationship d5c275d3-a53d-45ac-ba9f-7269503fbe7c
 	fromColumn: mart_tienda_distancia.store_code
 	toColumn: dim_tienda.store_code
+
+relationship bb4a03c8-405e-4287-ae68-774029fe3bc0
+	fromColumn: fact_ventas_reciente.serie_id
+	toColumn: dim_serie.serie_id
+
+relationship c5cc6186-dae5-4aa1-82cc-e14704205c36
+	fromColumn: fact_ventas_reciente.fecha
+	toColumn: dim_calendario.fecha

@@ -97,7 +97,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Mejores días de venta (suma de las 10 tiendas)'"
+                  "Value": "'Mejores Días de Venta'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

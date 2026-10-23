@@ -101,7 +101,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Cómo vende cada tienda frente a la media de las 10 (en desviaciones típicas: azul por encima, dorado por debajo)'"
+                  "Value": "'Cómo Vende Cada Tienda'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

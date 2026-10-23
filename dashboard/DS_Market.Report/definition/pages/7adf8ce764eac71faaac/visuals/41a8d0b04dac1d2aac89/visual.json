@@ -186,7 +186,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Demanda esperada y colchón en cada revisión'"
+                  "Value": "'Demanda Esperada y Colchón en Cada Revisión'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

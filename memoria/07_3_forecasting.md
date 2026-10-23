@@ -53,8 +53,7 @@ mínima tiene 7, 14, 21 y 28 días de antigüedad— la comparación se separa d
 | Media por día de la semana | 1,0855 |
 | Naive estacional | 1,4262 |
 
-> **[FIGURA 7.10]** *Estrategia de predicción por bloques semanales.*
-> `Fuente: Diagrama de elaboración propia: los cuatro modelos y su información mínima.`
+![**Figura 7.10.** Estrategia de predicción por bloques semanales. *Fuente: elaboración propia.*](figuras/fig_7_10.png){width=100%}
 
 El hallazgo metodológico es la magnitud relativa de los dos efectos: **la organización del horizonte
 mejora un 2 % el mismo algoritmo (de 1,0626 a 1,0407), mientras que la diferencia entre LightGBM y
@@ -69,21 +68,19 @@ superior a 1 significa que, ponderando por facturación, el error a 28 días vis
 de repetir el dato del día anterior (el denominador del RMSSE, §6.6), una referencia exigente
 porque conoce el día anterior y el modelo no.
 
-> **[FIGURA 7.11]** *Error de los modelos comparados, por pliegue de validación.*
-> `Fuente: Cuaderno 03. Incluir las referencias para que la comparación sea legible.`
+![**Figura 7.11.** Error (WRMSSE) de los modelos comparados: media de los tres pliegues y evolución por ventana de validación. *Fuente: elaboración propia.*](figuras/fig_7_11.png){width=100%}
 
 ### 7.3.4. Qué mira el modelo y cuánta complejidad hace falta
 
 El análisis de importancia de variables arroja un resultado que conviene no maquillar: la media
-móvil de 28 días, `rmean_28`, concentra el **56,6 %** de la importancia total, y las cuatro medias
-móviles juntas (7, 28, 91 y 364 días) el **86,5 %**. El identificador del producto pesa un 7,3 %, y
+móvil de 28 días, `rmean_28`, concentra el **58,2 %** de la importancia total, y las cuatro medias
+móviles juntas (7, 28, 91 y 364 días) el **86,2 %**. El identificador del producto pesa un 7,5 %, y
 las variables de evento y de fin de semana no llegan al 1 % cada una. El grupo de producto de §7.2
 aporta un **0,16 %**: su papel es de interpretación, no de precisión. La lectura es que el modelo
 hace, esencialmente, una media móvil refinada, y que el valor está en estimar bien el nivel reciente
 de cada serie, no en modelar efectos de calendario producto a producto.
 
-> **[FIGURA 7.12]** *Importancia de las variables del modelo.*
-> `Fuente: Cuaderno 03. Variables principales; rmean_28 destacada.`
+![**Figura 7.12.** Importancia de las variables del modelo de bloques semanales (media de los tres pliegues). *Fuente: elaboración propia.*](figuras/fig_7_12.png){width=100%}
 
 Esa lectura se contrastó con una **escalera de complejidad**, de menor a mayor, evaluada en las tres
 ventanas:
@@ -142,8 +139,7 @@ al −6,2 %, y la semana de Black Friday de +10,3 % a +0,2 %. El pico del 31 de 
 captarse del todo (−27 %). La regla de cierre sobre `dim_calendario` se mantiene en la carga de
 predicciones como salvaguarda, pero ya no es la que corrige el error.
 
-> **[FIGURA 7.13]** *Demanda real y predicha por semanas en diciembre de 2015, con 180 y con 400 días.*
-> `Fuente: Cuaderno 03.`
+![**Figura 7.13.** Demanda total diaria real y predicha en diciembre de 2015, con 180 y con 400 días de historia. *Fuente: elaboración propia.*](figuras/fig_7_13.png){width=100%}
 
 ### 7.3.6. Intervalos de predicción
 
@@ -172,8 +168,7 @@ un **127 % más de inventario** (2.629.378 unidades frente a 1.160.682 para las 
 semanas). La decisión de dónde situarse en esa curva no es estadística sino económica, y se
 resuelve en §7.4.
 
-> **[FIGURA 7.14]** *Cobertura empírica del intervalo frente al nivel nominal.*
-> `Fuente: Cuaderno 03. Curva de calibración con la diagonal de referencia.`
+![**Figura 7.14.** Cobertura empírica del intervalo frente al nivel nominal. *Fuente: elaboración propia.*](figuras/fig_7_14.png){width=100%}
 
 ### 7.3.7. Calibración del sesgo
 
@@ -219,8 +214,7 @@ con una medida de error distinta, mejoró al enfoque ascendente del 15,12 % al 1
 propiedad de coherencia garantizada entre niveles. No cambia la respuesta: sumar es válido, y
 reconciliar es una mejora opcional.
 
-> **[FIGURA 7.15]** *Error porcentual medio por nivel: ascendente frente a modelado directo.*
-> `Fuente: Cuaderno 03. Barras agrupadas por los cuatro niveles.`
+![**Figura 7.15.** Error porcentual medio por nivel: enfoque ascendente frente a modelado directo del agregado. *Fuente: elaboración propia.*](figuras/fig_7_15.png){width=100%}
 
 ### 7.3.9. El objetivo correcto no es el día, es el ciclo
 
@@ -239,6 +233,8 @@ diaria, sobre los mismos datos y la misma validación:
 | Modelo del total (XGBoost) | 3,989 | 9,688 | +0,08% |
 | **Ensamble de ambos** | **3,986** | **9,457** | +0,20% |
 
+![**Figura 7.16.** Error y sesgo de la suma de predicciones diarias frente a los modelos del total del ciclo. *Fuente: elaboración propia.*](figuras/fig_7_16.png){width=100%}
+
 La mejora del error absoluto medio es del **15,7%**, pero el resultado relevante es la última
 columna: el sesgo pasa de **−7,41% a +0,20%**. Sumar predicciones diarias no solo acumulaba
 error, acumulaba error *en una dirección*, infravalorando sistemáticamente la demanda del ciclo
@@ -251,7 +247,7 @@ exactamente sobre la cantidad que se usa para decidir.
 ### 7.3.10. Productos sin histórico
 
 Una referencia recién incorporada al catálogo no tiene retardos ni medias móviles, es decir,
-carece del 88% de la información que el modelo utiliza. Es además el momento en que un error de
+carece del 86% de la información que el modelo utiliza. Es además el momento en que un error de
 dimensionamiento resulta más caro. Se evaluaron por ello cuatro formas de estimar su demanda
 media, sobre un conjunto de productos ocultados por completo —en todas las tiendas— durante el
 entrenamiento:

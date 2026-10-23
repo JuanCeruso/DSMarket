@@ -5,7 +5,7 @@ pip install -r requirements-ci.txt
 pytest pruebas -v
 ```
 
-77 pruebas, poco más de dos segundos, y **sin los datos de DSMarket**.
+86 pruebas, pocos segundos, y **sin los datos de DSMarket**.
 
 Esa última parte no es una casualidad: es la decisión de diseño de la que depende todo lo demás.
 Una suite que exige 469 MB de ficheros propiedad de la escuela es una suite que no se ejecuta en
@@ -15,13 +15,13 @@ un servidor de integración continua, y por tanto una suite que no se ejecuta nu
 
 | Fichero | Pruebas | Qué cubre |
 |---|---|---|
-| `test_politica.py` | 19 | La aritmética que decide cuánto stock se pide |
+| `test_politica.py` | 28 | La aritmética que decide cuánto stock se pide |
 | `test_contratos.py` | 28 | Que cada contrato detecta la violación que dice detectar |
 | `test_promocion.py` | 13 | Que un candidato peor no llega a producción |
 | `test_registro.py` | 9 | El ciclo de vida del modelo, sobre un registro temporal |
 | `test_metricas.py` | 8 | Que el PSI mide deriva y no ruido |
 
-El proyecto tenía doce pruebas sobre el servicio web y ninguna sobre la política de reposición.
+El servicio web dispone de trece comprobaciones de humo y ninguna sobre la política de reposición.
 Es el reparto habitual y está al revés: un fallo del servicio se ve en el acto, un error en la
 fórmula del stock de seguridad se ve cuando falta mercadería.
 

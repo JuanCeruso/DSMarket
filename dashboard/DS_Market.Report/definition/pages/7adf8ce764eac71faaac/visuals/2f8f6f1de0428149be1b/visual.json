@@ -157,7 +157,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Colchón por segmento (A = más valor, X = más estable) en la revisión de referencia'"
+                  "Value": "'Colchón por Segmento (A = Más Valor, X = Más Estable) en la Revisión de Referencia'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

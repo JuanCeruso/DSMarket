@@ -103,7 +103,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Unidades vendidas por día y ciudad (2016)'"
+                  "Value": "'Unidades Vendidas por Día y Ciudad (2016)'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

@@ -1,9 +1,5 @@
 # 8. Referencias
 
-> **Nota para el equipo.** Las referencias siguen formato APA 7.ª edición. Antes de la entrega
-> conviene verificar volumen, número y páginas de las cuatro marcadas con [v] contra la fuente
-> original, y añadir el DOI a todas las que lo tengan.
-
 Angrist, J. D., & Pischke, J.-S. (2009). *Mostly harmless econometrics: An empiricist's
 companion*. Princeton University Press.
 
@@ -20,7 +16,7 @@ Berry, S., Levinsohn, J., & Pakes, A. (1995). Automobile prices in market equili
 *Econometrica, 63*(4), 841–890.
 
 Bijmolt, T. H. A., van Heerde, H. J., & Pieters, R. G. M. (2005). New empirical generalizations
-on the determinants of price elasticity. *Journal of Marketing Research, 42*(2), 141–156. [v]
+on the determinants of price elasticity. *Journal of Marketing Research, 42*(2), 141–156.
 
 Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system. *Proceedings of the
 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining*, 785–794.
@@ -71,11 +67,11 @@ Lovell, M. C. (1963). Seasonal adjustment of economic time series and multiple r
 analysis. *Journal of the American Statistical Association, 58*(304), 993–1010.
 
 Makridakis, S., Spiliotis, E., & Assimakopoulos, V. (2022). M5 accuracy competition: Results,
-findings, and conclusions. *International Journal of Forecasting, 38*(4), 1346–1364. [v]
+findings, and conclusions. *International Journal of Forecasting, 38*(4), 1346–1364.
 
 Makridakis, S., Spiliotis, E., Assimakopoulos, V., Chen, Z., Gaba, A., Tsetlin, I., & Winkler,
 R. L. (2022). The M5 uncertainty competition: Results, findings and conclusions. *International
-Journal of Forecasting, 38*(4), 1365–1385. [v]
+Journal of Forecasting, 38*(4), 1365–1385.
 
 Petropoulos, F., Apiletti, D., Assimakopoulos, V., Babai, M. Z., Barrow, D. K., Ben Taieb, S.,
 … Ziel, F. (2022). Forecasting: Theory and practice. *International Journal of Forecasting,
@@ -102,7 +98,7 @@ Taylor, S. J., & Letham, B. (2018). Forecasting at scale. *The American Statisti
 Thorndike, R. L. (1953). Who belongs in the family? *Psychometrika, 18*(4), 267–276.
 
 Villas-Boas, J. M., & Winer, R. S. (1999). Endogeneity in brand choice models. *Management
-Science, 45*(10), 1324–1338. [v]
+Science, 45*(10), 1324–1338.
 
 Wickramasuriya, S. L., Athanasopoulos, G., & Hyndman, R. J. (2019). Optimal forecast
 reconciliation for hierarchical and grouped time series through trace minimization. *Journal of

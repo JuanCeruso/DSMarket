@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "9d1b30767e72db40f5be",
   "position": {
-    "x": 1070,
-    "y": 170,
+    "x": 780,
+    "y": 124,
     "z": 220,
-    "height": 880,
-    "width": 814,
+    "height": 576,
+    "width": 560,
     "tabOrder": 220
   },
   "visual": {
@@ -103,7 +103,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Unidades vendidas por departamento'"
+                  "Value": "'Unidades Vendidas por Departamento'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
@@ -111,6 +138,5 @@
         }
       ]
     }
-  },
-  "parentGroupName": "dace2372e11959a60540"
+  }
 }

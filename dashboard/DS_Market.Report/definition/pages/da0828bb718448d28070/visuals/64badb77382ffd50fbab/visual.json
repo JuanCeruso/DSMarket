@@ -85,7 +85,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Venta por mes del año (1,00 = media del grupo)'"
+                  "Value": "'Venta por Mes del Año'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

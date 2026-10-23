@@ -157,7 +157,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Productos con mayor dispersión de precio entre tiendas'"
+                  "Value": "'Productos con Mayor Dispersión de Precio entre Tiendas'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

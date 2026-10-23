@@ -23,7 +23,6 @@ bruto hasta la cantidad que debe pedirse de cada producto en cada tienda.
 | `app/` | Panel interactivo (Streamlit) |
 | `api/` | Servicio de reposición (FastAPI) con sus doce pruebas |
 | `avanzado/` | Nueve experimentos y sondeos, con sus resultados |
-| `parches/` | Correcciones y extensiones aplicables sobre el proyecto |
 | `memoria/` | La memoria, una sección por fichero, y el `.docx` generado |
 | `defensa/` | Guion cronometrado de la defensa |
 | `documentacion/` | Manual de ejecución, teoría, arquitectura, explicación de la app |
@@ -66,8 +65,8 @@ Después, con los datos en su sitio:
 python3 operacion/orquestador.py
 ```
 
-Un comando ejecuta las nueve etapas: construye las tres capas del almacén, comprueba trece
-contratos de datos, entrena, predice a 28 días, calcula los niveles objetivo, vuelve a comprobar
+Un comando ejecuta las diez etapas: construye las tres capas del almacén, comprueba quince
+contratos de datos, entrena, somete el candidato a la puerta de promoción, predice a 28 días, calcula los niveles objetivo, vuelve a comprobar
 los contratos antes de publicar y ejecuta la monitorización. Se detiene ante el primer fallo
 bloqueante y deja constancia de todo.
 
@@ -118,7 +117,7 @@ era obligatoria.
 Los cuadernos son la fuente: se editan y se ejecutan directamente como cuadernos Jupyter. El 03 lee los
 resultados de los entrenamientos auxiliares guardados en `cache_forecast/` (reentrenar todo lleva varias horas) que generan
 `forecast_segmentacion.py`, `forecast_semanal.py`, `experimentos_t3.py`, `exp_precios_paso.py` y `modelo_final.py`. Las semillas aleatorias están fijadas. El almacén se reconstruye
-íntegro desde los ficheros de origen con un solo comando, y trece contratos de datos detienen el
+íntegro desde los ficheros de origen con un solo comando, y quince contratos de datos detienen el
 proceso si algo no cuadra.
 
 ## Licencia y datos

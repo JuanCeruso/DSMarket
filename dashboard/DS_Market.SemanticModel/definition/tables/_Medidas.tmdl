@@ -422,3 +422,20 @@ table _Medidas
 			AVERAGE ( mart_producto_perfil[fin_semana_vs_semana] ) - 1
 		formatString: +0%;-0%;0%
 		lineageTag: c0587c3c-9392-4aee-8f87-f4bf9cae70a7
+
+	measure 'Unidades vendidas (producto)' =
+			SUM ( fact_ventas_reciente[unidades] )
+		formatString: #,0
+		lineageTag: 962ef9cc-10b4-4773-8615-fcad8644e233
+
+	measure 'Unidades últimas 4 semanas (producto)' =
+			VAR fin = CALCULATE ( MAX ( fact_ventas_reciente[fecha] ), ALL ( dim_calendario ) )
+			RETURN
+			    CALCULATE ( [Unidades vendidas (producto)], DATESINPERIOD ( dim_calendario[fecha], fin, -28, DAY ) )
+		formatString: #,0
+		lineageTag: 8e051f72-5b7b-4527-92db-d3dfdb31b3a5
+
+	measure 'Previsión vs últimas 4 semanas (producto) %' =
+			DIVIDE ( [Unidades previstas] - [Unidades últimas 4 semanas (producto)], [Unidades últimas 4 semanas (producto)] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: ffabd005-86f2-42cd-a798-b3bd81b999b4

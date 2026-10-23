@@ -100,7 +100,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Diciembre frente al resto del año'"
+                  "Value": "'Diciembre Frente al Resto del Año'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

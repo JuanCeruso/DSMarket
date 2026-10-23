@@ -101,7 +101,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Distancia entre tiendas (menor = más parecidas)'"
+                  "Value": "'Distancia Entre Tiendas'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

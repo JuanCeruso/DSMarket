@@ -102,7 +102,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Dispersión mediana del precio por categoría'"
+                  "Value": "'Dispersión Mediana del Precio por Categoría'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

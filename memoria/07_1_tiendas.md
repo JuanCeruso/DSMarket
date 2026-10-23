@@ -24,8 +24,7 @@ Los días de cierre de establecimiento aparecen con claridad como ceros exactos 
 agregada de una tienda. Se identificaron y se marcaron, y su tratamiento tiene consecuencias
 que se cuantifican en §7.3.
 
-> **[FIGURA 7.1]** *Serie agregada de ventas diarias y su descomposición en tendencia, estacionalidad y residuo.*
-> `Fuente: Cuaderno 01, sección de descomposición. Exportar a 200 ppp.`
+![**Figura 7.1.** Serie agregada de ventas diarias, con su tendencia y sus perfiles semanal y anual. *Fuente: elaboración propia a partir de `fact_ventas`.*](figuras/fig_7_1.png){width=100%}
 
 ### 7.1.2. Los eventos que importan y el que no
 
@@ -47,8 +46,7 @@ conjunto de eventos relevantes. Que la ausencia de pico se deba a la política c
 compañía, a la naturaleza de su catálogo o a la codificación del calendario es una pregunta que
 estos datos no permiten responder, y así se deja consignado.
 
-> **[FIGURA 7.2]** *Coeficiente de elevación por evento del calendario, con Black Friday señalado.*
-> `Fuente: Cuaderno 01. La figura debe incluir Black Friday para que el lector vea la ausencia de pico.`
+![**Figura 7.2.** Coeficiente de elevación por evento del calendario, con Black Friday señalado. *Fuente: elaboración propia a partir de `fact_ventas`.*](figuras/fig_7_2.png){width=100%}
 
 ### 7.1.3. Las tiendas no son intercambiables
 
@@ -72,8 +70,7 @@ parecen mucho. Este hecho tiene consecuencias directas sobre el diseño de campa
 uniforme para toda la red desperdicia esfuerzo en dos tercios del catálogo— y sobre el
 modelado, que es lo que abre el capítulo siguiente.
 
-> **[FIGURA 7.3]** *Solapamiento de los quince productos más vendidos entre las tres ciudades.*
-> `Fuente: Cuaderno 01, diagrama de conjuntos o matriz de coincidencia.`
+![**Figura 7.3.** Solapamiento de los quince productos más vendidos entre las tres ciudades. *Fuente: elaboración propia a partir de `fact_ventas`.*](figuras/fig_7_3.png){width=100%}
 
 ### 7.1.4. El precio, y un resultado contraintuitivo
 
@@ -88,8 +85,7 @@ mayor precio unitario. La lectura más plausible es que la diferenciación se co
 volumen y competencia local, no donde hay margen unitario; pero el dato disponible permite
 constatar el hecho, no explicarlo.
 
-> **[FIGURA 7.4]** *Dispersión relativa de precios entre tiendas, por categoría.*
-> `Fuente: Cuaderno 01. Ordenar las categorías por dispersión descendente.`
+![**Figura 7.4.** Dispersión relativa de precios entre tiendas, por categoría. *Fuente: elaboración propia a partir de `fact_ventas`.*](figuras/fig_7_4.png){width=100%}
 
 Este resultado condiciona el capítulo §7.5: si el precio se mueve, hay algo que estimar. La
 pregunta de si ese movimiento permite identificar un efecto causal se responde allí, y la

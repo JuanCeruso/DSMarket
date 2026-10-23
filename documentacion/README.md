@@ -10,5 +10,3 @@ necesitan servidor ni conexión.
 | `lakehouse.html` | Cómo y dónde se construyó la DuckDB: arquitectura medallion (bronze/silver/gold), esquema estrella, el unpivot, el bucle de realimentación de predicciones y las trampas encontradas. | Para defender la parte de ingeniería de datos. |
 | `memoria.html` | Plan de la memoria: estructura por narrativa de negocio (opción B), con los extras como capítulos propios. | Al empezar a escribir la memoria y para repartir capítulos entre los cuatro. |
 
-Los cuatro están también publicados como artefactos en Claude; si se actualiza
-alguno, esta carpeta hay que volver a sincronizarla a mano.

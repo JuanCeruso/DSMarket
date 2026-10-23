@@ -127,7 +127,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Cada tienda y su tienda más parecida'"
+                  "Value": "'Cada Tienda y su Tienda Más Parecida'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

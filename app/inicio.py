@@ -241,7 +241,7 @@ intermedias: el dashboard, la API y este panel leen exactamente los mismos datos
 with tab5:
     st.header("Preguntar al almacén en lenguaje natural")
     st.markdown("""
-Escribí una pregunta de negocio y el sistema la traduce a SQL, la ejecuta contra el almacén
+Se escribe una pregunta de negocio y el sistema la traduce a SQL, la ejecuta contra el almacén
 y muestra el resultado. **El modelo de lenguaje no calcula nada**: genera la consulta, la
 aritmética la hace la base de datos, y el SQL se muestra siempre para que se pueda auditar.
 """)
@@ -249,7 +249,7 @@ aritmética la hace la base de datos, y el SQL se muestra siempre para que se pu
                 "¿Cuántas unidades se vendieron por ciudad y mes en 2015?",
                 "¿Qué productos del segmento AX tienen el mayor stock de seguridad sugerido?",
                 "¿Qué días con evento tuvieron más ventas totales?"]
-    pregunta = st.text_input("Tu pregunta", placeholder=ejemplos[0])
+    pregunta = st.text_input("Pregunta", placeholder=ejemplos[0])
     st.caption("Ejemplos: " + " · ".join(f"*{e}*" for e in ejemplos))
 
     if not hay_llm():

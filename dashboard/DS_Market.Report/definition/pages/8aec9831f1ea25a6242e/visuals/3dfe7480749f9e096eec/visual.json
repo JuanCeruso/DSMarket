@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "3dfe7480749f9e096eec",
   "position": {
-    "x": 1070,
-    "y": 170,
+    "x": 1350,
+    "y": 124,
     "z": 210,
-    "height": 880,
-    "width": 814,
+    "height": 576,
+    "width": 540,
     "tabOrder": 210
   },
   "visual": {
@@ -103,7 +103,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Reparto de unidades por departamento (% de cada ciudad)'"
+                  "Value": "'Reparto de Unidades por Departamento (% de Cada Ciudad)'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
@@ -111,6 +138,5 @@
         }
       ]
     }
-  },
-  "parentGroupName": "c078700722bdad29a764"
+  }
 }

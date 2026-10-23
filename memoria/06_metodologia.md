@@ -162,8 +162,7 @@ donde se ejecutan las comprobaciones automáticas de integridad.
 91,0 MB —más que plata, porque incorpora tablas derivadas y agregados— y es la única capa que
 leen los consumidores.
 
-> **[FIGURA 6.1]** *Arquitectura del almacén en tres capas.*
-> `Fuente: Diagrama de elaboración propia. Vectorial o 200 ppp.`
+![**Figura 6.1.** Arquitectura del almacén en tres capas. *Fuente: elaboración propia.*](figuras/fig_6_1.png){width=100%}
 
 El despliegue del formato ancho a formato largo, que es la operación más pesada del proceso,
 se resuelve con una sola sentencia `UNPIVOT` sobre las 1.913 columnas diarias: **58.327.370
@@ -194,8 +193,7 @@ Se añaden dos tablas agregadas de consumo directo, `mart_ventas_dia` (133.910 f
 `mart_producto_tienda` (30.490 filas), destinadas al cuadro de mando y a las consultas de nivel
 ciudad o departamento, que no necesitan bajar al grano diario.
 
-> **[FIGURA 6.2]** *Modelo dimensional de la capa de consumo (esquema en estrella).*
-> `Fuente: Diagrama de elaboración propia con las cuatro dimensiones y las tres tablas de hechos.`
+![**Figura 6.2.** Modelo dimensional de la capa de consumo (esquema en estrella). *Fuente: elaboración propia.*](figuras/fig_6_2.png){width=100%}
 
 ### 6.3.3. Motor y decisiones de implementación
 
@@ -288,8 +286,7 @@ pliegues informa sobre la estabilidad del modelo. En este trabajo esa dispersió
 relevante en un caso concreto —el sesgo de la predicción, que no se mantuvo constante entre
 pliegues— y condicionó la decisión de calibrar únicamente con la ventana más reciente (§7.3).
 
-> **[FIGURA 6.3]** *Esquema de la validación temporal por avance.*
-> `Fuente: Diagrama de elaboración propia: tres ventanas de entrenamiento y sus horizontes de 28 días.`
+![**Figura 6.3.** Esquema de la validación temporal por avance. *Fuente: elaboración propia.*](figuras/fig_6_3.png){width=100%}
 
 ### 6.5.2. Ventana de entrenamiento
 

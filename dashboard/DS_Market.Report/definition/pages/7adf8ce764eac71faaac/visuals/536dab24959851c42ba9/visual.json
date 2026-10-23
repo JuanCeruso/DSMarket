@@ -120,7 +120,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Colchón sobre la demanda según lo que se vende en 9 días'"
+                  "Value": "'Colchón Sobre la Demanda Según lo que se Vende en 9 Días'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

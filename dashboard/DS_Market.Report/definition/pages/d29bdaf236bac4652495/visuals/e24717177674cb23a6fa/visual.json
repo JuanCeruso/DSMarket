@@ -152,7 +152,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Campana de la demanda de los próximos 9 días: la zona oscura es lo que cubre el nivel de confianza elegido'"
+                  "Value": "'Campana de la Demanda de los Próximos 9 Días: la Zona Oscura es lo que Cubre el Nivel de Confianza Elegido'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

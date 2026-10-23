@@ -162,7 +162,7 @@ siguen siendo donde el error de predicción es mayor, y la comparación de §7.4
 segmento CZ la media móvil simple supera al modelo.
 
 **Predicción de productos sin histórico.** Una referencia nueva llega al lineal sin retardos ni
-medias móviles, es decir sin el 88% de la información que usa el modelo, y es justo el momento en
+medias móviles, es decir sin el 86% de la información que usa el modelo, y es justo el momento en
 que un error de dimensionamiento resulta más caro. La vía natural es predecir su nivel de demanda
 a partir de sus atributos y del comportamiento de la misma referencia en la tienda más parecida,
 lo que da un uso operativo a la comparación de tiendas de §7.2.
@@ -193,5 +193,5 @@ intervalo ya estaba bien calibrado, aportando garantía formal pero no rendimien
 de afinidad entre productos** se ejecutó y no encontró señal por encima del ruido. Y quedan
 descartadas sin ejecutar, por diagnóstico previo, las **arquitecturas neuronales genéricas**,
 superadas por los ensambles de árboles en problemas de esta estructura, y un **modelo de mayor
-capacidad**, dado que la media móvil de 28 días concentra el 56,6% de la importancia y el techo
+capacidad**, dado que la media móvil de 28 días concentra el 58,2% de la importancia y el techo
 lo pone el ruido de la serie.

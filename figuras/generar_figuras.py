@@ -23,6 +23,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import matplotlib.dates
 from matplotlib.ticker import FuncFormatter
 from matplotlib.patches import FancyArrowPatch, Rectangle
 
@@ -93,7 +94,7 @@ def sql(consulta):
     if _con is None:
         _con = duckdb.connect()
         _con.execute(f"SET memory_limit='{os.environ.get('DSMARKET_MEM','3GB')}';")
-        tmp = os.path.join(os.path.expanduser("~"), ".duckdb_tmp")
+        tmp = "/tmp/dsmarket_duck"
         os.makedirs(tmp, exist_ok=True)
         _con.execute(f"SET temp_directory='{tmp}';")
         _con.execute("SET preserve_insertion_order=false;")
@@ -373,187 +374,6 @@ def _perfiles_producto():
     return X[X.sum(axis=1) > 0]
 
 
-def fig_7_5():
-    """Métricas internas de agrupamiento frente al número de grupos."""
-    from sklearn.cluster import KMeans
-    from sklearn.preprocessing import StandardScaler
-    from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
-    X = _perfiles_producto()
-    Z = StandardScaler().fit_transform(X.to_numpy(np.float32))
-    rng = np.random.default_rng(42)
-    idx = rng.choice(len(Z), min(2000, len(Z)), replace=False)   # la silueta es O(n²)
-    ks, sil, db, ch = [], [], [], []
-    for k in range(2, 13):
-        et = KMeans(n_clusters=k, n_init=10, random_state=42).fit_predict(Z)
-        ks.append(k)
-        sil.append(silhouette_score(Z[idx], et[idx]))
-        db.append(davies_bouldin_score(Z, et))
-        ch.append(calinski_harabasz_score(Z, et))
-    fig, axes = plt.subplots(1, 3, figsize=(6.6, 2.3))
-    for ax, v, t, mejor in [(axes[0], sil, "Silueta (↑)", None),
-                            (axes[1], db, "Davies-Bouldin (↓)", int(np.argmin(db))),
-                            (axes[2], ch, "Calinski-Harabasz (↑)", int(np.argmax(ch)))]:
-        ax.plot(ks, v, color=AZUL, marker="o", markersize=3.5, zorder=3)
-        ax.axvline(5, color=NARANJA, lw=1.2, ls=(0, (3, 3)), zorder=2)
-        ax.set_title(t, fontsize=8.5); ax.set_xlabel("K"); ax.set_xticks([2, 5, 8, 12])
-        rejilla(ax)
-    axes[0].annotate("K = 5", xy=(5, sil[3]), xytext=(6.6, max(sil) * 0.98),
-                     fontsize=7.5, color=NARANJA, fontweight="bold",
-                     arrowprops=dict(arrowstyle="-|>", color=NARANJA, lw=0.9))
-    fig.suptitle("La silueta baja siempre con K: la decisión se toma con las tres juntas",
-                 fontsize=9, fontweight="bold", x=0.02, ha="left", y=1.04)
-    return guardar(fig, "7.5", "Métricas internas frente al número de grupos")
-
-
-def fig_7_6():
-    """Qué distingue a los cinco arquetipos, en las variables con las que se construyeron.
-
-    La versión anterior dibujaba el perfil semanal y mensual de cada grupo, y los cinco salían
-    casi idénticos. No era un error de dibujo: los arquetipos NO se construyeron sobre la forma
-    del perfil, sino sobre ocho variables de comportamiento —volumen, intermitencia,
-    variabilidad, sensibilidad al fin de semana, a diciembre y a los eventos, tendencia y
-    precio—. Un gráfico de perfiles no puede separar grupos que no se separaron por el perfil.
-
-    Aquí se dibujan seis de esas ocho variables, en sus unidades reales. Cada arquetipo tiene su
-    máximo en alguna columna, y ese máximo es lo que le da el nombre.
-    """
-    d = sql("""
-        WITH dia AS (
-            SELECT item, fecha, sum(unidades) AS u, avg(precio) AS p
-            FROM fact_ventas GROUP BY 1, 2
-        ), j AS (
-            SELECT d.*, c.es_fin_de_semana AS fs, c.mes
-            FROM dia d JOIN dim_calendario c USING (fecha)
-        )
-        SELECT p.arquetipo,
-               count(DISTINCT j.item)                                   AS n,
-               avg(j.u)                                                 AS media_dia,
-               sum(CASE WHEN j.u = 0 THEN 1 ELSE 0 END) * 100.0 / count(*) AS sin_venta,
-               stddev_pop(j.u) / nullif(avg(j.u), 0)                    AS cv,
-               avg(CASE WHEN j.fs THEN j.u END)
-                 / nullif(avg(CASE WHEN NOT j.fs THEN j.u END), 0)      AS finde,
-               avg(CASE WHEN j.mes = 12 THEN j.u END)
-                 / nullif(avg(CASE WHEN j.mes <> 12 THEN j.u END), 0)   AS diciembre,
-               avg(j.p)                                                 AS precio
-        FROM j JOIN dim_producto p USING (item)
-        WHERE p.arquetipo IS NOT NULL
-        GROUP BY 1 ORDER BY 2 DESC
-    """)
-
-    COLS = [("media_dia", "volumen",       "uds/día",         1, ""),
-            ("sin_venta", "intermitencia", "días sin venta",  0, "%"),
-            ("cv",        "variabilidad",  "coef. variación", 2, ""),
-            ("finde",     "fin de semana", "x un día normal", 2, ""),
-            ("diciembre", "diciembre",     "x un mes normal", 2, ""),
-            ("precio",    "precio",        "USD",             2, "")]
-
-    fig, axes = plt.subplots(1, len(COLS), figsize=(7.0, 2.7),
-                             gridspec_kw={"wspace": 0.30, "left": 0.235, "right": 0.985,
-                                          "top": 0.745, "bottom": 0.135})
-    y = np.arange(len(d))[::-1]
-
-    for k, (col, titulo, unidad, dec, suf) in enumerate(COLS):
-        ax = axes[k]
-        v = d[col].to_numpy(float)
-        dueno = int(np.argmax(v))
-        ax.barh(y, v, height=0.62, zorder=2,
-                color=[CAT[i % len(CAT)] for i in range(len(d))])
-        tope = v.max() * 1.62
-        for i, valor in enumerate(v):
-            ax.text(valor + tope * 0.05, y[i], es_num(valor, dec) + suf,
-                    va="center", fontsize=6.2, color=TINTA if i == dueno else TINTA2,
-                    fontweight="bold" if i == dueno else "normal")
-        ax.set_xlim(0, tope)
-        ax.set_yticks(y); ax.set_yticklabels([])
-        ax.set_xticks([]); ax.tick_params(length=0)
-        for lado in ("top", "right", "bottom", "left"):
-            ax.spines[lado].set_visible(False)
-        ax.set_title(titulo, fontsize=7.2, color=TINTA, fontweight="bold", pad=12)
-        ax.text(0.5, 1.03, unidad, transform=ax.transAxes, ha="center",
-                fontsize=5.9, color=TINTA3)
-
-    for i in range(len(d)):
-        axes[0].text(-0.08, y[i] + 0.16, str(d["arquetipo"].iloc[i]),
-                     transform=axes[0].get_yaxis_transform(), ha="right", va="center",
-                     fontsize=7, color=TINTA, fontweight="bold")
-        axes[0].text(-0.08, y[i] - 0.30, f"{int(d['n'].iloc[i])} ref.",
-                     transform=axes[0].get_yaxis_transform(), ha="right", va="center",
-                     fontsize=6, color=TINTA3)
-
-    fig.suptitle("Cada arquetipo encabeza una variable distinta",
-                 fontsize=9.5, fontweight="bold", x=0.015, ha="left", y=0.975)
-    fig.text(0.015, 0.02,
-             "En negrita, el arquetipo que encabeza cada variable. Seis de las ocho con las "
-             "que se construyeron los grupos.",
-             fontsize=6.2, color=TINTA2)
-    return guardar(fig, "7.6", "Que distingue a los cinco arquetipos")
-
-
-def fig_7_7():
-    """El producto de Nochevieja."""
-    item = "SUPERMARKET_3_069"
-    d = sql(f"""SELECT fecha, sum(unidades) u FROM fact_ventas
-                WHERE item = '{item}' GROUP BY 1 ORDER BY 1""")
-    if d.empty:
-        raise ValueError(f"{item} no está en el almacén")
-    d["fecha"] = pd.to_datetime(d["fecha"])
-    fig, ax = plt.subplots(figsize=(6.4, 2.5))
-    ax.plot(d["fecha"], d["u"], color=REJILLA, lw=0.8, zorder=1)
-    fin = d[(d["fecha"].dt.month == 12) & (d["fecha"].dt.day == 31)]
-    ax.scatter(fin["fecha"], fin["u"], color=NARANJA, s=26, zorder=3)
-    for _, r in fin.iterrows():
-        ax.annotate(str(r["fecha"].year), (r["fecha"], r["u"]), textcoords="offset points",
-                    xytext=(0, 7), ha="center", fontsize=7, color=NARANJA, fontweight="bold")
-    ax.set_ylabel("unidades / día"); ax.yaxis.set_major_formatter(FMT); rejilla(ax)
-    ax.set_title(f"{item}: los cuatro días de máxima venta son cuatro 31 de diciembre")
-    ax.text(0.99, 0.94, "elevación en diciembre ×7,66", transform=ax.transAxes,
-            ha="right", fontsize=7.5, color=NARANJA, fontweight="bold")
-    return guardar(fig, "7.7", "El producto de Nochevieja")
-
-
-def fig_7_8():
-    """Los tres grupos de tienda, y que no respetan la ciudad."""
-    from sklearn.preprocessing import StandardScaler
-    from sklearn.decomposition import PCA
-    d = sql("""
-        SELECT t.tienda, t.ciudad, t.grupo_comportamiento grupo, p.categoria,
-               c.weekday_int wd, sum(v.unidades) u
-        FROM fact_ventas v JOIN dim_tienda t USING (store_code)
-        JOIN dim_producto p USING (item) JOIN dim_calendario c USING (fecha)
-        GROUP BY 1,2,3,4,5
-    """)
-    piv = d.pivot_table(index=["tienda", "ciudad", "grupo"],
-                        columns=["categoria", "wd"], values="u", aggfunc="sum").fillna(0)
-    piv = piv.div(piv.sum(axis=1), axis=0)
-    XY = PCA(n_components=2, random_state=42).fit_transform(
-        StandardScaler().fit_transform(piv.to_numpy()))
-    info = piv.index.to_frame(index=False)
-    grupos = sorted(info["grupo"].unique())
-    marcas = {"Boston": "o", "New York": "s", "Philadelphia": "^"}
-    fig, ax = plt.subplots(figsize=(6.4, 3.6))
-    for i, g in enumerate(grupos):
-        m = info["grupo"] == g
-        for ciudad in info.loc[m, "ciudad"].unique():
-            mm = m & (info["ciudad"] == ciudad)
-            ax.scatter(XY[mm.values, 0], XY[mm.values, 1], s=68, color=CAT[i],
-                       marker=marcas.get(ciudad, "o"), zorder=3,
-                       edgecolor=FONDO, linewidth=1.4)
-    for j, fila in info.iterrows():
-        ax.annotate(fila["tienda"].replace("_", " "), (XY[j, 0], XY[j, 1]),
-                    textcoords="offset points", xytext=(0, 9), ha="center",
-                    fontsize=7, color=TINTA2)
-    for i, g in enumerate(grupos):
-        ax.scatter([], [], color=CAT[i], s=60, label=g)
-    for ciudad, marca in marcas.items():
-        if ciudad in set(info["ciudad"]):
-            ax.scatter([], [], color=TINTA3, marker=marca, s=50, label=ciudad)
-    ax.legend(ncol=2, loc="upper center", bbox_to_anchor=(0.5, -0.06), fontsize=7)
-    ax.set_xlabel("componente principal 1"); ax.set_ylabel("componente principal 2")
-    ax.set_title("El color es el grupo de comportamiento; la forma, la ciudad")
-    rejilla(ax, "both")
-    return guardar(fig, "7.8", "Grupos de tienda frente a ciudades")
-
-
 def fig_7_9():
     """Matriz ABC/XYZ: recuento y peso en facturación."""
     d = sql("""SELECT clase_abc, clase_xyz, count(*) series, sum(facturacion_90d) fact
@@ -621,46 +441,55 @@ def fig_7_10():
 
 
 def fig_7_11():
-    """Modelo frente a referencia ingenua, por arquetipo y pliegue."""
-    es = cache("error_segmento.pkl")
-    g = es[es["tipo"] == "arquetipo"].copy()
-    arq = sql("SELECT DISTINCT cluster_k5, arquetipo FROM dim_producto ORDER BY 1")
-    mapa = dict(zip(arq["cluster_k5"].astype(str), arq["arquetipo"]))
-    g["nombre"] = g["grupo"].astype(str).map(mapa).fillna(g["grupo"].astype(str))
-    m = g.groupby("nombre")[["RMSSE_modelo", "RMSSE_baseline"]].mean().sort_values("RMSSE_modelo")
-    fig, ax = plt.subplots(figsize=(6.4, 3.0))
-    y = np.arange(len(m)); h = 0.34
-    ax.barh(y - h / 2, m["RMSSE_baseline"], height=h, color=REJILLA, zorder=2, label="referencia ingenua")
-    ax.barh(y + h / 2, m["RMSSE_modelo"], height=h, color=AZUL, zorder=2, label="modelo")
-    for i, (b, mo) in enumerate(zip(m["RMSSE_baseline"], m["RMSSE_modelo"])):
-        ax.text(b + 0.012, i - h / 2, es_num(b, 3), va="center", fontsize=6.6, color=TINTA2)
-        ax.text(mo + 0.012, i + h / 2, es_num(mo, 3), va="center", fontsize=6.6,
-                color=AZUL, fontweight="bold")
-    ax.axvline(1, color=TINTA3, lw=0.9, ls=(0, (3, 3)))
-    ax.text(1.005, len(m) - 0.35, "1,0 = naive estacional", fontsize=6.8, color=TINTA3)
-    ax.set_yticks(y); ax.set_yticklabels(m.index, fontsize=7.5)
-    ax.set_xlabel("RMSSE medio de los tres pliegues (menor es mejor)")
-    ax.set_title("Dónde el modelo gana a la referencia, y dónde no")
-    ax.legend(loc="lower right"); rejilla(ax, "x")
-    return guardar(fig, "7.11", "Error por arquetipo: modelo frente a referencia")
+    """Comparación de modelos: media de los tres pliegues y evolución por ventana.
+
+    Valores de §7.3.3 y §7.3.4, procedentes del cuaderno 03 (WRMSSE, menor es mejor)."""
+    medias = [("LightGBM, bloques semanales", 1.0407), ("XGBoost, bloques semanales", 1.0430),
+              ("LightGBM, modelo único", 1.0626), ("XGBoost, modelo único", 1.0631),
+              ("Media móvil de 28 días", 1.0657), ("Media por día de la semana", 1.0855),
+              ("Naive estacional", 1.4262)]
+    escalera = {"Media móvil de 28 días": [1.0909, 1.0660, 1.0402],
+                "Media móvil × día de la semana": [1.0768, 1.0518, 1.0185],
+                "LightGBM pequeño": [1.0827, 1.0380, 1.0095],
+                "LightGBM completo": [1.0776, 1.0415, 1.0029]}
+    fig, axes = plt.subplots(1, 2, figsize=(6.8, 3.0), gridspec_kw={"wspace": 0.55, "width_ratios": [1.15, 1]})
+    a = axes[0]
+    y = np.arange(len(medias))[::-1]
+    col = [AZUL if i == 0 else (REJILLA if i >= 4 else "#9ec5f4") for i in range(len(medias))]
+    a.barh(y, [v for _, v in medias], color=col, height=0.62, zorder=2)
+    for yi, (n, v) in zip(y, medias):
+        a.text(v + 0.015, yi, es_num(v, 4), va="center", fontsize=6.8, color=TINTA2)
+    a.axvline(1, color=TINTA3, lw=0.9, ls=(0, (3, 3)))
+    a.set_yticks(y); a.set_yticklabels([n for n, _ in medias], fontsize=6.8)
+    a.set_xlim(0.8, 1.6); a.set_xlabel("WRMSSE medio de los tres pliegues")
+    a.set_title("Media de los tres pliegues", fontsize=9); rejilla(a, "x")
+    b = axes[1]
+    for i, (n, v) in enumerate(escalera.items()):
+        b.plot(["Feb", "Mar", "Abr"], v, marker="o", markersize=3.5, color=CAT[i], label=n)
+    b.set_ylabel("WRMSSE"); b.set_title("Por ventana de validación (2016)", fontsize=9)
+    b.legend(fontsize=6.2, loc="upper right"); rejilla(b)
+    return guardar(fig, "7.11", "Error de los modelos comparados")
 
 
 def fig_7_12():
-    """Importancia de las variables del modelo final."""
-    imp = cache("pred_fold0.pkl")["importancia_lgb"]
-    imp = pd.Series(imp).sort_values(ascending=False)
-    pct = imp / imp.sum() * 100
+    """Importancia de las variables del modelo con bloques semanales de 180 días (media de los tres pliegues)."""
+    ss = []
+    for k in range(3):
+        d = cache(f"semanal_actual_fold{k}.pkl")["importancia"]
+        s_ = pd.Series({str(n): v for n, v in d.items()}, dtype=float)
+        ss.append(s_ / s_.sum() * 100)
+    pct = pd.concat(ss, axis=1).mean(axis=1).sort_values(ascending=False)
     top = pct.head(14)[::-1]
     fig, ax = plt.subplots(figsize=(6.4, 3.4))
     col = [AZUL if n.startswith("rmean") else REJILLA for n in top.index]
     ax.barh(range(len(top)), top.values, color=col, height=0.66, zorder=2)
     for i, (n, v) in enumerate(zip(top.index, top.values)):
-        ax.text(v + 0.7, i, es_num(v, 1) + "%", va="center", fontsize=7,
+        ax.text(v + 0.7, i, es_num(v, 1) + " %", va="center", fontsize=7,
                 color=TINTA if v > 5 else TINTA2, fontweight="bold" if v > 5 else "normal")
     ax.set_yticks(range(len(top))); ax.set_yticklabels(top.index, fontsize=7)
     ax.set_xlabel("% de la importancia total por ganancia")
     medias = pct[[i for i in pct.index if str(i).startswith("rmean")]].sum()
-    ax.set_title(f"Las medias móviles concentran el {es_num(medias,1)}% de la importancia")
+    ax.set_title(f"Las medias móviles concentran el {es_num(medias,1)} % de la importancia")
     ax.text(0.99, 0.06, "en azul, las medias móviles", transform=ax.transAxes,
             ha="right", fontsize=7.5, color=AZUL, fontweight="bold")
     rejilla(ax, "x")
@@ -668,34 +497,29 @@ def fig_7_12():
 
 
 def fig_7_13():
-    """Temporada alta: lo que el modelo no podía saber."""
-    candidatos = [f for f in os.listdir(CACHE) if f.startswith("temporada_pred_")]
-    if not candidatos:
-        raise FileNotFoundError("faltan los ficheros temporada_pred_*.pkl")
-    fig, axes = plt.subplots(len(candidatos), 1, figsize=(6.4, 2.3 * len(candidatos)),
-                             squeeze=False, gridspec_kw={"hspace": 0.62})
+    """Diciembre de 2015: demanda total diaria real y predicha con 180 y con 400 días de historia."""
     cal = sql("SELECT fecha FROM dim_calendario WHERE NOT es_futuro ORDER BY fecha")
-    fechas = pd.to_datetime(cal["fecha"]).to_numpy()
-    for k, f in enumerate(sorted(candidatos)):
-        d = cache(f)
-        pred = np.asarray(d["pred"]).sum(axis=0)
-        real = np.asarray(d["y_true"]).sum(axis=0)
-        ini = int(d["start"])
-        x = fechas[ini:ini + len(real)]
-        ax = axes[k][0]
-        ax.plot(x, real, color=TINTA, label="real", zorder=3)
-        ax.plot(x, pred, color=NARANJA, ls=(0, (4, 2)), label="predicho", zorder=3)
-        ax.fill_between(x, real, pred, where=pred > real, color=NARANJA, alpha=0.12, zorder=1)
-        ax.set_title(d.get("etiqueta", f), fontsize=9)
-        ax.set_ylabel("unidades / día"); ax.yaxis.set_major_formatter(FMT)
-        ax.legend(loc="upper left"); rejilla(ax)
-        peor = int(np.argmax(pred - real))
-        if pred[peor] > real[peor] * 1.5:
-            ax.annotate(f"predicho {es_num(pred[peor])} · real {es_num(real[peor])}",
-                        xy=(x[peor], pred[peor]), xytext=(-8, -26),
-                        textcoords="offset points", ha="right", fontsize=7,
-                        color=ROJO, fontweight="bold",
-                        arrowprops=dict(arrowstyle="-|>", color=ROJO, lw=0.9))
+    fechas = pd.to_datetime(cal["fecha"]).reset_index(drop=True)
+    i0 = int(fechas[fechas == pd.Timestamp("2015-12-04")].index[0])
+    V = cache("V_ventas.npy")
+    real = np.asarray(V[:, i0:i0 + 28]).sum(axis=0)
+    p180 = np.asarray(cache("semanal_actual_dic2015.pkl")["pred"]).sum(axis=0)
+    p400 = np.asarray(cache("semanal_eventos_semanales_400d_dic2015.pkl")["pred"]).sum(axis=0)
+    x = fechas[i0:i0 + 28].to_numpy()
+    fig, ax = plt.subplots(figsize=(6.6, 3.0))
+    ax.plot(x, real, color=TINTA, lw=2.2, marker="o", markersize=2.8, label="real", zorder=4)
+    ax.plot(x, p180, color=TINTA3, ls=(0, (4, 2)), label="180 días de historia", zorder=3)
+    ax.plot(x, p400, color=NARANJA, ls=(0, (4, 2)), lw=2.0, label="400 días + eventos semanales", zorder=3)
+    nav = list(fechas[i0:i0 + 28]).index(pd.Timestamp("2015-12-25"))
+    ax.annotate(f"25 de diciembre: real {es_num(real[nav])}\n180 días: {es_num(p180[nav])}\n400 días: {es_num(p400[nav])}",
+                xy=(x[nav], p180[nav]), xytext=(-12, -4), textcoords="offset points", ha="right",
+                fontsize=6.8, color=ROJO, fontweight="bold",
+                arrowprops=dict(arrowstyle="-|>", color=ROJO, lw=0.9))
+    ax.set_ylabel("unidades / día"); ax.yaxis.set_major_formatter(FMT)
+    ax.set_title("Con 400 días, el modelo aprende por sí solo el cierre de Navidad")
+    ax.legend(loc="lower left"); rejilla(ax)
+    fig.autofmt_xdate(rotation=0, ha="center")
+    ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d/%m"))
     return guardar(fig, "7.13", "Temporada alta: real frente a predicho")
 
 
@@ -734,7 +558,7 @@ def fig_7_14():
         b.text(r.get_x() + r.get_width() / 2, 4, es_num(u / 1000) + " k uds",
                ha="center", fontsize=7, color="white" if c > 50 else TINTA2)
     b.axhline(90, color=NARANJA, lw=1.1, ls=(0, (3, 3)))
-    b.text(1.42, 90.6, "objetivo 90%", fontsize=7, color=NARANJA, ha="right")
+    b.text(-0.45, 91.5, "objetivo 90 %", fontsize=7, color=NARANJA, ha="left")
     b.set_ylim(0, 105); b.set_ylabel("cobertura (%)")
     b.set_title("Y la media no sirve para dimensionar", fontsize=9)
     rejilla(b)
@@ -742,47 +566,26 @@ def fig_7_14():
 
 
 def fig_7_15():
-    """Error por nivel de la jerarquía: MinT frente al resto."""
-    mr = cache("mint_resultados.pkl")
-    orden_nivel = [n for n in ["base", "Tienda", "Depto", "Ciudad", "Grupo", "Total"]
-                   if n in set(mr["nivel"])]
-    piv = mr.pivot_table(index="metodo", columns="nivel", values="MAPE_pct",
-                         aggfunc="mean")[orden_nivel]
-    mint = next((m for m in piv.index if "MinT" in m), None)
-    bu = next((m for m in piv.index if "Bottom-up" in m), None)
-    fig, ax = plt.subplots(figsize=(6.4, 3.2))
-    x = np.arange(len(orden_nivel))
-    for m in piv.index:
-        if m in (mint, bu):
-            continue
-        ax.plot(x, piv.loc[m], color=REJILLA, lw=1.3, marker="o", markersize=2.6, zorder=2)
-    ax.plot([], [], color=REJILLA, lw=1.3, label="otros métodos de reconciliación")
-    if bu is not None:
-        ax.plot(x, piv.loc[bu], color=NARANJA, lw=1.8, marker="o", markersize=3.6,
-                zorder=3, label="bottom-up (sumar)")
-    if mint is not None:
-        ax.plot(x, piv.loc[mint], color=AZUL, lw=2.6, marker="o", markersize=4.6,
-                zorder=5, label="MinT (shrink)")
-    if mint is not None and bu is not None:
-        for j in range(len(x)):
-            a, b = piv.loc[bu].iloc[j], piv.loc[mint].iloc[j]
-            ax.annotate("", xy=(x[j], b), xytext=(x[j], a),
-                        arrowprops=dict(arrowstyle="-|>", color=AQUA, lw=1.2), zorder=4)
-            # Debajo del punto más bajo, no al lado de la flecha: a media altura la etiqueta
-            # cae encima de las líneas grises y deja de leerse.
-            ax.text(x[j], b - piv.to_numpy().max() * 0.045,
-                    "−" + es_num((a - b) / a * 100, 1) + "%",
-                    fontsize=6.4, color=AQUA, fontweight="bold",
-                    va="top", ha="left" if j == 0 else "center", zorder=6)
-    # «base» es el grano producto-tienda; se nombra como en la tabla de §7.3.8.
-    ax.set_xticks(x)
-    ax.set_xticklabels([{"base": "serie", "Depto": "Depto."}.get(n, n) for n in orden_nivel])
-    ax.set_xlim(-0.35, len(x) - 0.45)
-    ax.set_ylim(bottom=min(0.0, piv.to_numpy().min() - piv.to_numpy().max() * 0.14))
-    ax.set_ylabel("MAPE (%)"); ax.yaxis.set_major_formatter(FMT)
-    ax.set_title("MinT es el mejor en todos los niveles de la jerarquía")
-    ax.legend(loc="upper right"); rejilla(ax)
-    return guardar(fig, "7.15", "Error por nivel: métodos de reconciliación")
+    """Ascendente frente a modelado directo del agregado (valores de §7.3.8, cuaderno 03)."""
+    niveles = ["Total compañía", "Ciudad", "Tienda", "Departamento"]
+    datos = {"Ascendente (suma de LightGBM)": [5.48, 6.76, 8.03, 9.93],
+             "Prophet": [5.80, 7.25, 8.59, 10.71],
+             "SARIMA": [6.50, 7.72, 8.54, 10.33],
+             "Media móvil": [12.79, 13.50, 14.55, 13.95]}
+    fig, ax = plt.subplots(figsize=(6.6, 3.1))
+    x = np.arange(len(niveles)); w = 0.2
+    colores = [AZUL, NARANJA, AQUA, REJILLA]
+    for i, (n, v) in enumerate(datos.items()):
+        ax.bar(x + (i - 1.5) * w, v, width=w, color=colores[i], label=n, zorder=2)
+        if i == 0:
+            for xi, vi in zip(x, v):
+                ax.text(xi + (i - 1.5) * w, vi + 0.25, es_num(vi, 2), ha="center", fontsize=6.6,
+                        color=AZUL, fontweight="bold")
+    ax.set_xticks(x); ax.set_xticklabels(niveles, fontsize=7.5)
+    ax.set_ylabel("error porcentual medio (%)")
+    ax.set_title("Sumar las previsiones individuales gana en los cuatro niveles")
+    ax.legend(ncol=2, loc="upper left"); ax.set_ylim(0, 19); rejilla(ax)
+    return guardar(fig, "7.15", "Error por nivel: ascendente frente a modelado directo")
 
 
 # =================================================================== §7.4 reposición
@@ -796,10 +599,10 @@ CURVA = pd.DataFrame({
     "remanente": [147183, 200677, 235338, 257189, 285227, 327592, 376097, 408796]})
 
 
-def fig_7_16():
-    """La política de partida: catorce a uno."""
+def fig_7_17():
+    """La política de partida: quince a uno (valores del cuaderno 04)."""
     fig, ax = plt.subplots(figsize=(6.4, 2.4))
-    v = [CURVA["margen_perdido"].iloc[0], CURVA["mantenimiento"].iloc[0]]
+    v = [164543, 11156]
     et = ["Margen perdido\npor rotura", "Coste de mantener\ninventario"]
     barras = ax.barh([1, 0], v, color=[NARANJA, REJILLA], height=0.5, zorder=2)
     for r, x, e in zip(barras, v, et):
@@ -808,36 +611,35 @@ def fig_7_16():
     ax.set_yticks([1, 0]); ax.set_yticklabels(et, fontsize=8)
     ax.set_xlim(0, 200000); ax.xaxis.set_major_formatter(FMT)
     ax.set_xlabel("coste en 28 días (USD)")
-    ax.set_title("La política de partida no es cara por inmovilizar capital: "
-                 "es cara porque deja de vender")
-    ax.text(0.99, 0.12, "14 dólares perdidos por cada 1 inmovilizado",
+    ax.set_title("La política de partida es cara porque deja de vender, no por inmovilizar capital", fontsize=8.8)
+    ax.text(0.99, 0.12, "casi 15 dólares perdidos por cada 1 inmovilizado",
             transform=ax.transAxes, ha="right", fontsize=8.5,
             color=NARANJA, fontweight="bold")
     rejilla(ax, "x")
-    return guardar(fig, "7.16", "Descomposición del coste de la política de partida")
+    return guardar(fig, "7.17", "Descomposición del coste de la política de partida")
 
 
-def fig_7_17():
-    """El cambio de signo: dónde aporta el modelo y dónde resta."""
-    d = pd.DataFrame({"segmento": ["Cola larga\n(clases Y y Z)", "Núcleo estable\n(clase X)"],
-                      "efecto": [19.3, -7.9]})
-    fig, ax = plt.subplots(figsize=(6.4, 2.3))
+def fig_7_18():
+    """El cambio de signo: dónde aporta el modelo y dónde resta (valores de §7.4.4, cuaderno 04)."""
+    d = pd.DataFrame({"segmento": ["Clase Z\n(demanda errática)", "Clase Y", "Clase X\n(demanda estable)"],
+                      "efecto": [18.1, -0.2, -7.8]})
+    fig, ax = plt.subplots(figsize=(6.4, 2.5))
     col = [AZUL if v > 0 else ROJO for v in d["efecto"]]
-    barras = ax.barh(range(len(d)), d["efecto"], color=col, height=0.48, zorder=2)
+    ax.barh(range(len(d)), d["efecto"], color=col, height=0.48, zorder=2)
     for i, v in enumerate(d["efecto"]):
-        ax.text(v + (1.1 if v > 0 else -1.1), i, ("+" if v > 0 else "") + es_num(v, 1) + "%",
-                va="center", ha="left" if v > 0 else "right", fontsize=9.5,
+        ax.text(v + (1.1 if v >= 0 else -1.1), i, ("+" if v > 0 else "") + es_num(v, 1) + " %",
+                va="center", ha="left" if v >= 0 else "right", fontsize=9.5,
                 fontweight="bold", color=AZUL if v > 0 else ROJO)
     ax.axvline(0, color=TINTA, lw=1.1)
     ax.set_yticks(range(len(d))); ax.set_yticklabels(d["segmento"], fontsize=8)
     ax.set_xlim(-16, 27); ax.invert_yaxis()
-    ax.set_xlabel("efecto de usar el modelo frente a la regla histórica, en coste")
+    ax.set_xlabel("mejora en coste de usar el modelo frente a la regla histórica (%)")
     ax.set_title("La simulación invirtió la conclusión del capítulo anterior")
     rejilla(ax, "x")
-    return guardar(fig, "7.17", "Efecto del modelo por segmento")
+    return guardar(fig, "7.18", "Efecto del modelo por segmento")
 
 
-def fig_7_18():
+def fig_7_20():
     """La curva de servicio bajo distintos supuestos de merma."""
     fig, axes = plt.subplots(1, 2, figsize=(6.6, 3.0), gridspec_kw={"wspace": 0.3})
     a = axes[0]
@@ -869,11 +671,100 @@ def fig_7_18():
     b.set_xlabel("nivel de servicio objetivo (%)"); b.set_ylabel("coste total (USD)")
     b.yaxis.set_major_formatter(FMT)
     b.set_title("El óptimo lo decide la merma, no el margen", fontsize=9); rejilla(b)
-    return guardar(fig, "7.18", "Curva de coste frente a nivel de servicio")
+    return guardar(fig, "7.20", "Curva de coste frente a nivel de servicio")
+
+
+
+# ============================================ figuras tomadas de los cuadernos
+def _imagen_de_cuaderno(cuaderno, marca):
+    """Primera imagen de salida de la celda de `cuaderno` cuyo código contiene `marca`."""
+    import json, base64, io
+    from PIL import Image
+    nb = json.load(open(os.path.join(RAIZ, cuaderno), encoding="utf-8"))
+    for c in nb["cells"]:
+        if c["cell_type"] == "code" and marca in "".join(c["source"]):
+            for o in c.get("outputs", []):
+                if "data" in o and "image/png" in o["data"]:
+                    return Image.open(io.BytesIO(base64.b64decode(o["data"]["image/png"]))).convert("RGB")
+    raise ValueError(f"sin imagen para «{marca}» en {cuaderno}")
+
+
+def _guardar_imagen(im, clave, titulo):
+    nombre = "fig_" + clave.replace(".", "_") + ".png"
+    ruta = os.path.join(SALIDA, nombre)
+    im.save(ruta)
+    print(f"  [{clave:>4}] {nombre:<16} {os.path.getsize(ruta)//1024:>4} KB   {titulo}")
+    return ruta
+
+
+def fig_7_5():
+    return _guardar_imagen(_imagen_de_cuaderno("02_Clustering_DSMarket.ipynb", "k_vals = curva.index.values"),
+                           "7.5", "Método del codo")
+
+
+def fig_7_6():
+    return _guardar_imagen(_imagen_de_cuaderno("02_Clustering_DSMarket.ipynb", "pca = PCA(n_components=2"),
+                           "7.6", "Proyección PCA y peso de cada grupo")
+
+
+def fig_7_7():
+    return _guardar_imagen(_imagen_de_cuaderno("02_Clustering_DSMarket.ipynb", "caso = item_feat['dec_lift']"),
+                           "7.7", "El producto de Nochevieja")
+
+
+def fig_7_8():
+    from PIL import Image
+    a = _imagen_de_cuaderno("02_Clustering_DSMarket.ipynb", "PERFIL_T = [")
+    b = _imagen_de_cuaderno("02_Clustering_DSMarket.ipynb", "D = pd.DataFrame(cdist(")
+    h = max(a.height, b.height)
+    im = Image.new("RGB", (a.width + b.width + 30, h), "white")
+    im.paste(a, (0, (h - a.height) // 2)); im.paste(b, (a.width + 30, (h - b.height) // 2))
+    return _guardar_imagen(im, "7.8", "Perfil y parecido entre tiendas")
+
+
+def fig_7_22():
+    """Elasticidad por grupo de producto, leída de la salida del cuaderno 05."""
+    import json, re
+    nb = json.load(open(os.path.join(RAIZ, "05_Elasticidad_DSMarket.ipynb"), encoding="utf-8"))
+    texto = None
+    for c in nb["cells"]:
+        if c["cell_type"] == "code" and "por_grupo = pd.DataFrame" in "".join(c["source"]):
+            for o in c.get("outputs", []):
+                t = "".join(o.get("text", [])) or "".join(o.get("data", {}).get("text/plain", []))
+                if "elasticidad" in t:
+                    texto = t; break
+    if texto is None:
+        raise ValueError("sin tabla por grupo en el cuaderno 05")
+    filas = []
+    for l in texto.splitlines():
+        m = re.match(r"\s*\d+\s+(.+?)\s+(-?\d+\.\d+)\s+(\d+\.\d+)\s+(-?\d+\.\d+)", l)
+        if m:
+            filas.append((m.group(1), float(m.group(2)), float(m.group(3))))
+    d = pd.DataFrame(filas, columns=["grupo", "e", "se"]).sort_values("e")
+    fig, ax = plt.subplots(figsize=(6.4, 3.0))
+    y = np.arange(len(d))
+    ax.errorbar(d["e"], y, xerr=1.96 * d["se"], fmt="o", color=AZUL, ecolor=AZUL,
+                capsize=3, markersize=6, zorder=3)
+    for yi, (e, se) in enumerate(zip(d["e"], d["se"])):
+        ax.text(e, yi + 0.28, es_num(e, 2), ha="center", fontsize=7, color=TINTA2)
+    ax.axvline(0, color=TINTA, lw=1.0)
+    ax.set_yticks(y); ax.set_yticklabels(d["grupo"], fontsize=7.5)
+    ax.set_xlabel("elasticidad-precio estimada (intervalo al 95 %)")
+    ax.set_title("La sensibilidad al precio varía entre grupos de producto")
+    rejilla(ax, "x")
+    return guardar(fig, "7.22", "Elasticidad estimada por grupo de producto")
+
+
+def fig_7_26():
+    """Pantalla principal del panel (captura recortada: cabecera, pestañas e indicadores)."""
+    from PIL import Image
+    im = Image.open(os.path.join(RAIZ, "documentacion", "capturas", "app_0_hoy_en_la_tienda.png")).convert("RGB")
+    im = im.crop((600, 150, im.width, 980))
+    return _guardar_imagen(im, "7.26", "Panel de reposición")
 
 
 # =================================================================== §7.5 precio
-def fig_7_20():
+def fig_7_23():
     """El coeficiente y su placebo."""
     d = pd.DataFrame({
         "modelo": ["Efectos fijos\n(precio de la semana)",
@@ -892,14 +783,14 @@ def fig_7_20():
     ax.set_yticks(range(len(d))); ax.set_yticklabels(d["modelo"], fontsize=8)
     ax.invert_yaxis(); ax.set_xlim(-0.52, 0.12)
     ax.set_xlabel("elasticidad estimada (intervalo al 95%)")
-    ax.set_title("Un precio futuro no puede causar una venta pasada")
+    ax.set_title("Un precio futuro no puede causar una venta pasada", pad=26)
     ax.text(-0.397, 1.42, "prácticamente idéntico al real:\nla especificación no identifica nada",
             ha="center", fontsize=7.2, color=ROJO, fontweight="bold")
     rejilla(ax, "x")
-    return guardar(fig, "7.20", "Coeficiente estimado frente al placebo")
+    return guardar(fig, "7.23", "Coeficiente estimado frente al placebo")
 
 
-def fig_7_21():
+def fig_7_24():
     """Potencia del experimento de precios."""
     from scipy.stats import norm
     n = np.arange(50, 1400, 10)
@@ -920,11 +811,11 @@ def fig_7_21():
     ax.set_ylim(0, 1.03)
     ax.set_title("Lo que haría falta para responder la pregunta: 8 semanas y este tamaño")
     rejilla(ax)
-    return guardar(fig, "7.21", "Curva de potencia del experimento de precios")
+    return guardar(fig, "7.24", "Curva de potencia del experimento de precios")
 
 
 # =================================================================== §7.6 ingeniería
-def fig_7_22():
+def fig_7_25():
     """El sistema completo, con los dos bucles de realimentación."""
     fig, ax = lienzo(6.6, 3.9)
     ax.text(0, 96, "Los tres consumidores leen las mismas tablas", fontsize=9.5,
@@ -966,10 +857,10 @@ def fig_7_22():
     flecha(ax, (31, 10), (31, 41), color=AQUA, guion=(0, (4, 2)))
     ax.text(62, 11, "y la decisión del encargado, también",
             fontsize=6.4, color=AQUA, fontweight="bold", ha="center")
-    return guardar(fig, "7.22", "El sistema completo")
+    return guardar(fig, "7.25", "El sistema completo")
 
 
-def fig_7_24():
+def fig_7_16():
     """Predecir el total del ciclo en vez de sumar días."""
     d = resultado("objetivo_agregado_resumen.csv").sort_values("MAE", ascending=False)
     fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.7), gridspec_kw={"wspace": 0.42})
@@ -992,29 +883,10 @@ def fig_7_24():
     b.set_xlabel("sesgo (%)"); b.set_title("Sesgo", fontsize=9); rejilla(b, "x")
     fig.suptitle("Sumar nueve predicciones diarias arrastraba un sesgo sistemático",
                  fontsize=9, fontweight="bold", x=0.02, ha="left", y=1.04)
-    return guardar(fig, "7.24", "Objetivo del ciclo frente a suma de días")
+    return guardar(fig, "7.16", "Objetivo del ciclo frente a suma de días")
 
 
-def fig_7_25():
-    """Arranque en frío: la tienda vecina gana al modelo."""
-    d = resultado("arranque_frio.csv").sort_values("MAE", ascending=False)
-    fig, ax = plt.subplots(figsize=(6.4, 2.5))
-    col = [AZUL if i == len(d) - 1 else REJILLA for i in range(len(d))]
-    ax.barh(range(len(d)), d["MAE"], color=col, height=0.6, zorder=2)
-    base = d["MAE"].max()
-    for i, (v, n) in enumerate(zip(d["MAE"], d["referencia"])):
-        mejora = (base - v) / base * 100
-        ax.text(v + 0.02, i, es_num(v, 3) + (f"   −{es_num(mejora,0)}%" if mejora > 0.5 else ""),
-                va="center", fontsize=7.5, color=TINTA2)
-    ax.set_yticks(range(len(d)))
-    ax.set_yticklabels([r[0].upper() + r[1:] for r in d["referencia"]], fontsize=7.5)
-    ax.set_xlabel("MAE sobre la demanda media diaria de productos ocultados por completo")
-    ax.set_title("Para un producto nuevo, copiar la tienda del mismo grupo gana al modelo")
-    rejilla(ax, "x")
-    return guardar(fig, "7.25", "Arranque en frío")
-
-
-def fig_7_26():
+def fig_7_21():
     """Censura: las rachas que el azar no produce."""
     d = resultado("censura_rachas.csv")
     d = d[d["longitud_racha"] != ">= 1 días"]
@@ -1031,10 +903,10 @@ def fig_7_26():
     ax.set_ylabel("% de las rachas de ceros sospechosos")
     ax.set_title("Una rotura dura días; el ruido de Poisson no")
     ax.legend(loc="upper right"); rejilla(ax)
-    return guardar(fig, "7.26", "Rachas de ceros: la firma de la censura")
+    return guardar(fig, "7.21", "Rachas de ceros: la firma de la censura")
 
 
-def fig_7_27():
+def fig_7_19():
     """El coste de cada candidato, y el nivel de servicio fijo."""
     d = resultado("coste_comparacion.csv").sort_values("coste_USD")
     fig, ax = plt.subplots(figsize=(6.4, 3.0))
@@ -1056,11 +928,11 @@ def fig_7_27():
     peor, mejor = d["coste_USD"].max(), d["coste_USD"].min()
     ax.set_title(f"El nivel de servicio fijo del 90% cuesta {es_num(peor/mejor,2)} veces "
                  f"más que el candidato óptimo")
-    ax.legend(loc="lower right"); rejilla(ax, "x")
-    return guardar(fig, "7.27", "Coste por candidato de modelo")
+    ax.legend(loc="upper right"); rejilla(ax, "x")
+    return guardar(fig, "7.19", "Coste por candidato de modelo")
 
 
-def fig_7_28():
+def fig_7_27():
     """Ciclo de vida de un modelo: entrenar no despliega."""
     fig, ax = lienzo(6.6, 3.4)
     ax.text(0, 95, "Entrenar deja un candidato; la puerta decide", fontsize=9.5,
@@ -1100,11 +972,18 @@ def fig_7_28():
     ax.text(0, 5, "El rechazado no se borra: el histórico de lo que no se promovió es la mitad\n"
                   "de la información útil cuando algo va mal.",
             fontsize=6.4, color=TINTA2, va="bottom")
-    return guardar(fig, "7.28", "Ciclo de vida de un modelo")
+    return guardar(fig, "7.27", "Ciclo de vida de un modelo")
 
 
 # =================================================================== registro y CLI
 REGISTRO = {
+    "7.5":  (fig_7_5,  "Método del codo", "cuaderno 02"),
+    "7.6":  (fig_7_6,  "Proyección PCA y peso de cada grupo", "cuaderno 02"),
+    "7.7":  (fig_7_7,  "El producto de Nochevieja", "cuaderno 02"),
+    "7.8":  (fig_7_8,  "Perfil y parecido entre tiendas", "cuaderno 02"),
+    "7.22": (fig_7_22, "Elasticidad por grupo de producto", "cuaderno 05"),
+    "7.26": (fig_7_26, "Panel de reposición", "captura"),
+
     "6.1":  (fig_6_1,  "Arquitectura del almacén en tres capas", "esquema"),
     "6.2":  (fig_6_2,  "Modelo dimensional de la capa de consumo", "esquema"),
     "6.3":  (fig_6_3,  "Esquema de la validación temporal por avance", "esquema"),
@@ -1112,10 +991,6 @@ REGISTRO = {
     "7.2":  (fig_7_2,  "Elevación por evento del calendario", "almacén"),
     "7.3":  (fig_7_3,  "Solapamiento del top 15 entre ciudades", "almacén"),
     "7.4":  (fig_7_4,  "Dispersión de precios por categoría", "almacén"),
-    "7.5":  (fig_7_5,  "Métricas internas frente al número de grupos", "almacén · recalcula"),
-    "7.6":  (fig_7_6,  "Qué distingue a los cinco arquetipos", "almacén"),
-    "7.7":  (fig_7_7,  "El producto de Nochevieja", "almacén"),
-    "7.8":  (fig_7_8,  "Grupos de tienda frente a ciudades", "almacén"),
     "7.9":  (fig_7_9,  "Matriz ABC/XYZ", "almacén"),
     "7.10": (fig_7_10, "Estrategia de predicción por bloques", "esquema"),
     "7.11": (fig_7_11, "Error por arquetipo: modelo frente a referencia", "caché"),
@@ -1123,26 +998,20 @@ REGISTRO = {
     "7.13": (fig_7_13, "Temporada alta: real frente a predicho", "caché"),
     "7.14": (fig_7_14, "Calibración del intervalo de predicción", "caché"),
     "7.15": (fig_7_15, "Error por nivel: métodos de reconciliación", "caché"),
-    "7.16": (fig_7_16, "Descomposición del coste de la política de partida", "Tarea 4"),
-    "7.17": (fig_7_17, "Efecto del modelo por segmento", "Tarea 4"),
-    "7.18": (fig_7_18, "Curva de coste frente a nivel de servicio", "Tarea 4"),
-    "7.20": (fig_7_20, "Coeficiente estimado frente al placebo", "Tarea 5"),
-    "7.21": (fig_7_21, "Curva de potencia del experimento de precios", "Tarea 5"),
-    "7.22": (fig_7_22, "El sistema completo", "esquema"),
-    "7.24": (fig_7_24, "Objetivo del ciclo frente a suma de días", "experimento 2"),
-    "7.25": (fig_7_25, "Arranque en frío", "experimento 8"),
-    "7.26": (fig_7_26, "Rachas de ceros: la firma de la censura", "experimento 7"),
-    "7.27": (fig_7_27, "Coste por candidato de modelo", "experimento 5"),
-    "7.28": (fig_7_28, "Ciclo de vida de un modelo", "esquema"),
+    "7.17": (fig_7_17, "Descomposición del coste de la política de partida", "Tarea 4"),
+    "7.18": (fig_7_18, "Efecto del modelo por segmento", "Tarea 4"),
+    "7.20": (fig_7_20, "Curva de coste frente a nivel de servicio", "Tarea 4"),
+    "7.23": (fig_7_23, "Coeficiente estimado frente al placebo", "Tarea 5"),
+    "7.24": (fig_7_24, "Curva de potencia del experimento de precios", "Tarea 5"),
+    "7.25": (fig_7_25, "El sistema completo", "esquema"),
+    "7.16": (fig_7_16, "Objetivo del ciclo frente a suma de días", "experimento 2"),
+    "7.21": (fig_7_21, "Rachas de ceros: la firma de la censura", "experimento 7"),
+    "7.19": (fig_7_19, "Coste por candidato de modelo", "experimento 5"),
+    "7.27": (fig_7_27, "Ciclo de vida de un modelo", "esquema"),
 }
 
 # Figuras del texto que este guion NO produce, con el motivo.
-SIN_AUTOMATIZAR = {
-    "7.19": "Elasticidad por arquetipo — el cuaderno 05 no deja en caché los coeficientes "
-            "por grupo. Exportala desde el cuaderno, o guardá ahí el DataFrame y avisá.",
-    "7.23": "Capturas del panel — ya están en documentacion/capturas/. Copialas a "
-            "memoria/figuras/ o rehacelas con el almacén completo (streamlit run app/inicio.py).",
-}
+SIN_AUTOMATIZAR = {}
 
 
 def main(solo, listar):
@@ -1158,7 +1027,7 @@ def main(solo, listar):
     claves = solo or list(REGISTRO)
     desconocidas = [k for k in claves if k not in REGISTRO]
     if desconocidas:
-        print(f"No conozco: {', '.join(desconocidas)}. Probá --listar.")
+        print(f"No conozco: {', '.join(desconocidas)}. Se puede consultar con --listar.")
         return 1
 
     print(f"\nGENERANDO {len(claves)} FIGURAS EN {SALIDA}\n" + "-" * 74)
@@ -1183,18 +1052,6 @@ def main(solo, listar):
         print("\nSin automatizar, hay que exportarlas a mano:")
         for k, m in SIN_AUTOMATIZAR.items():
             print(f"  {k}: {m}")
-        print(f"""
-CÓMO INSERTARLAS
-----------------
-En cada .md de memoria/, sustituí el bloque del marcador por la imagen y su pie:
-
-    ![Serie agregada, tendencia y estacionalidades](figuras/fig_7_1.png)
-
-    *Figura 7.1 — Serie agregada de ventas diarias, tendencia a 28 días y perfiles
-    semanal y anual. Elaboración propia a partir de fact_ventas.*
-
-Y regenerá el .docx con el comando del README de memoria/. Pandoc incrusta las imágenes
-si las rutas son relativas a la carpeta desde la que se ejecuta.""")
     return 0 if not fallidas else 1
 
 

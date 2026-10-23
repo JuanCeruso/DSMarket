@@ -100,7 +100,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Fin de semana frente a entre semana'"
+                  "Value": "'Fin de Semana Frente a Entre Semana'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

@@ -79,8 +79,7 @@ trabajo— y fallar —no tener ningún modelo con el que seguir—. El candidat
 borra: queda en el registro con el motivo, porque el histórico de lo que no se promovió es la
 mitad de la información útil cuando algo va mal.
 
-> **[FIGURA 7.28]** *Ciclo de vida de un modelo: los cuatro estados y las transiciones.*
-> `Fuente: Diagrama de elaboración propia. Debe mostrar que entrenar no promueve y que el retroceso es una arista.`
+![**Figura 7.27.** Ciclo de vida de un modelo: los cuatro estados y las transiciones. *Fuente: elaboración propia.*](figuras/fig_7_27.png){width=100%}
 
 **El retroceso.** Un modelo promovido puede resultar malo de todos modos: la puerta compara
 métricas de validación, y la validación describe el pasado. Volver al anterior es un comando que
@@ -90,7 +89,7 @@ diagnosticar**, porque a las tres de la mañana nadie diagnostica bien.
 
 ### 7.7.4. Pruebas automáticas e integración continua
 
-El proyecto tenía doce pruebas sobre el servicio web y ninguna sobre la lógica que decide los
+El servicio web disponía de trece comprobaciones de humo y no existía ninguna sobre la lógica que decide los
 pedidos. Es el reparto habitual y está al revés: un fallo del servicio se ve en el acto, un
 error en la fórmula del stock de seguridad se ve cuando falta mercadería.
 
@@ -99,13 +98,13 @@ del guion que consulta el almacén, de modo que comprobar que el stock de seguri
 nivel de servicio exigía reconstruir 163 MB de almacén. Se extrajeron las funciones puras a un
 módulo propio. No cambia ningún número; cambia que ahora son comprobables.
 
-La suite tiene **78 pruebas y se ejecuta en poco más de dos segundos**, y —esto es lo que la hace
+La suite consta de **86 pruebas y se ejecuta en pocos segundos**, y —esto es lo que la hace
 viable— **no necesita los datos de DSMarket**. Una suite que exige 469 MB de ficheros propiedad
 de la escuela es una suite que no se ejecuta nunca. Cubre cinco bloques:
 
 | Bloque | Qué comprueba | Ejemplo de propiedad verificada |
 |---|---|---|
-| Política de reposición | 20 pruebas | El coste del vendedor de periódicos es la pérdida pinball reescalada |
+| Política de reposición | 28 pruebas | El coste del vendedor de periódicos es la pérdida pinball reescalada |
 | Métricas de deriva | 8 pruebas | El PSI detecta un cambio de escala que la media no ve |
 | Contratos de datos | 28 pruebas | Cada contrato detecta la violación que dice detectar |
 | Puerta de promoción | 13 pruebas | Un candidato peor no pasa la puerta |
@@ -172,7 +171,7 @@ El servicio de reposición se empaqueta además en una **imagen de contenedor** 
 operativo, la versión menor del intérprete y las dependencias. Resuelve de paso, y de una vez,
 el mismo problema de OpenMP que aparece en macOS. La imagen contiene el código y no los datos:
 el almacén se monta como volumen y en solo lectura, lo que es correcto —el servicio lee, nunca
-escribe— y evita redistribuir unos datos que no son nuestros. Sus dependencias son siete y no
+escribe— y evita redistribuir unos datos que no pertenecen al proyecto. Sus dependencias son siete y no
 veinticinco: una imagen del servicio no necesita Jupyter, Prophet ni Matplotlib, y separarlas es
 la diferencia entre 1,5 GB y 400 MB.
 
@@ -212,7 +211,7 @@ Situar el trabajo con honestidad exige decir también lo que no está.
 | Registro de modelos con procedencia | Implementada | Código, datos y entorno |
 | Promoción con puerta y retroceso | Implementada | Entrenar no despliega |
 | Monitorización de error y deriva | Implementada | Tres señales de naturaleza distinta |
-| Pruebas automáticas e integración continua | Implementada | 78 pruebas, sin datos |
+| Pruebas automáticas e integración continua | Implementada | 86 pruebas, sin datos |
 | Entorno fijado y servicio en contenedor | Implementada | Dos ficheros, dos propósitos |
 | Reentrenamiento por señal, con política | Implementada | Asistido: propone, no decide |
 | Realimentación con la decisión humana | **Ausente** | El dato no existe; §7.6.8 |

@@ -235,7 +235,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Unidades por día según el día de la semana: en dorado, los días por encima del promedio (línea punteada)'"
+                  "Value": "'Unidades Vendidas por Día de la Semana'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

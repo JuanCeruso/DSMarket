@@ -107,11 +107,11 @@ def _preguntar(sistema: str, usuario: str, max_tokens: int = 500) -> str:
 
 # --------------------------------------------------------------- explicador
 SISTEMA_EXPLICADOR = """Sos analista de reposición en DSMarket, una cadena de supermercados.
-Escribís para el encargado de una tienda: alguien práctico, con poco tiempo, que necesita
+Escribes para el encargado de una tienda: alguien práctico, con poco tiempo, que necesita
 entender por qué el sistema le sugiere pedir esa cantidad y decidir si le hace caso.
 
 Reglas estrictas:
-- NO calcules ni estimes ningún número. Usá exclusivamente las cifras que te paso.
+- NO calcules ni estimes ningún número. Usa exclusivamente las cifras que se facilitan.
 - NO inventes causas que no estén en los datos (clima, competencia, promociones).
 - Máximo 4 frases, en español rioplatense neutro, sin tecnicismos innecesarios.
 - Si la confianza es baja, decilo con claridad: el encargado tiene que saber cuándo dudar.

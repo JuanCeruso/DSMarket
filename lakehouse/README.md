@@ -1,9 +1,7 @@
 # DSMarket — Lakehouse
 
-> **¿Buscás entender esto para defenderlo, no para programarlo?** Hay una explicación
-> pedagógica paso a paso —qué es cada pieza, por qué se eligió, y las preguntas que puede
-> hacer el tribunal— publicada como página aparte. Está en la galería de artefactos de
-> Claude con el título *El Lakehouse de DSMarket*. Este README es la referencia técnica.
+> Explicación pedagógica paso a paso (qué es cada pieza, por qué se eligió y qué preguntas
+> pueden plantearse): `documentacion/lakehouse.html`. Este README es la referencia técnica.
 
 Arquitectura medallón sobre ficheros Parquet, con DuckDB como motor de consulta.
 
@@ -44,7 +42,7 @@ columnar comprimido). El grano atómico completo de ventas (58,3 millones de fil
 
 | Tabla | Grano | Filas |
 |---|---|---|
-| `dim_calendario` | día | 1.913 |
+| `dim_calendario` | día (incluye los 28 días de horizonte) | 1.941 |
 | `dim_producto` | producto, con su grupo de la Tarea 2 (`grupo_producto` y su nombre en `arquetipo`) | 3.049 |
 | `dim_tienda` | tienda, con la tienda más parecida de la Tarea 2 | 10 |
 | `dim_serie` | producto × tienda (con clase ABC/XYZ) | 30.490 |

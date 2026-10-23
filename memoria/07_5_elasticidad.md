@@ -42,8 +42,7 @@ se compran por la fecha, no reaccionan.
 Es exactamente el tipo de resultado que una memoria presentaría como hallazgo principal y sobre
 el que construiría una recomendación de política de precios.
 
-> **[FIGURA 7.19]** *Elasticidad estimada por grupo de producto.*
-> `Fuente: Cuaderno 05. Puntos con su intervalo de confianza.`
+![**Figura 7.22.** Elasticidad estimada por grupo de producto, con intervalo de confianza del 95 %. *Fuente: elaboración propia.*](figuras/fig_7_22.png){width=100%}
 
 ### 7.5.3. La prueba que lo derriba
 
@@ -60,8 +59,7 @@ que las mueve a la vez. La causa más plausible es la política comercial de la 
 precios se fijan en función de la demanda esperada, no al azar—, lo que constituye un problema de
 endogeneidad de manual.
 
-> **[FIGURA 7.20]** *Coeficiente estimado frente al coeficiente placebo con el precio de la semana siguiente.*
-> `Fuente: Cuaderno 05. Es la figura central del capítulo: los dos intervalos, prácticamente superpuestos.`
+![**Figura 7.23.** Coeficiente estimado frente al coeficiente placebo con el precio de la semana siguiente. *Fuente: elaboración propia.*](figuras/fig_7_23.png){width=100%}
 
 Como comprobación adicional se estimó el modelo en **primeras diferencias**, que elimina
 cualquier componente de nivel persistente. La elasticidad estimada pasa a **+0,02**: el efecto
@@ -102,8 +100,7 @@ agrupados por tienda; las 451 series son, por tanto, un mínimo. La segunda: par
 varianza, cada tienda tratada se empareja con la tienda que más se le parece (§7.2.4) y no con
 otra de su ciudad, porque el parecido entre tiendas no respeta las fronteras de ciudad.
 
-> **[FIGURA 7.21]** *Curva de potencia frente al tamaño de muestra por brazo.*
-> `Fuente: Cuaderno 05. Marcar el punto de 451 series y potencia 0,80.`
+![**Figura 7.24.** Curva de potencia frente al tamaño de muestra por brazo. *Fuente: elaboración propia.*](figuras/fig_7_24.png){width=100%}
 
 ### 7.5.6. El valor de un resultado negativo
 

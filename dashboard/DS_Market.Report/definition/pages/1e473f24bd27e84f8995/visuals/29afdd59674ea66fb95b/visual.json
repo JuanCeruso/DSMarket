@@ -172,7 +172,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Productos (selecciona uno para ver su detalle; ordenados por subida en diciembre)'"
+                  "Value": "'Productos'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

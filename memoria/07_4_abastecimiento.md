@@ -56,8 +56,7 @@ inmovilizado**. La política de partida no es cara porque acumule existencias; e
 deja de vender. Ese diagnóstico, que la métrica de error no puede dar, orienta toda la
 optimización posterior en una única dirección: subir el nivel de servicio.
 
-> **[FIGURA 7.16]** *Descomposición del coste de la política de partida.*
-> `Fuente: Cuaderno 04. La desproporción entre margen perdido y mantenimiento es el mensaje.`
+![**Figura 7.17.** Descomposición del coste de la política de partida. *Fuente: elaboración propia.*](figuras/fig_7_17.png){width=100%}
 
 Aplicando la política híbrida con un objetivo del 90%, el nivel de servicio pasa del **86,6% al
 96,2%** y el coste total desciende un **62,5%**, de 175.699 a 65.856 dólares. La híbrida mejora
@@ -93,8 +92,7 @@ ruido de estimación sin aportar información nueva. En la demanda errática ocu
 histórico es escaso y errático, y el modelo, que aprende de las 30.490 series a la vez, aporta
 la estructura que la serie individual no tiene.
 
-> **[FIGURA 7.17]** *Efecto de usar el modelo frente a la regla histórica, por segmento.*
-> `Fuente: Cuaderno 04. Los signos opuestos deben ser visibles de un vistazo.`
+![**Figura 7.18.** Efecto de usar el modelo frente a la regla histórica, por segmento. *Fuente: elaboración propia.*](figuras/fig_7_18.png){width=100%}
 
 Este es el segundo de los tres momentos en que una prueba refutó una conclusión del trabajo.
 Elegir la política por el RMSSE habría llevado a la decisión opuesta en ambos extremos.
@@ -152,6 +150,8 @@ Es decir: la pregunta por la función de pérdida no cambió el modelo, cambió 
 servicio**, y ahí estaba el error caro. Un parámetro fijado por convención y nunca sometido a
 comprobación resultó ser la decisión más costosa del sistema.
 
+![**Figura 7.19.** Coste total del período por candidato de modelo y nivel de servicio alcanzado. *Fuente: elaboración propia.*](figuras/fig_7_19.png){width=100%}
+
 *Nota:* este experimento, como el resto de los de la carpeta `avanzado/`, se ejecutó con la
 configuración anterior del modelo (180 días de historia); sus conclusiones son comparativas entre
 candidatos y no dependen de esa configuración.
@@ -193,8 +193,7 @@ merma en torno al 5%). Son valores provisionales: el código los lee de una úni
 que medir la merma real basta para ajustarlos. Con la política híbrida, un objetivo del 95% da un
 servicio real del 97,3% y un coste de 55.701 dólares en las cuatro semanas.
 
-> **[FIGURA 7.18]** *Coste total por nivel de servicio objetivo y supuesto de merma.*
-> `Fuente: Cuaderno 04. Barras apiladas por componente, con el óptimo marcado en cada escenario.`
+![**Figura 7.20.** Coste total por nivel de servicio objetivo y supuesto de merma. *Fuente: elaboración propia.*](figuras/fig_7_20.png){width=100%}
 
 Se documenta también el coste del servicio en términos de inventario: pasar de una cobertura del
 68% —la que da la predicción media— al 90% exige un **127% más de stock**. La curva es
@@ -226,6 +225,8 @@ independiente:
 
 Las rachas de tres días o más resultan **doce veces más frecuentes** de lo que produciría la
 distribución independiente. La firma es inequívoca: estos ceros no son demanda nula.
+
+![**Figura 7.21.** Rachas de ceros sospechosos: frecuencia observada frente a la esperable por azar. *Fuente: elaboración propia.*](figuras/fig_7_21.png){width=100%}
 
 **Las cotas.** Se construyen dos. La inferior contabiliza únicamente los ceros sospechosos,
 imputándoles como demanda perdida su intensidad esperada. La superior contabiliza todos los ceros

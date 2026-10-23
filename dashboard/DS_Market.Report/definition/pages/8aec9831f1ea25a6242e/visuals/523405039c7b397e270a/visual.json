@@ -5,8 +5,8 @@
     "x": 230,
     "y": 124,
     "z": 210,
-    "height": 470,
-    "width": 820,
+    "height": 576,
+    "width": 540,
     "tabOrder": 210
   },
   "visual": {
@@ -103,7 +103,49 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Unidades vendidas por tienda'"
+                  "Value": "'Unidades Vendidas por Tienda'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }

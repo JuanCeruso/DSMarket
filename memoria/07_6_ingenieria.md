@@ -35,7 +35,7 @@ entradas, y cualquier consumidor puede cruzar previsión y realidad con una uni�
 **El servicio de reposición.** Una interfaz de programación que responde la pregunta operativa
 —cuántas unidades pedir de un producto en una tienda, dado el stock actual— aplicando la misma
 política del capítulo §7.4. Carga las tablas de la capa de oro en memoria al arrancar y expone
-cuatro operaciones. Dispone de doce pruebas automáticas que verifican tanto los casos normales
+cuatro operaciones. Dispone de trece comprobaciones automáticas que verifican tanto los casos normales
 como los límite.
 
 **El panel interactivo.** Una aplicación que expone la misma política en una pantalla, pensada
@@ -49,8 +49,7 @@ capa de oro.
 Los tres consumidores —servicio, panel y cuadro de mando— leen exactamente las mismas tablas.
 No pueden discrepar, y esa propiedad es verificable.
 
-> **[FIGURA 7.22]** *El sistema completo, de los ficheros de origen a los tres consumidores.*
-> `Fuente: Diagrama de elaboración propia. Debe mostrar el bucle de realimentación de las predicciones.`
+![**Figura 7.25.** El sistema completo, de los ficheros de origen a los tres consumidores. *Fuente: elaboración propia.*](figuras/fig_7_25.png){width=100%}
 
 ### 7.6.3. La capa de lenguaje natural y su regla de diseño
 
@@ -70,8 +69,7 @@ La justificación no es tecnológica sino de responsabilidad: un sistema que sug
 mercadería no puede permitirse una cifra inventada, y la única garantía sólida contra eso es que
 el modelo no tenga la posibilidad de producirla.
 
-> **[FIGURA 7.23]** *Las cinco pantallas del panel de reposición.*
-> `Fuente: Capturas de la aplicación en ejecución sobre el almacén completo, a 200 ppp.`
+![**Figura 7.26.** Pantalla principal del panel de reposición («Hoy en la tienda»). *Fuente: captura de la aplicación en ejecución.*](figuras/fig_7_26.png){width=100%}
 
 ### 7.6.4. Las trampas encontradas
 
@@ -172,8 +170,8 @@ Un sistema no se distingue de un conjunto de cuadernos por los modelos que conti
 que sabe de sí mismo. Se incorporaron por ello cuatro piezas que no producen ningún resultado
 analítico y sin las cuales el trabajo seguiría siendo un prototipo.
 
-**Orquestación.** Un único comando ejecuta las nueve etapas en orden —construcción de las tres
-capas, contratos, entrenamiento, predicción, reposición, contratos otra vez y monitorización—,
+**Orquestación.** Un único comando ejecuta las diez etapas en orden —construcción de las tres
+capas, contratos, entrenamiento, puerta de promoción, predicción, reposición, contratos otra vez y monitorización—,
 cronometra cada una, se detiene ante el primer fallo bloqueante y registra el resultado en una
 tabla de ejecuciones. Permite además reanudar desde la etapa que falló, que es lo que convierte
 un fallo en una incidencia y no en una repetición completa.

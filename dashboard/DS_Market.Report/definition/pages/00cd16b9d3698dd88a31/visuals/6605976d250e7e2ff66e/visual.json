@@ -118,7 +118,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Tamaño de cada tienda (unidades vendidas; no interviene en el parecido)'"
+                  "Value": "'Unidades Vendidas por Tienda'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

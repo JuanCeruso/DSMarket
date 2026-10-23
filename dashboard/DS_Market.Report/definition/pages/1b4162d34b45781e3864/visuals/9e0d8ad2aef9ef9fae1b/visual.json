@@ -91,5 +91,61 @@
       "filterChanges": true
     }
   },
-  "parentGroupName": "6e42c6baa0bb4db1b6ad"
+  "parentGroupName": "6e42c6baa0bb4db1b6ad",
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "e7c5efdafba2e528bf1a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_calendario"
+              }
+            },
+            "Property": "fecha"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "d",
+              "Entity": "dim_calendario",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Between": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "d"
+                        }
+                      },
+                      "Property": "fecha"
+                    }
+                  },
+                  "LowerBound": {
+                    "Literal": {
+                      "Value": "datetime'2016-01-01T00:00:00'"
+                    }
+                  },
+                  "UpperBound": {
+                    "Literal": {
+                      "Value": "datetime'2016-05-22T00:00:00'"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
 }

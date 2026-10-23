@@ -85,7 +85,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Venta por día de la semana (1,00 = media del grupo)'"
+                  "Value": "'Venta por Día de la Semana'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

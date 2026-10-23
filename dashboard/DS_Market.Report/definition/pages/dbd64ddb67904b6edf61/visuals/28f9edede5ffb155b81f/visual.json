@@ -100,7 +100,34 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Colchón sobre la demanda, por grupo de producto'"
+                  "Value": "'Colchón Sobre la Demanda Frente a Tipo de Grupo'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }
