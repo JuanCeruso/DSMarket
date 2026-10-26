@@ -16,7 +16,7 @@ atributos de la referencia (identificador, departamento, categoría) y de la tie
 por 10 tiendas: el panel está completo, todas las referencias existen en todas las tiendas.
 
 **`item_prices.csv`** recoge el precio de venta con granularidad semanal por producto y tienda,
-identificando la semana mediante un código `wm_yr_wk`. Es, con 370 MB, el fichero más grande
+identificando la semana mediante un código propio, `yearweek`. Es, con 370 MB, el fichero más grande
 del conjunto pese a ser el de menor cardinalidad conceptual.
 
 **`daily_calendar_with_events.csv`** hace de tabla puente entre ambos: asocia cada día `d_n` con
@@ -39,15 +39,9 @@ decisión de reposición, que es el destino final del análisis.
 ### 6.2.1. El desfase entre precios y ventas
 
 La comprobación de integridad más relevante del trabajo surgió al cruzar los dos ficheros
-principales. El histórico de precios **comienza cinco semanas antes que el de ventas**. Una
-lectura ingenua del cruce interpretaría esas semanas como períodos con precio y sin demanda, es
-decir, como ceros de venta, e introduciría un sesgo a la baja en todas las medias y en todos los
-modelos entrenados sobre ellas.
+principales. El fichero de precios tiene 279 semanas etiquetadas y el calendario de ventas cubre 274, de modo que hay que decidir de qué lado sobran cinco. Alinearlo mal desplazaría cinco semanas todas las variables de precio, un error que no se detecta mirando métricas.
 
-La hipótesis se contrastó de forma directa: se contaron las unidades vendidas en las
-combinaciones producto-tienda-semana **sin** precio registrado y en las que **sí** lo tenían. El
-resultado fue **0 unidades frente a 164.349**. La ausencia de precio no señala una semana sin
-ventas: señala una semana anterior al inicio del registro de ventas. La regla que se derivó —el
+La hipótesis se contrastó de forma directa: un producto no puede venderse en una tienda antes de tener precio en ella, así que se contaron las unidades que quedarían vendidas en días sin precio con cada alineación. Si precios y ventas empezaran a la vez, quedarían 164.349 unidades sin precio, repartidas en 13.731 series; si los precios empiezan cinco semanas antes, no queda ninguna. El histórico de precios comienza, por tanto, cinco semanas antes que el de ventas. La regla que se derivó —el
 histórico de una serie empieza el día de su primer precio, no antes— quedó codificada en la
 capa intermedia del almacén y se acompaña de una comprobación automática que vuelve a
 ejecutarse en cada reconstrucción.
@@ -73,8 +67,7 @@ de reposición aplica métodos distintos según la clase.
 
 ### 6.2.3. Eventos del calendario
 
-El fichero de calendario etiqueta días con eventos de cuatro tipos (deportivos, culturales,
-nacionales y religiosos). Para cada evento se compararon sus ventas con las del mismo día de la
+El fichero de calendario marca cinco eventos (SuperBowl, Ramadan starts, Thanksgiving, NewYear y Easter), a los que se añadieron por regla de fecha Christmas, Labor Day y, como candidato, Black Friday. Para cada evento se compararon sus ventas con las del mismo día de la
 semana de las dos semanas anteriores y las dos posteriores, y se retuvieron únicamente aquellos
 con efecto consistente y de magnitud apreciable.
 
@@ -119,7 +112,7 @@ Las consecuencias recorren todo el trabajo y conviene enunciarlas juntas:
   adicional a la de endogeneidad ya documentada.
 
 Sin datos de inventario el problema **no es corregible**: no existe información que permita
-determinar qué ceros correspondieron a rotura. Sí es acotable, y así se trata en §7.4.8: un cero
+determinar qué ceros correspondieron a rotura. Sí es acotable, y así se trata en §7.4.7: un cero
 observado en una serie cuya intensidad esperada hace ese cero improbable es incompatible con
 demanda nula, y el conjunto de esos días permite construir cotas para la demanda no observada.
 
@@ -224,19 +217,18 @@ cuadro de mando como patrón obligatorio.
 
 ### 6.4.1. Variables construidas
 
-El conjunto de variables predictoras se organiza en cuatro bloques:
+El conjunto de variables predictoras se organiza en seis bloques:
 
 - **Retardos.** Valores de la serie en días anteriores, con el retardo mínimo condicionado por
   el horizonte de predicción (§6.4.2).
 - **Medias móviles.** Promedios de la serie sobre ventanas de 7, 28, 91 y 364 días.
-- **Calendario.** Día de la semana, mes, semana del año, bandera de fin de semana y evento del
-  día.
+- **Dispersión.** Desviación típica y proporción de días sin venta de los últimos 28 días.
+- **Calendario.** Día de la semana, mes, día del mes, semana del año, bandera de fin de semana y evento del día.
 - **Eventos a nivel semanal.** Si la semana (de sábado a viernes, como el calendario original)
   contiene un evento, cuál, cuántos días faltan para el próximo evento y cuántos han pasado desde
   el último. Se conocen de antemano por el calendario, de modo que no introducen información
   futura.
-- **Precio y segmento.** Precio de la semana, variación relativa respecto de la semana anterior,
-  categoría, departamento, tienda y ciudad. El grupo de producto obtenido en §7.2 se probó también como variable y se retiró, porque no mejoraba la predicción (cuaderno 03b).
+- **Precio y segmento.** Precio de la semana, precio relativo a la media del producto, variación respecto de cuatro semanas antes, categoría, departamento, tienda y ciudad. El grupo de producto obtenido en §7.2 se probó también como variable y se retiró, porque no mejoraba la predicción (cuaderno 03b).
 
 ### 6.4.2. La restricción de retardo mínimo
 
@@ -294,8 +286,7 @@ La comparación de modelos de §7.3 se hizo con ventanas de 180 días, con el ar
 media móvil anual ya aporta la referencia estacional. Ese argumento resultó insuficiente: con 180
 días, el modelo que predice diciembre no ha visto ninguna Navidad, y la media anual no basta para
 que aprenda el cierre del día 25 ni la subida de las semanas previas. Se repitió la validación
-con **400 días**, que incluyen el año anterior completo: el error mejora un 5,7 % en diciembre y
-un 3,4 % en noviembre sin empeorar el resto del año. El **modelo final se entrena con 400 días**;
+con **400 días**, que incluyen el año anterior completo: el error mejora un 5,7 % en diciembre y un 3,3 % en noviembre sin empeorar el resto del año. El **modelo final se entrena con 400 días**;
 el coste es un tiempo de entrenamiento algo más del doble.
 
 ### 6.5.3. Validación de la segmentación
@@ -314,7 +305,7 @@ perfil, se compararon directamente mediante una tabla de perfil y una matriz de 
 
 ### 6.6.1. Error de predicción
 
-Se emplean cuatro métricas, cada una para un propósito distinto.
+Se emplean varias métricas, cada una para un propósito distinto.
 
 **MAE y RMSE** describen el error en unidades de la variable. Son interpretables pero no
 agregables entre series de escalas muy distintas: el error de una referencia que vende
@@ -389,12 +380,23 @@ El **nivel de servicio** se mide como la proporción de unidades de demanda aten
 demanda total, y no como la proporción de ciclos sin rotura, que es una definición más
 benévola.
 
-## 6.7. Reproducibilidad
+## 6.7. Muestreo y organización del trabajo
+
+El trabajo no utiliza una muestra: se analizan las 30.490 series producto-tienda completas de
+todo el periodo disponible. Las únicas selecciones son intencionales y se declaran donde
+aparecen: las tres ventanas de validación de febrero a abril de 2016 y las dos de temporada alta
+de 2015 (§6.5), y la ventana de cuatro semanas sobre la que se simula la política de reposición
+(§7.4).
+
+El equipo, de tres personas, no se repartió el trabajo por tareas cerradas. Cada integrante
+desarrolló por su cuenta el análisis de todas las fases, y las versiones se pusieron en común y
+se fueron integrando y corrigiendo de forma conjunta sobre un repositorio de código compartido,
+que es la única versión de referencia.
+
+## 6.8. Reproducibilidad
 
 Todo el trabajo se ejecuta desde el almacén analítico y no desde ficheros temporales, de modo
-que borrar cualquier caché no impide reproducir ningún resultado. Los cinco cuadernos se
-generan a partir de guiones de construcción versionados —no se editan a mano—, lo que garantiza
-que el cuaderno entregado y el código que lo produce no puedan divergir. Las semillas
+que borrar cualquier caché no impide reproducir ningún resultado. El código de entrenamiento de los modelos está en módulos versionados que los cuadernos importan, de modo que el cuaderno y el código que produce sus resultados no divergen. Las semillas
 aleatorias están fijadas en todos los procedimientos con componente estocástica.
 
 El entorno de ejecución y los tiempos de referencia de cada etapa se detallan en el anexo, junto

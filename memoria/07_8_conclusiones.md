@@ -71,7 +71,7 @@ de reposición, panel interactivo y cuadro de mando— leyendo las mismas tablas
 ### 7.8.2. El hilo conductor: cuatro veces que la evidencia nos contradijo
 
 Los resultados anteriores son los que el encargo pedía. El resultado del que este trabajo se
-siente más responsable es otro, y recorre los seis capítulos: en cuatro ocasiones una conclusión
+siente más responsable es otro, y recorre los siete capítulos: en cuatro ocasiones una conclusión
 o una hipótesis atractiva fue sometida a una prueba que podía refutarla, y la prueba la refutó.
 
 **Primera. Un hallazgo que hubo que aprender a no publicar.** Black Friday no mostraba el pico

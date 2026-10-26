@@ -91,7 +91,7 @@ diagnosticar**, porque a las tres de la mañana nadie diagnostica bien.
 
 El servicio web disponía de trece comprobaciones de humo y no existía ninguna sobre la lógica que decide los
 pedidos. Es el reparto habitual y está al revés: un fallo del servicio se ve en el acto, un
-error en la fórmula del stock de seguridad se ve cuando falta mercadería.
+error en la fórmula del stock de seguridad se ve cuando falta mercancía.
 
 La razón de que no estuviera probada era estructural, no de desidia: la política vivía dentro
 del guion que consulta el almacén, de modo que comprobar que el stock de seguridad crece con el

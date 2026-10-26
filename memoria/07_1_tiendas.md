@@ -54,20 +54,19 @@ El hallazgo que sostiene el capítulo procede de una comparación deliberadament
 cada ciudad se extrajeron los quince productos más vendidos y se examinó cuántos de ellos son
 comunes a las tres.
 
-**Solo cinco de quince.** Dos tercios de los productos que encabezan las ventas en una ciudad no
-encabezan las de las otras dos. La misma comparación entre las tiendas de cada ciudad hace el
+**Solo cinco de quince.** Los otros diez, dos tercios del top, no figuran a la vez entre los más vendidos de las tres ciudades. La misma comparación entre las tiendas de cada ciudad hace el
 contraste más nítido:
 
 | Ciudad | Productos del top 15 comunes a todas las tiendas de la ciudad |
 |---|---|
-| Boston | 10 de 15 |
-| Nueva York | 8 de 15 |
-| **Filadelfia** | **4 de 15** |
+| Boston | 10 de 15 (67 %) |
+| Nueva York | 8 de 15 (53 %) |
+| **Filadelfia** | **4 de 15 (27 %)** |
 
 Filadelfia es el caso extremo: sus tres tiendas solo comparten cuatro de sus quince referencias
 más vendidas. Es la ciudad con las tiendas más distintas entre sí, mientras que las de Boston se
 parecen mucho. Este hecho tiene consecuencias directas sobre el diseño de campañas —una promoción
-uniforme para toda la red desperdicia esfuerzo en dos tercios del catálogo— y sobre el
+uniforme para toda la red desperdicia esfuerzo en dos tercios de los productos más vendidos— y sobre el
 modelado, que es lo que abre el capítulo siguiente.
 
 ![**Figura 7.3.** Solapamiento de los quince productos más vendidos entre las tres ciudades. *Fuente: elaboración propia a partir de `fact_ventas`.*](figuras/fig_7_3.png){width=100%}
@@ -76,12 +75,10 @@ modelado, que es lo que abre el capítulo siguiente.
 
 El análisis de la dispersión de precios entre tiendas para una misma referencia buscaba
 localizar dónde la compañía practica precios diferenciados. La expectativa razonable era
-encontrarla en artículos de valor unitario alto, donde unos céntimos de diferencia son
-irrelevantes y unos euros no lo son.
+encontrarla en artículos de valor unitario alto, donde unos céntimos de diferencia son irrelevantes y unos dólares no lo son.
 
 El resultado fue el contrario. La categoría con mayor dispersión relativa de precios entre
-establecimientos es **SUPERMARKET, con un 2,75%**, por delante de las categorías de artículos de
-mayor precio unitario. La lectura más plausible es que la diferenciación se concentra donde hay
+establecimientos es **SUPERMARKET, con un 2,75%**: un mismo producto es, en mediana, un 2,75 % más caro en la tienda más cara que en la más barata, por delante de ACCESORIES (1,18 %) y HOME_&_GARDEN (0,97 %), de mayor precio unitario. La lectura más plausible es que la diferenciación se concentra donde hay
 volumen y competencia local, no donde hay margen unitario; pero el dato disponible permite
 constatar el hecho, no explicarlo.
 
@@ -95,8 +92,6 @@ respuesta no es la esperable.
 
 El análisis exploratorio deja establecido que la demanda de DSMarket no es homogénea: varía
 entre ciudades, varía entre tiendas de una misma ciudad y varía entre productos de una misma
-categoría. Un modelo único para toda la cadena ignoraría esa estructura; un modelo por serie
-—30.490 modelos— sería inmanejable y además desaprovecharía la información compartida entre
-series parecidas.
+categoría. Tratar la cadena como una sola serie ignoraría esa estructura, y un modelo por serie —30.490 modelos— sería inmanejable y desaprovecharía la información compartida entre series parecidas. El trabajo responde con un modelo global que aprende de todas las series a la vez (§7.3).
 
-La salida es agrupar antes de modelar. Ese es el objeto del capítulo siguiente.
+Antes, conviene ordenar esa heterogeneidad agrupando los productos que se venden de forma parecida, que es lo que necesita el diseño de campañas. Ese es el objeto del capítulo siguiente.

@@ -108,7 +108,7 @@ memoria, de modo que responde en milisegundos y los entrenamientos no compiten c
 | `GET` | `/salud` | Comprobación de vida y horizonte de datos cargado |
 
 **Petición.** Una tienda, una fecha de revisión, una lista de productos con su stock actual y
-mercadería en tránsito, y parámetros opcionales (`dias_revision`, `lead_time`, `nivel_servicio`).
+mercancía en tránsito, y parámetros opcionales (`dias_revision`, `lead_time`, `nivel_servicio`).
 Los parámetros viajan en la petición y no en el código, de modo que el nivel de servicio puede
 modificarse por categoría sin redesplegar. Si se omite, cada producto aplica el de su categoría
 (90 % en SUPERMARKET; 95 % en ACCESORIES y HOME_&_GARDEN).

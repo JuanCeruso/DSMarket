@@ -110,7 +110,7 @@ de falsación, el trabajo habría entregado una recomendación de precios apoyad
 correlación espuria, y una recomendación así aplicada a una cadena real tiene un coste que no es
 académico.
 
-Es el tercero de los tres momentos en que una prueba refutó una conclusión propia del trabajo.
+Es el tercero de los cuatro momentos en que una prueba refutó una conclusión propia del trabajo.
 
 ### 7.5.7. Qué abre el capítulo siguiente
 

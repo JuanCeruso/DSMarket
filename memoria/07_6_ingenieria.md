@@ -15,8 +15,7 @@ servicio web necesitan las mismas cifras, cada uno acaba con su propia lectura, 
 limpieza y su propia interpretación de las columnas. La divergencia no aparece de golpe;
 aparece meses después, cuando dos informes dan números distintos y nadie sabe cuál es el bueno.
 
-La solución adoptada —el almacén analítico descrito en §6.3— convierte cuatro cuadernos
-independientes en un sistema con una única fuente de verdad.
+La solución adoptada —el almacén analítico descrito en §6.3— convierte un conjunto de cuadernos independientes en un sistema con una única fuente de verdad.
 
 ### 7.6.2. Lo que se construyó
 
@@ -34,8 +33,7 @@ entradas, y cualquier consumidor puede cruzar previsión y realidad con una uni�
 
 **El servicio de reposición.** Una interfaz de programación que responde la pregunta operativa
 —cuántas unidades pedir de un producto en una tienda, dado el stock actual— aplicando la misma
-política del capítulo §7.4. Carga las tablas de la capa de oro en memoria al arrancar y expone
-cuatro operaciones. Dispone de trece comprobaciones automáticas que verifican tanto los casos normales
+política del capítulo §7.4. Carga las tablas de la capa de oro en memoria al arrancar y expone cinco operaciones. Dispone de trece comprobaciones automáticas que verifican tanto los casos normales
 como los límite.
 
 **El panel interactivo.** Una aplicación que expone la misma política en una pantalla, pensada
@@ -65,8 +63,7 @@ motor. La tercera, el SQL generado atraviesa un validador que admite únicamente
 lectura sobre las nueve vistas conocidas, rechaza sentencias múltiples y añade un límite de
 filas si no lo trae; además se muestra siempre al usuario antes de ejecutarse.
 
-La justificación no es tecnológica sino de responsabilidad: un sistema que sugiere pedidos de
-mercadería no puede permitirse una cifra inventada, y la única garantía sólida contra eso es que
+La justificación no es tecnológica sino de responsabilidad: un sistema que sugiere pedidos de mercancía no puede permitirse una cifra inventada, y la única garantía sólida contra eso es que
 el modelo no tenga la posibilidad de producirla.
 
 ![**Figura 7.26.** Pantalla principal del panel de reposición («Hoy en la tienda»). *Fuente: captura de la aplicación en ejecución.*](figuras/fig_7_26.png){width=100%}
@@ -210,7 +207,7 @@ mostrarlas sin ninguna integración adicional.
 
 Un sistema que decide compras no se despliega de una vez. La ruta propuesta tiene tres fases,
 cada una con su criterio de avance y su criterio de parada, y la razón de que existan es que un
-error de reposición no se corrige con un despliegue nuevo: se corrige con mercadería.
+error de reposición no se corrige con un despliegue nuevo: se corrige con mercancía.
 
 **Fase 1 — Modo sombra (4 semanas).** El sistema calcula pedidos para las diez tiendas y no los
 envía a nadie. Se registra la sugerencia junto a lo que el encargado pidió realmente. No hay

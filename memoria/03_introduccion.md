@@ -3,7 +3,7 @@
 DSMarket es una cadena de distribución minorista con diez establecimientos repartidos entre
 Nueva York, Boston y Filadelfia, y un catálogo de 3.049 referencias organizado en tres
 categorías comerciales. Como muchas cadenas de su tamaño, la compañía dispone desde hace años
-de un registro exhaustivo de sus operaciones —cinco años y cuatro meses de ventas diarias por
+de un registro exhaustivo de sus operaciones —cinco años y casi tres meses de ventas diarias por
 producto y tienda, junto con el histórico semanal de precios y el calendario de eventos— y de
 muy poca capacidad para convertir ese registro en decisiones. Los datos existen; el uso, no.
 
@@ -56,13 +56,33 @@ La memoria se organiza como una investigación encadenada y no como un informe d
 la justificación y el estado del arte (§4) y los objetivos (§5), la sección de metodología (§6)
 reúne una sola vez el aparato común a todos los capítulos: el origen y la calidad de los datos,
 la arquitectura del almacén analítico, el esquema de validación temporal y las métricas de
-error. La sección de resultados (§7) desarrolla los seis capítulos de la narrativa, cada uno
+error. La sección de resultados (§7) desarrolla los siete capítulos de la narrativa, cada uno
 abierto por la pregunta de negocio que lo motiva y cerrado por la que abre el siguiente.
 
-El lector encontrará también tres momentos en los que una conclusión propia del trabajo fue
+El lector encontrará también cuatro momentos en los que una conclusión propia del trabajo fue
 sometida a una prueba que podía refutarla y la prueba la refutó. Están señalados de forma
 explícita en cada capítulo y recogidos en las conclusiones, porque son, a juicio de los autores,
 el resultado más valioso del proyecto: un hallazgo del análisis exploratorio que se descartó por
-falta de sustento, una conclusión sobre el valor del modelo de predicción que la simulación de
-la política invirtió, y una elasticidad estadísticamente significativa que una prueba de
-falsación dejó sin interpretación causal.
+falta de sustento, una conclusión sobre el valor del modelo de predicción que la simulación de la política invirtió, una elasticidad estadísticamente significativa que una prueba de falsación dejó sin interpretación causal, y una aparente afinidad entre productos que no superó el nivel de ruido.
+
+## 3.4. Principales conclusiones
+
+- **La demanda no es homogénea.** Solo 5 de los 15 productos más vendidos (33 %) son comunes a
+  las tres ciudades, y el perfil de venta de una tienda no lo determina su ciudad: Tribeca, en
+  Nueva York, se parece más a las tiendas de Boston que a las de su propia ciudad.
+- **Seis grupos de producto ordenan el catálogo.** Son estables entre ejecuciones y cada uno
+  admite una lectura de negocio; los dos primeros concentran el 68 % de la facturación.
+- **Sumar las predicciones individuales es válido.** Sumar las predicciones de cada producto y
+  tienda da mejor resultado que modelar cada agregado por separado en los cuatro niveles
+  evaluados, y la forma de organizar el horizonte de predicción pesa más que la elección del
+  algoritmo.
+- **La reposición se decide por coste, no por error.** La política propuesta, híbrida según la
+  clase XYZ, eleva el nivel de servicio del 86,6 % al 96,2 % y reduce el coste total un 62,5 % en
+  el periodo simulado. El nivel de servicio óptimo depende sobre todo de la merma, que la
+  compañía no mide hoy.
+- **La elasticidad precio no puede estimarse de forma creíble con estos datos.** En su lugar se
+  diseña el experimento de precios que permitiría medirla.
+
+Los referentes teóricos de cada parte —la competición M5 para la previsión, la teoría del
+vendedor de periódicos para la reposición y la literatura sobre identificación del efecto del
+precio— se recogen en el estado del arte (§4.4).

@@ -19,11 +19,7 @@ tiendas y ciudades y estableciendo qué eventos del calendario tienen efecto med
 demanda. Criterio de cumplimiento: disponer de un diagnóstico documentado de calidad de los
 datos y de una lista de eventos con su efecto estimado, incluidos los que se descartan.
 
-**OE2 — Segmentar el catálogo y la red de tiendas.** Obtener agrupaciones de productos y de
-tiendas basadas en el perfil de demanda, con una elección de número de grupos justificada por
-métricas internas y con una comprobación de estabilidad. Criterio de cumplimiento: que la
-partición resista una validación *leave-one-out* y que los grupos admitan una interpretación de
-negocio, no solamente una separación estadística.
+**OE2 — Segmentar el catálogo y la red de tiendas.** Obtener una agrupación de productos basada en su perfil de demanda, con una elección del número de grupos justificada por métricas internas, y comparar las tiendas entre sí. Criterio de cumplimiento: que la partición sea estable entre ejecuciones con distinta semilla y que los grupos admitan una interpretación de negocio, no solamente una separación estadística.
 
 **OE3 — Predecir la demanda a veintiocho días.** Comparar, bajo un mismo protocolo de validación
 temporal, familias de modelos de distinta naturaleza —estadísticos clásicos, descomposición
@@ -34,7 +30,7 @@ pliegues y una métrica de error escalada que permita agregar entre series de es
 **OE4 — Responder si los agregados pueden obtenerse sumando.** Determinar si la previsión de los
 niveles superiores de la jerarquía (tienda, ciudad, categoría, total) debe calcularse sumando
 las previsiones individuales, modelando cada nivel por separado o reconciliando ambas.
-Criterio de cumplimiento: una comparación empírica en los seis niveles de la jerarquía y una
+Criterio de cumplimiento: una comparación empírica en cuatro niveles de la jerarquía y una
 garantía de coherencia entre niveles.
 
 **OE5 — Convertir la predicción en una política de reposición.** Formular una política de

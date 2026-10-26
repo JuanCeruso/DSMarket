@@ -45,7 +45,7 @@ afectado, y una fracción sustancial se traduce en tráfico que se va a la compe
 
 Esta asimetría es la razón por la que el trabajo abandona en §7.4 las métricas de error y pasa a
 expresar los resultados en unidades monetarias. También explica por qué el diagnóstico económico
-de la política de partida —catorce dólares de margen perdido por cada dólar de inventario
+de la política de partida —casi quince dólares de margen perdido por cada dólar de inventario
 inmovilizado— orienta toda la optimización posterior en una única dirección.
 
 ## 4.3. Por qué el problema no es trivial
@@ -184,5 +184,4 @@ literaturas por separado; su uso como criterio de selección de modelo, sustituy
 métrica simétrica, es lo que este trabajo propone y documenta.
 
 **El uso sistemático de pruebas de falsación.** Cada conclusión relevante se acompaña de la
-prueba que la habría desmentido. En tres ocasiones la prueba desmintió efectivamente una
-conclusión propia, y esos tres casos se documentan como resultado y no como incidencia.
+prueba que la habría desmentido. En cuatro ocasiones la prueba desmintió efectivamente una conclusión propia, y esos cuatro casos se documentan como resultado y no como incidencia.
