@@ -236,7 +236,7 @@ El conjunto de variables predictoras se organiza en cuatro bloques:
   el último. Se conocen de antemano por el calendario, de modo que no introducen información
   futura.
 - **Precio y segmento.** Precio de la semana, variación relativa respecto de la semana anterior,
-  categoría, departamento, tienda, ciudad y el grupo de producto obtenido en §7.2.
+  categoría, departamento, tienda y ciudad. El grupo de producto obtenido en §7.2 se probó también como variable y se retiró, porque no mejoraba la predicción (cuaderno 03b).
 
 ### 6.4.2. La restricción de retardo mínimo
 

@@ -12,8 +12,7 @@ semanas previas a Navidad venden un 4-5 % más. La categoría con mayor dispersi
 precios entre tiendas es SUPERMARKET, con un 2,75%, en contra de la expectativa inicial.
 
 **OE2 — Segmentar el catálogo y la red.** Seis grupos de producto elegidos con el método del
-codo y estables entre semillas (índice de Rand ajustado 0,98), con nombres ligados a lo que
-contienen: Alta rotación diaria, Pico de fin de semana, Rotación baja sin picos,
+codo y estables entre semillas (índice de Rand ajustado 0,98), con nombres que describen su comportamiento de compra: Alta rotación diaria, Pico de fin de semana, Rotación baja sin picos,
 Precio alto, pocas unidades, Venta esporádica con pico en eventos y Pico de diciembre.
 Las variables se miden desde la primera venta de cada producto, para no confundir un lanzamiento
 tardío con un producto de venta ocasional. Los dos primeros grupos reúnen el 68 % de la

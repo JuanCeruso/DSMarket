@@ -75,9 +75,7 @@ mantener dos clasificaciones del mismo producto que no encajan entre sí.
 
 Cada grupo se resume en una ficha con su tamaño, los valores medios de las variables y dos
 variables que no intervinieron en la segmentación: la composición por categoría y el peso en la
-facturación. Con ellas se asignó a cada grupo un nombre que dice qué productos contiene. Cuando una
-categoría es mayoritaria, aparece en el nombre; cuando el grupo es mixto, se nombra por el momento
-de compra.
+facturación. Con ellas se asignó a cada grupo un nombre que describe su comportamiento de compra (ritmo de venta, momento de compra o precio), ya que la segmentación se hizo por comportamiento y no por categoría; la categoría predominante se indica solo como contexto en la descripción.
 
 | Grupo | Productos | % facturación | Rasgo que lo define |
 |---|---|---|---|
@@ -129,9 +127,7 @@ La comparación arroja tres resultados:
   elevación de fin de semana (+50 %) y el mayor peso de hogar; Midtown Village es la única tienda
   que vende más en diciembre que el resto del año y, junto con Yorktown, la de venta más irregular.
 
-La lectura de negocio es que el perfil de una tienda depende más de su entorno —el tipo de barrio,
-la clientela— que de su ciudad. Para una apertura, la referencia de surtido y de previsión inicial
-debería ser la tienda existente más parecida en tipo de barrio, no la media de su ciudad.
+La lectura de negocio es que el perfil de una tienda no viene determinado por su ciudad. Para una apertura, la referencia de surtido y de previsión inicial debería ser la tienda existente que se espere más parecida (por tipo de zona y de clientela), no la media de su ciudad.
 
 ![**Figura 7.8.** Perfil de cada tienda respecto a la media y matriz de parecido entre tiendas. *Fuente: elaboración propia.*](figuras/fig_7_8.png){width=100%}
 
@@ -196,8 +192,6 @@ recomendación de incorporación de datos de este trabajo, después de la merma 
 ### 7.2.7. Qué abre el capítulo siguiente
 
 Con los productos segmentados y la clasificación operativa construida, el trabajo dispone de la
-estructura necesaria para modelar. El grupo de producto entra como variable en el modelo de
-predicción, y la clasificación ABC/XYZ, junto con el grupo, determina más adelante qué método de
-reposición se aplica a cada serie.
+estructura necesaria para modelar. El grupo de producto se probó como variable del modelo de predicción y no mejoró la precisión, por lo que se usa para describir el error por tipo de producto; la clase XYZ determina más adelante qué método de reposición se aplica a cada serie.
 
 La pregunta siguiente es la que el encargo formula de forma más directa: cuánto se va a vender.

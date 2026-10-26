@@ -35,8 +35,7 @@ $$S = \hat{D}_{R+L} + z_{\tau^{*}} \cdot \sigma_{R+L} \qquad
 ### 7.4.2. Una política híbrida por segmento
 
 La implementación no aplica el mismo método a todas las series. Para las de **clase X** —demanda
-estable— el término de incertidumbre se estima con el desvío histórico, que en esas series es
-fiable. Para las de **clase Y y Z** se toma directamente del modelo cuantílico de §7.3.6.
+estable— el nivel objetivo se toma del percentil de las ventas históricas en ventanas de nueve días, que en esas series es fiable. Para las de **clase Y y Z** se toma directamente del modelo cuantílico de §7.3.6.
 
 Esta separación no es una elección estética: es el resultado del experimento descrito en §7.4.4,
 y llegar a ella exigió contradecir una conclusión propia del capítulo anterior.
@@ -70,7 +69,7 @@ abril de 2016.
 ### 7.4.4. La simulación refuta la conclusión del capítulo anterior
 
 En §7.3 el grupo de producto con menor error de predicción era Alta rotación diaria
-(RMSSE 0,88) y uno de los de mayor error, Venta esporádica con pico en eventos (0,93). Leído así,
+(WAPE semanal del 35 %) y uno de los de mayor error, Venta esporádica con pico en eventos (68 %). Leído así,
 el modelo debería usarse en el primero y no en el segundo. La simulación de la política dice lo
 contrario:
 
@@ -83,10 +82,10 @@ contrario:
 | Alta rotación diaria | **−7,2%** |
 
 La única excepción relevante es Pico de diciembre (−49,9%), que en una ventana de marzo-abril
-está fuera de temporada y pesa poco en dinero (unos 800 de 65.000 dólares); necesita una regla de
+está fuera de temporada y pesa poco en dinero (unos 800 de 67.600 dólares); necesita una regla de
 temporada propia.
 
-La explicación es que en las series estables el desvío histórico es un estimador excelente de la
+La explicación es que en las series estables el percentil histórico es un estimador excelente de la
 incertidumbre —hay muchos datos y poca varianza— mientras que el modelo cuantílico introduce
 ruido de estimación sin aportar información nueva. En la demanda errática ocurre lo contrario: el
 histórico es escaso y errático, y el modelo, que aprende de las 30.490 series a la vez, aporta
@@ -129,9 +128,9 @@ cada uno.
 
 | Candidato | WRMSSE | Coste (USD) | Nivel de servicio |
 |---|---|---|---|
-| **B · LightGBM + desvío histórico** | **0,837** | **256.451** | 88,9% |
+| **B · LightGBM + desviación histórica** | **0,837** | **256.451** | 88,9% |
 | A · media móvil + normal | 0,867 | 263.907 | 89,0% |
-| C · LightGBM + desvío de residuos | 0,837 | 265.847 | 87,2% |
+| C · LightGBM + desviación de residuos | 0,837 | 265.847 | 87,2% |
 | D · cuantílico entrenado en $\tau^{*}$ | 0,916 | 315.090 | 88,7% |
 | E · cuantílico en 0,90 fijo | 1,395 | **628.935** | 98,6% |
 
