@@ -70,7 +70,7 @@ el modelo no tenga la posibilidad de producirla.
 
 ### 7.6.4. Las trampas encontradas
 
-Se documentan aquí tres errores de implementación que se detectaron durante el trabajo, porque
+Se documentan aquí varios errores de implementación que se detectaron durante el trabajo, porque
 son silenciosos —no producen excepción, producen cifras equivocadas— y porque su documentación
 es parte del valor de ingeniería del proyecto.
 
@@ -133,7 +133,7 @@ La corrección deriva la bandera del **nombre** del día en lugar del índice, q
 no depende de una convención, y usa la misma definición para el histórico y para el horizonte.
 Se añadieron además dos contratos bloqueantes —uno por cada mitad del defecto— y sus dos pruebas
 de regresión. El efecto colateral fue confirmar la segmentación del catálogo: con la bandera
-corregida, el grupo «Fin de semana/hogar» pasa a encabezar la elevación de fin de semana con
+corregida, el grupo «Pico de fin de semana» pasa a encabezar la elevación de fin de semana con
 un ×1,42, cifra que antes quedaba invisible y que es la que justifica su nombre (§7.2.3).
 
 **La ventana predicha, corrida un horizonte entero.** El contrato que exige que toda predicción
@@ -216,8 +216,7 @@ decisiones sobre la demanda que realmente ocurrió. *Criterio de avance:* que el
 peor que la práctica actual en coste simulado, y que ninguna de las alertas del monitor se haya
 disparado por causas ajenas a los datos.
 
-**Fase 2 — Piloto (8 semanas, dos tiendas).** Se eligen dos establecimientos de grupos de
-comportamiento distintos y se aplican las sugerencias en el segmento AX, que concentra el 56% de
+**Fase 2 — Piloto (8 semanas, dos tiendas).** Se eligen dos establecimientos con perfiles de venta distintos (§7.2.4) y se aplican las sugerencias en el segmento AX, que concentra el 56% de
 la facturación y es el de demanda más estable. El resto del catálogo sigue con el procedimiento
 actual, lo que proporciona un grupo de control interno. *Criterio de avance:* mejora del nivel de
 servicio sin aumento del inventario medio. *Criterio de parada:* dos semanas consecutivas con el

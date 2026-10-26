@@ -17,7 +17,7 @@ ejecuta de principio a fin sin intervención manual.
 |---|---|---|
 | `01_EDA_DSMarket.ipynb` | Análisis exploratorio, diagnóstico de calidad y eventos vistos por semanas | §7.1 |
 | `02_Clustering_DSMarket.ipynb` | Segmentación de productos (método del codo, variables medidas desde la primera venta) y comparación de tiendas | §7.2 |
-| `03_Forecasting_DSMarket.ipynb` | Comparación de modelos, validación y reconciliación; revisión con la segmentación vigente, métrica semanal, eventos semanales y modelo final de 400 días | §7.3 |
+| `03_Forecasting_DSMarket.ipynb` | Comparación de modelos, validación y reconciliación; revisión sin la variable de grupo de producto, métrica semanal, eventos semanales y modelo final de 400 días | §7.3 |
 | `04_Abastecimiento_DSMarket.ipynb` | Política de reposición y simulación de costes con las predicciones del modelo final | §7.4 |
 | `05_Elasticidad_DSMarket.ipynb` | Estimación de elasticidad y prueba de falsación | §7.5 |
 
@@ -215,7 +215,7 @@ streamlit run app/inicio.py                      # panel interactivo
 entrenamientos auxiliares de la caché; si esta no existe, deben regenerarse con los módulos
 descritos en el Anexo A.
 
-**Integración continua.** El flujo definido en `.github/ci.yml` ejecuta la suite de pruebas en
+**Integración continua.** El flujo definido en `.github/workflows/ci.yml` ejecuta la suite de pruebas en
 cada cambio, con un entorno mínimo que no incluye las bibliotecas de modelado.
 
 ## Anexo G. Alternativas evaluadas y descartadas

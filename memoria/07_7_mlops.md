@@ -183,7 +183,7 @@ desconozcan.
 Las herramientas del ecosistema resuelven tres problemas reales: **escala** —cientos de
 experimentos, decenas de personas, cómputo distribuido—, **colaboración** —un registro
 compartido al que varios equipos escriben— e **integración** con plataformas gestionadas. Este
-proyecto tiene un equipo de cuatro personas, un almacén de 91 MB en su capa de consumo y un
+proyecto tiene un equipo de tres personas, un almacén de 91 MB en su capa de consumo y un
 pipeline de nueve minutos. Ninguno de los tres problemas se presenta.
 
 Frente a eso, adoptarlas tiene un coste concreto en el contexto de un trabajo académico: un
@@ -220,7 +220,7 @@ Situar el trabajo con honestidad exige decir también lo que no está.
 | Repositorio de variables compartido | **Ausente** | No se justifica con un solo consumidor de modelos |
 | Servicio a escala y alta disponibilidad | **Ausente** | Diez tiendas caben en memoria |
 
-Las cuatro ausencias no son accidentales y tres de ellas comparten causa: dependen de que el
+Las cinco ausencias no son accidentales y tres de ellas comparten causa: dependen de que el
 sistema esté en explotación. La primera es la más importante, y ya estaba señalada en §7.6.8:
 **mientras no se registre qué pidió realmente el encargado frente a lo que el sistema sugirió,
 no hay forma de medir si el sistema acierta**. Todo lo descrito en este capítulo sirve para que
