@@ -14,7 +14,7 @@ concreta: **¿hasta qué punto se parecen entre sí las diez tiendas?**
 ### 7.1.1. La estructura temporal
 
 La serie agregada de la cadena muestra los tres componentes esperables en un minorista de
-alimentación. Una **tendencia** suavemente creciente a lo largo de los cinco años. Una
+gran consumo. Una **tendencia** suavemente creciente a lo largo de los cinco años. Una
 **estacionalidad semanal** marcada, con el fin de semana por encima de la media y el punto bajo
 a mitad de semana. Y una **estacionalidad anual** con máximo en verano y un comportamiento
 particular en diciembre, que resulta ser el mes con mayor dispersión entre productos: no es que

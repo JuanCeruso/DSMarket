@@ -28,7 +28,7 @@ la política de reposición.
 
 ## 4.2. Por qué la decisión de reposición es el problema
 
-La distribución minorista de alimentación opera con márgenes brutos estrechos y volúmenes muy
+La distribución minorista de gran consumo opera con márgenes brutos estrechos y volúmenes muy
 altos, una combinación que convierte las decisiones repetidas de bajo importe unitario en la
 principal palanca de resultado. La reposición es la más repetida de todas: se toma para cada
 referencia, en cada tienda, cada semana.

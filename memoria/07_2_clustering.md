@@ -66,7 +66,7 @@ partición no depende del punto de partida del algoritmo.
 
 **Respuesta a la pregunta de marketing.** El encargo planteaba 5, 10 o 20 grupos. Con 5, el grupo
 de Navidad se diluye dentro de otro mayor. Con 10, la silueta empeora (0,145) y los grupos grandes
-de alimentación y hogar se parten en subgrupos que solo se diferencian en matices. Con 20, uno de
+de supermercado y hogar se parten en subgrupos que solo se diferencian en matices. Con 20, uno de
 los grupos contiene un único producto. Seis grupos es la partición que el método justifica y la
 más manejable para planificar campañas. Trabajar con una única segmentación evita además
 mantener dos clasificaciones del mismo producto que no encajan entre sí.
@@ -81,12 +81,12 @@ de compra.
 
 | Grupo | Productos | % facturación | Rasgo que lo define |
 |---|---|---|---|
-| **Alta rotación diaria** | 679 | 42,4 % | 72 % alimentación, el precio más bajo (2,6 $). Venta muy alta (37 unidades al día entre las diez tiendas) y casi diaria: 5 % de días sin venta. |
+| **Alta rotación diaria** | 679 | 42,4 % | 72 % supermercado, el precio más bajo (2,6 $). Venta muy alta (37 unidades al día entre las diez tiendas) y casi diaria: 5 % de días sin venta. |
 | **Pico de fin de semana** | 882 | 25,4 % | 45 % hogar y jardín. La mayor elevación en fin de semana (+42 %), y también sube en los eventos. |
 | **Rotación baja sin picos** | 745 | 14,7 % | Mixto. Venta baja (6 unidades al día) y sin picos: los que menos reaccionan al fin de semana, a diciembre y a los eventos. |
 | **Precio alto, pocas unidades** | 218 | 11,1 % | 48 % accesorios y 43 % hogar. Precio medio de 17,4 $, más del triple que el resto. |
 | **Venta esporádica con pico en eventos** | 405 | 4,2 % | Mixto. No venden nada en el 39 % de los días en que están a la venta, pero venden un 26 % más en los días de evento. |
-| **Pico de diciembre** | 120 | 2,1 % | Mixto (accesorios, alimentación y hogar: mesa y regalo). Venden casi el doble en diciembre (1,89 veces). |
+| **Pico de diciembre** | 120 | 2,1 % | Mixto (accesorios, supermercado y hogar: mesa y regalo). Venden casi el doble en diciembre (1,89 veces). |
 
 Los dos primeros grupos reúnen el 68 % de la facturación. El grupo de venta esporádica con pico en eventos ocupa el 13 % del
 catálogo y aporta el 4 %: es el grupo donde la pregunta pertinente no es solo cuánto reponer sino
@@ -114,7 +114,7 @@ tiendas entren en el cálculo. Diez elementos, además, se comparan mejor direct
 
 Las tiendas se compararon con una tabla de perfil, un mapa de calor de desviaciones respecto a la
 media y una matriz de distancias calculada sobre las variables de perfil (variabilidad, fin de
-semana, diciembre, índice de precio y peso de alimentación y hogar). El volumen se dejó fuera de la
+semana, diciembre, índice de precio y peso de supermercado y hogar). El volumen se dejó fuera de la
 distancia porque mide el tamaño de la tienda, no su forma de vender.
 
 La comparación arroja tres resultados:

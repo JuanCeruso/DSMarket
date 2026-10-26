@@ -276,7 +276,7 @@ tienda solo cuenta con el modelo por atributos o con la media del departamento.
 **Semana vista y máximo desglose.** El modelo predice las cuatro semanas siguientes, con un modelo
 por semana, para cada una de las 30.490 series producto-tienda.
 
-**Un ejemplo concreto.** Un producto de alimentación de Filadelfia que vende unas ocho unidades al
+**Un ejemplo concreto.** Un producto de supermercado de Filadelfia que vende unas ocho unidades al
 día tiene un error del 39 % medido día a día, porque nadie puede saber si mañana se venderán cuatro
 o doce. Por semanas el error baja al 6 %: vendió 51, 53, 57 y 41 unidades y el modelo predijo 49,
 54, 52 y 45. Un producto de compra ocasional de Nueva York, que no se vende la mitad de los días,

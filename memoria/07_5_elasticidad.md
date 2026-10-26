@@ -33,7 +33,7 @@ variable, y se estima $\beta$ sobre los residuos.
 ### 7.5.2. Un resultado excelente
 
 La estimación arroja una elasticidad de **−0,395** con un estadístico $t$ de **−19,3**. El signo
-es el correcto, la magnitud es plausible para bienes de alimentación, la significación
+es el correcto, la magnitud es plausible para bienes de gran consumo, la significación
 estadística es abrumadora y la descomposición por grupo de producto de §7.2 tiene sentido: la
 alta rotación diaria, barata y de compra frecuente, es la más sensible (−0,62); el grupo de
 precio alto y pocas unidades, de los menos (−0,26); y la venta esporádica con pico en eventos y el pico de diciembre, que
