@@ -1,29 +1,27 @@
 
-**NUCLIO DIGITAL SCHOOL**
+::: {custom-style="Title"}
+DSMarket: de la venta diaria a la decisión de reposición
+:::
 
-Máster en Data Science & Inteligencia Artificial
-
-# DSMarket: de la venta diaria a la decisión de reposición
-
-### Previsión de demanda, segmentación e inventario en una cadena de distribución minorista
+::: {custom-style="Subtitle"}
+Previsión de demanda, segmentación e inventario en una cadena de distribución minorista
+:::
 
 **Trabajo de Fin de Máster**
 
-Autores
+Máster en Data Science & Inteligencia Artificial · **Nuclio Digital School**
 
-[Nombre y apellidos] · [Nombre y apellidos]
-[Nombre y apellidos] · [Nombre y apellidos]
+**Autores:** [Nombre y apellidos] · [Nombre y apellidos] · [Nombre y apellidos]
 
-Tutor o tutora
+**Tutora:** [Nombre y apellidos]
 
-[Nombre y apellidos]
+**Defensa:** [fecha] · **Entrega de la memoria:** [fecha]
 
 Barcelona, octubre de 2026
 
-
-
----
-
+```{=openxml}
+<w:p><w:r><w:br w:type="page"/></w:r></w:p>
+```
 
 ## Resumen
 
@@ -53,8 +51,9 @@ estimación obtenida.
 teoría de inventarios, modelo del vendedor de periódicos, arquitectura de datos analíticos.
 
 
----
-
+```{=openxml}
+<w:p><w:r><w:br w:type="page"/></w:r></w:p>
+```
 
 ## Abstract
 
@@ -63,3 +62,7 @@ This work develops a complete analytical system on the sales history of DSMarket
 Demand is not homogeneous: only five of the fifteen best-selling products are common to the three cities, and the similarity between stores does not follow geographic boundaries. The adopted forecasting model reaches a WRMSSE of 1.0422 (1.0002 in the last window with the final model, trained on 400 days of history); the horizon strategy proves roughly three times more influential than the choice of library, and reformulating the target as the total of the replenishment cycle reduces the error by a further 15.7% and removes a bias of −7.4%. Summing individual predictions outperforms modelling each aggregate separately (Prophet, SARIMA) at the four levels evaluated. The proposed replenishment policy raises the service level from 86.6% to 96.2% while reducing total cost by 62.5%, and the cost-based comparison shows that a uniform 90% service level was 2.45 times more expensive than the optimum. Price elasticity, by contrast, is not identifiable with these data: a temporal falsification test refutes the estimate obtained.
 
 **Keywords:** demand forecasting, intermittent demand, hierarchical reconciliation, inventory theory, newsvendor model, analytical data architecture.
+
+```{=openxml}
+<w:p><w:r><w:br w:type="page"/></w:r></w:p>
+```

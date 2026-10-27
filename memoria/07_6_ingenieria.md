@@ -15,8 +15,7 @@ servicio web necesitan las mismas cifras, cada uno acaba con su propia lectura, 
 limpieza y su propia interpretación de las columnas. La divergencia no aparece de golpe;
 aparece meses después, cuando dos informes dan números distintos y nadie sabe cuál es el bueno.
 
-La solución adoptada —el almacén analítico descrito en §6.3— convierte cuatro cuadernos
-independientes en un sistema con una única fuente de verdad.
+La solución adoptada —el almacén analítico descrito en §6.3— convierte un conjunto de cuadernos independientes en un sistema con una única fuente de verdad.
 
 ### 7.6.2. Lo que se construyó
 
@@ -34,8 +33,7 @@ entradas, y cualquier consumidor puede cruzar previsión y realidad con una uni�
 
 **El servicio de reposición.** Una interfaz de programación que responde la pregunta operativa
 —cuántas unidades pedir de un producto en una tienda, dado el stock actual— aplicando la misma
-política del capítulo §7.4. Carga las tablas de la capa de oro en memoria al arrancar y expone
-cuatro operaciones. Dispone de trece comprobaciones automáticas que verifican tanto los casos normales
+política del capítulo §7.4. Carga las tablas de la capa de oro en memoria al arrancar y expone cinco operaciones. Dispone de trece comprobaciones automáticas que verifican tanto los casos normales
 como los límite.
 
 **El panel interactivo.** Una aplicación que expone la misma política en una pantalla, pensada
@@ -65,15 +63,14 @@ motor. La tercera, el SQL generado atraviesa un validador que admite únicamente
 lectura sobre las nueve vistas conocidas, rechaza sentencias múltiples y añade un límite de
 filas si no lo trae; además se muestra siempre al usuario antes de ejecutarse.
 
-La justificación no es tecnológica sino de responsabilidad: un sistema que sugiere pedidos de
-mercadería no puede permitirse una cifra inventada, y la única garantía sólida contra eso es que
+La justificación no es tecnológica sino de responsabilidad: un sistema que sugiere pedidos de mercancía no puede permitirse una cifra inventada, y la única garantía sólida contra eso es que
 el modelo no tenga la posibilidad de producirla.
 
 ![**Figura 7.26.** Pantalla principal del panel de reposición («Hoy en la tienda»). *Fuente: captura de la aplicación en ejecución.*](figuras/fig_7_26.png){width=100%}
 
 ### 7.6.4. Las trampas encontradas
 
-Se documentan aquí tres errores de implementación que se detectaron durante el trabajo, porque
+Se documentan aquí varios errores de implementación que se detectaron durante el trabajo, porque
 son silenciosos —no producen excepción, producen cifras equivocadas— y porque su documentación
 es parte del valor de ingeniería del proyecto.
 
@@ -136,7 +133,7 @@ La corrección deriva la bandera del **nombre** del día en lugar del índice, q
 no depende de una convención, y usa la misma definición para el histórico y para el horizonte.
 Se añadieron además dos contratos bloqueantes —uno por cada mitad del defecto— y sus dos pruebas
 de regresión. El efecto colateral fue confirmar la segmentación del catálogo: con la bandera
-corregida, el grupo «Fin de semana/hogar» pasa a encabezar la elevación de fin de semana con
+corregida, el grupo «Pico de fin de semana» pasa a encabezar la elevación de fin de semana con
 un ×1,42, cifra que antes quedaba invisible y que es la que justifica su nombre (§7.2.3).
 
 **La ventana predicha, corrida un horizonte entero.** El contrato que exige que toda predicción
@@ -210,7 +207,7 @@ mostrarlas sin ninguna integración adicional.
 
 Un sistema que decide compras no se despliega de una vez. La ruta propuesta tiene tres fases,
 cada una con su criterio de avance y su criterio de parada, y la razón de que existan es que un
-error de reposición no se corrige con un despliegue nuevo: se corrige con mercadería.
+error de reposición no se corrige con un despliegue nuevo: se corrige con mercancía.
 
 **Fase 1 — Modo sombra (4 semanas).** El sistema calcula pedidos para las diez tiendas y no los
 envía a nadie. Se registra la sugerencia junto a lo que el encargado pidió realmente. No hay
@@ -219,8 +216,7 @@ decisiones sobre la demanda que realmente ocurrió. *Criterio de avance:* que el
 peor que la práctica actual en coste simulado, y que ninguna de las alertas del monitor se haya
 disparado por causas ajenas a los datos.
 
-**Fase 2 — Piloto (8 semanas, dos tiendas).** Se eligen dos establecimientos de grupos de
-comportamiento distintos y se aplican las sugerencias en el segmento AX, que concentra el 56% de
+**Fase 2 — Piloto (8 semanas, dos tiendas).** Se eligen dos establecimientos con perfiles de venta distintos (§7.2.4) y se aplican las sugerencias en el segmento AX, que concentra el 56% de
 la facturación y es el de demanda más estable. El resto del catálogo sigue con el procedimiento
 actual, lo que proporciona un grupo de control interno. *Criterio de avance:* mejora del nivel de
 servicio sin aumento del inventario medio. *Criterio de parada:* dos semanas consecutivas con el

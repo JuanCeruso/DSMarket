@@ -93,7 +93,7 @@ la estructura que la serie individual no tiene.
 
 ![**Figura 7.18.** Efecto de usar el modelo frente a la regla histórica, por segmento. *Fuente: elaboración propia.*](figuras/fig_7_18.png){width=100%}
 
-Este es el segundo de los tres momentos en que una prueba refutó una conclusión del trabajo.
+Este es el segundo de los cuatro momentos en que una prueba refutó una conclusión del trabajo.
 Elegir la política por el RMSSE habría llevado a la decisión opuesta en ambos extremos.
 
 ### 7.4.5. La función de pérdida correcta
@@ -142,8 +142,7 @@ no se confirmó.
 Pero el experimento reveló otra cosa, y de magnitud muy superior. **La fila E es la política que
 el trabajo venía aplicando**, con nivel de servicio fijado en 0,90 para todos los segmentos, y
 resulta ser **2,45 veces más cara** que la mejor alternativa. Compra 9,7 puntos de nivel de
-servicio a un coste de 372.000 dólares en cuatro semanas. Con margen del 25% y coste de exceso
-del 5%, el ratio crítico correcto es **0,714**, no 0,90.
+servicio a un coste de 372.000 dólares en cuatro semanas. Con margen del 25%, coste de posesión del 5% y merma del 5%, el ratio crítico es **0,714**, no 0,90.
 
 Es decir: la pregunta por la función de pérdida no cambió el modelo, cambió **el nivel de
 servicio**, y ahí estaba el error caro. Un parámetro fijado por convención y nunca sometido a
@@ -249,8 +248,8 @@ no cambia, de modo que:
 | | Margen perdido | Mantenimiento | Proporción |
 |---|---|---|---|
 | Medido en la simulación | 164.543 USD | 11.156 USD | 15 : 1 |
-| Con la cota inferior de censura | 186.821 USD | 11.156 USD | **17 : 1** |
-| Con la cota superior de censura | 338.520 USD | 11.156 USD | **30 : 1** |
+| Con la cota inferior de censura | 186.868 USD | 11.156 USD | **17 : 1** |
+| Con la cota superior de censura | 338.567 USD | 11.156 USD | **30 : 1** |
 
 La proporción de quince a uno entre venta perdida y capital inmovilizado es, por tanto, un
 mínimo, y en el peor escenario la asimetría se duplica. El diagnóstico del capítulo —que la

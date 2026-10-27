@@ -6,8 +6,8 @@ Nueve experimentos y sondeos complementarios al trabajo principal. Todos leen de
 
 > **Nota sobre la versión del modelo.** Los experimentos se ejecutaron con la versión anterior del
 > modelo (180 días de historia y la segmentación previa). El código compartido (`comun.py`) usa ya
-> la configuración final (400 días, grupo de producto vigente y variables de evento semanal), de
-> modo que una nueva ejecución puede diferir ligeramente de los ficheros de `resultados/`. El
+> 400 días de historia y variables de evento semanal, pero, a diferencia del modelo final,
+> conserva la variable de grupo de producto, de modo que una nueva ejecución puede diferir ligeramente de los ficheros de `resultados/`. El
 > experimento 8 (arranque en frío) sí se ejecutó con la versión final.
 
 ## Criterio de orden

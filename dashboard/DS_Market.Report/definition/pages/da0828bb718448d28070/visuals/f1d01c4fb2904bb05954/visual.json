@@ -103,7 +103,7 @@
               },
               "queryRef": "dim_arquetipo.pct_alimentacion",
               "nativeQueryRef": "pct_alimentacion",
-              "displayName": "% alimentación"
+              "displayName": "% supermercado"
             },
             {
               "field": {

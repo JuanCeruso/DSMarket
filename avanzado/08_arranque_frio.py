@@ -159,7 +159,7 @@ Lo relevante no es cuánto gana el modelo, es **cuánto gana sobre lo que haría
 la media de la categoría en la tienda ya se acerca, la conclusión honesta es que para un producto
 nuevo una regla simple basta, y eso también se escribe.
 
-Mirá sobre todo la columna de cobertura de la vía C: solo aplica cuando el producto ya se vende
+Mira sobre todo la columna de cobertura de la vía C: solo aplica cuando el producto ya se vende
 en la tienda más parecida. Cuando aplica suele ser la mejor, y eso conecta directamente con el
 hallazgo de §7.2 —que el parecido entre tiendas cruza las fronteras de ciudad—: la comparación de
 tiendas no era un adorno descriptivo, sirve para decidir de qué tienda copiar.

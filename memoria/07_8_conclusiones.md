@@ -71,7 +71,7 @@ de reposición, panel interactivo y cuadro de mando— leyendo las mismas tablas
 ### 7.8.2. El hilo conductor: cuatro veces que la evidencia nos contradijo
 
 Los resultados anteriores son los que el encargo pedía. El resultado del que este trabajo se
-siente más responsable es otro, y recorre los seis capítulos: en cuatro ocasiones una conclusión
+siente más responsable es otro, y recorre los siete capítulos: en cuatro ocasiones una conclusión
 o una hipótesis atractiva fue sometida a una prueba que podía refutarla, y la prueba la refutó.
 
 **Primera. Un hallazgo que hubo que aprender a no publicar.** Black Friday no mostraba el pico
@@ -114,7 +114,7 @@ Se enumeran las que afectan a la validez de las conclusiones, ordenadas por impo
    estos datos no los distinguen. El sesgo recorre todo el trabajo —el modelo predice por debajo,
    la simulación infravalora el coste de la rotura— y no es corregible sin datos de inventario,
    solo acotable (§7.4.7). Su dirección es conocida y favorable: sobre el período simulado, el
-   coste real de la rotura se sitúa entre 186.821 y 338.520 dólares frente a los 164.496
+   coste real de la rotura se sitúa entre 186.868 y 338.567 dólares frente a los 164.543
    medidos, de modo que **todas las cifras de coste de rotura presentadas son conservadoras** y
    la asimetría frente al coste de mantenimiento pasa de quince a uno a situarse entre diecisiete
    y treinta a uno. Además, toda la evaluación de la política se apoya en una

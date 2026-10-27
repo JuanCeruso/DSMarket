@@ -75,7 +75,7 @@ horizonte pesó unas tres veces más que la elección de biblioteca.
 Después, lo que pidió la tutoría, en una frase cada cosa: medido **por semanas** (WAPE semanal) el
 error baja del 76 % al 40 %, porque más de la mitad de los días no se vende nada; y el modelo final
 aprende con **400 días** de historia en lugar de 180, de modo que ya ha visto una Navidad: mejora
-un 5,7 % en diciembre y un 3,3 % en noviembre, y aprende solo que el 25 de diciembre la tienda
+un 5,3 % en diciembre y un 3,2 % en noviembre, y aprende solo que el 25 de diciembre la tienda
 cierra. Mostrar el gráfico del producto de ejemplo: por semanas, vendió 51, 53, 57 y 41 y el modelo
 dijo 49, 54, 52 y 45.
 

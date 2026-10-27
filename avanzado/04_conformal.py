@@ -125,7 +125,7 @@ def main():
     print(f"\nguardado en {SALIDA}  ·  total {time.time()-t0:.0f}s")
     print("\nCómo leerlo: si la corrección conforme es pequeña, significa que el modelo "
           "cuantílico ya estaba bien calibrado y lo único que ganamos es la garantía formal — "
-          "que para la memoria es un argumento de rigor, no de rendimiento. Mirá sobre todo la "
+          "que para la memoria es un argumento de rigor, no de rendimiento. Mira sobre todo la "
           "cobertura por clase: lo habitual es que la clase Z sea donde el modelo sin ajustar "
           "se queda corto, y es justo donde la garantía vale.")
 
