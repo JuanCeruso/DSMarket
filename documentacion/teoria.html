@@ -197,7 +197,7 @@ td.n,th.n{text-align:right;padding-right:0;font-family:"Fira Mono",monospace;
     <h4>Por qué global gana en este problema</h4>
     <p>Porque la mayoría de las series son cortas y ruidosas. Un producto que vende dos unidades por día con 66% de días en cero no tiene suficiente historia propia para estimar nada estable. Pero <em>hay miles de productos parecidos</em>, y un modelo global aprende de todos ellos el patrón compartido —el efecto del fin de semana, el de diciembre, el del precio— y lo aplica a cada uno. Es transferencia de aprendizaje entre series.</p>
   </div>
-  <p>Es también la razón por la que los clusters de la Tarea 2 entran como variables: le permiten al modelo tratar distinto a un producto de «compra ocasional» que a uno de «alimentación de consumo diario» sin tener que descubrirlo desde cero para cada uno de los 3.049.</p>
+  <p>Por la misma razón, los grupos de la Tarea 2 no aportan como variable del modelo: el identificador del producto y sus medias recientes ya le permiten tratar distinto a un producto de «venta esporádica» que a uno de «alta rotación diaria». El experimento del notebook 03b lo comprueba, y el modelo final no los usa.</p>
 </section>
 
 <section id="tweedie">
@@ -244,7 +244,7 @@ td.n,th.n{text-align:right;padding-right:0;font-family:"Fira Mono",monospace;
   <div class="formula">RMSSE = √[  media((y − ŷ)²)  /  media((y<sub>t</sub> − y<sub>t−1</sub>)²)  ]
     <span class="expl">Al dividir por el error del naive, el resultado es adimensional y comparable entre series. Menor que 1 significa que el modelo aporta valor sobre esa referencia; mayor que 1, que es peor que no hacer nada.</span>
   </div>
-  <p>Ese umbral en 1 ayuda a leer la Tarea 3 por grupos: el error va de 0,88 en la alimentación de consumo diario a 0,93-0,96 en la compra ocasional y la Navidad. No es que el modelo sea flojo ahí — es que <strong>las series de venta escasa no son predecibles día a día</strong>, y ninguna cantidad de variables lo iba a cambiar. Por eso la sección 16 mide también el error por semanas.</p>
+  <p>Ese umbral en 1 ayuda a leer la Tarea 3 por grupos: los grupos de venta esporádica y de pico de diciembre son los que peor se predicen. No es que el modelo sea flojo ahí — es que <strong>las series de venta escasa no son predecibles día a día</strong>, y ninguna cantidad de variables lo iba a cambiar. Por eso la sección 8 del notebook 03 mide también el error por semanas.</p>
 
   <h3>Ponderar por lo que importa</h3>
   <p>El <strong>WRMSSE</strong> promedia los RMSSE ponderando cada serie por su facturación de los últimos 28 días. Equivocarse en el producto que más factura pesa más que equivocarse en uno marginal.</p>

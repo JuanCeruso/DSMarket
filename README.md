@@ -15,13 +15,13 @@ bruto hasta la cantidad que debe pedirse de cada producto en cada tienda.
 
 | Carpeta | Contenido |
 |---|---|
-| `*.ipynb` | Los cinco cuadernos de análisis, uno por etapa |
+| `*.ipynb` | Los cinco cuadernos de análisis, uno por etapa, y el experimento complementario `03b` (modelo sin los grupos de producto) |
 | `forecast_segmentacion.py`, `forecast_semanal.py`, `modelo_final.py` | Entrenamientos auxiliares del cuaderno 03 (secciones 6, 9 y 11) y el modelo final (sección 12): 400 días de historia y eventos semanales |
 | `predicciones_28dias*.csv` | La entrega: predicción media y percentil 90 de los 28 días siguientes, con el modelo final |
 | `lakehouse/scripts/` | Construcción del almacén analítico en tres capas |
 | `operacion/` | La capa que hace que esto sea un sistema y no un conjunto de cuadernos |
 | `app/` | Panel interactivo (Streamlit) |
-| `api/` | Servicio de reposición (FastAPI) con sus doce pruebas |
+| `api/` | Servicio de reposición (FastAPI) con sus trece comprobaciones |
 | `avanzado/` | Nueve experimentos y sondeos, con sus resultados |
 | `memoria/` | La memoria, una sección por fichero, y el `.docx` generado |
 | `defensa/` | Guion cronometrado de la defensa |
@@ -33,7 +33,7 @@ bruto hasta la cantidad que debe pedirse de cada producto en cada tienda.
 Tres cosas se ignoran a propósito. Ninguna se pierde: todas se regeneran.
 
 **Los datos de origen** (`data_dsmarket/`, 469 MB) los aporta la escuela y no nos corresponde
-redistribuirlos. Colocalos en `data_dsmarket/data_dsmarket/` con sus tres CSV:
+redistribuirlos. Colócalos en `data_dsmarket/data_dsmarket/` con sus tres CSV:
 `item_sales.csv`, `item_prices.csv` y `daily_calendar_with_events.csv`.
 
 **El almacén** (`lakehouse/bronze|silver|gold`, 163 MB) se reconstruye entero en unos veinte
@@ -49,7 +49,7 @@ conda env create -f environment.yml
 conda activate dsmarket
 ```
 
-O con pip, si preferís un entorno virtual:
+O con pip, si prefieres un entorno virtual:
 
 ```bash
 python3.12 -m venv .venv && source .venv/bin/activate
@@ -115,7 +115,7 @@ era obligatoria.
 ## Reproducibilidad
 
 Los cuadernos son la fuente: se editan y se ejecutan directamente como cuadernos Jupyter. El 03 lee los
-resultados de los entrenamientos auxiliares guardados en `cache_forecast/` (reentrenar todo lleva varias horas) que generan
+resultados de los entrenamientos auxiliares guardados en `cache_forecast_sin_clusters/` (reentrenar todo lleva varias horas) que generan
 `forecast_segmentacion.py`, `forecast_semanal.py`, `experimentos_t3.py`, `exp_precios_paso.py` y `modelo_final.py`. Las semillas aleatorias están fijadas. El almacén se reconstruye
 íntegro desde los ficheros de origen con un solo comando, y quince contratos de datos detienen el
 proceso si algo no cuadra.
