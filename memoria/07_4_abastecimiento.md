@@ -248,8 +248,8 @@ no cambia, de modo que:
 | | Margen perdido | Mantenimiento | Proporción |
 |---|---|---|---|
 | Medido en la simulación | 164.543 USD | 11.156 USD | 15 : 1 |
-| Con la cota inferior de censura | 186.821 USD | 11.156 USD | **17 : 1** |
-| Con la cota superior de censura | 338.520 USD | 11.156 USD | **30 : 1** |
+| Con la cota inferior de censura | 186.868 USD | 11.156 USD | **17 : 1** |
+| Con la cota superior de censura | 338.567 USD | 11.156 USD | **30 : 1** |
 
 La proporción de quince a uno entre venta perdida y capital inmovilizado es, por tanto, un
 mínimo, y en el peor escenario la asimetría se duplica. El diagnóstico del capítulo —que la
