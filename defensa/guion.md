@@ -69,8 +69,8 @@ El bloque más largo y el que decide la nota. Tiene tres momentos.
 > existe.»
 
 Y entonces la solución: cuatro modelos, uno por semana del horizonte, cada uno con el retardo
-mínimo que le corresponde. WRMSSE 1,0407. **La frase que hay que decir:** la estrategia de
-horizonte pesó unas diez veces más que la elección de biblioteca.
+mínimo que le corresponde. WRMSSE 1,0422. **La frase que hay que decir:** la estrategia de
+horizonte pesó unas tres veces más que la elección de biblioteca.
 
 Después, lo que pidió la tutoría, en una frase cada cosa: medido **por semanas** (WAPE semanal) el
 error baja del 76 % al 40 %, porque más de la mitad de los días no se vende nada; y el modelo final

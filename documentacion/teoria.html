@@ -229,7 +229,7 @@ td.n,th.n{text-align:right;padding-right:0;font-family:"Fira Mono",monospace;
   <h3>La solución: bloques semanales</h3>
   <p>Cuatro modelos, uno por semana del horizonte. El de la primera semana puede mirar hasta hace 7 días, el de la segunda hasta hace 14, y así. Cada uno usa <strong>la información más fresca que realmente tendría disponible</strong> en el momento de predecir.</p>
   <div class="clave">
-    <p><strong>Este cambio rindió unas diez veces más que elegir la librería.</strong> LightGBM pasó de un WRMSSE de 1,0626 a 1,0407 solo por reorganizar el horizonte — un 2%. La diferencia entre LightGBM y XGBoost con la misma estrategia fue de 0,002, que es ruido.</p>
+    <p><strong>Este cambio rindió unas tres veces más que elegir la librería.</strong> LightGBM pasó de un WRMSSE de 1,0639 a 1,0422 solo por reorganizar el horizonte — un 2%. La diferencia entre LightGBM y XGBoost con la misma estrategia fue de 0,002, que es ruido.</p>
     <p>Y hay un detalle que importa más de lo que parece: con la estrategia ingenua, <em>los modelos no le ganaban a una media móvil de 28 días</em>. La ventaja apareció solo al organizar bien el horizonte.</p>
   </div>
 </section>

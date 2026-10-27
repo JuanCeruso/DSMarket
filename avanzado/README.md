@@ -12,7 +12,7 @@ Nueve experimentos y sondeos complementarios al trabajo principal. Todos leen de
 
 ## Criterio de orden
 
-El diagnóstico del modelo condiciona el orden: la media móvil de 28 días concentra el 58,2 % de la
+El diagnóstico del modelo condiciona el orden: la media móvil de 28 días concentra el 54,1 % de la
 importancia y las cuatro medias móviles juntas el 86 %. Un modelo con más capacidad dispone de poca
 señal adicional; el techo lo fija el ruido de series que venden pocas unidades por día. Por ello los
 experimentos se ordenan por retorno esperado, no por sofisticación, y los dos primeros son cambios

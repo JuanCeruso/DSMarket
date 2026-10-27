@@ -48,7 +48,7 @@ comentarios de Raquel y las páginas del cuadro de mando. Complementa a `guion.m
 
 ### Bloque C · Predecir y decidir (6 min)
 8. **El resultado incómodo.** Nada ganaba a la media móvil de 28 días; el problema estaba mal
-   planteado. Estrategia por bloques semanales: WRMSSE 1,0407.
+   planteado. Estrategia por bloques semanales: WRMSSE 1,0422.
 9. **Comparación de modelos y medida por semanas** (WAPE semanal del 76 % al 40 %).
 10. **Sumar es válido.** Ascendente frente a directo por nivel (5,5 % a 9,9 %).
 11. **La refutación.** Cambio de signo por segmento: +26 % en venta esporádica, −7 % en alta

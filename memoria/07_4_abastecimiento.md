@@ -195,7 +195,7 @@ servicio real del 97,3% y un coste de 55.701 dólares en las cuatro semanas.
 ![**Figura 7.20.** Coste total por nivel de servicio objetivo y supuesto de merma. *Fuente: elaboración propia.*](figuras/fig_7_20.png){width=100%}
 
 Se documenta también el coste del servicio en términos de inventario: pasar de una cobertura del
-68% —la que da la predicción media— al 90% exige un **127% más de stock**. La curva es
+68% —la que da la predicción media— al 90% exige un **128% más de stock**. La curva es
 fuertemente convexa en su tramo alto, lo que significa que los últimos puntos de servicio son
 desproporcionadamente caros.
 
