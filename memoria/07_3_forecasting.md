@@ -18,8 +18,8 @@ series. La métrica de decisión es el WRMSSE, ponderado por la facturación de 
 - **Referencias**: naive estacional (lo vendido cuatro semanas antes), media móvil de 28 días y
   media por día de la semana de las últimas ocho semanas.
 - **Modelos globales de árboles**: LightGBM y XGBoost con objetivo Tweedie, entrenados sobre todas
-  las series a la vez, con 26 variables (historia reciente, dispersión, calendario, precio e
-  identidad, entre ella el grupo de producto de §7.2).
+  las series a la vez, con 25 variables (historia reciente, dispersión, calendario, precio e
+identidad del producto y la tienda).
 - **Modelos clásicos para el agregado**: Prophet y SARIMA(1,1,1)(1,1,1,7), que no escalan a 30.490
   series pero son la comparación natural en los niveles de agregación (§7.3.8).
 
@@ -251,7 +251,7 @@ exactamente sobre la cantidad que se usa para decidir.
 ### 7.3.10. Productos sin histórico
 
 Una referencia recién incorporada al catálogo no tiene retardos ni medias móviles, es decir,
-carece del 86% de la información que el modelo utiliza. Es además el momento en que un error de
+carece del 88% de la información que el modelo utiliza. Es además el momento en que un error de
 dimensionamiento resulta más caro. Se evaluaron por ello cuatro formas de estimar su demanda
 media, sobre un conjunto de productos ocultados por completo —en todas las tiendas— durante el
 entrenamiento:

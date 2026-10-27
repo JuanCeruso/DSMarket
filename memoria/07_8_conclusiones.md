@@ -31,7 +31,7 @@ de la tienda, y lo que queda no supera el nivel de ruido medido entre establecim
 **OE3 — Predecir la demanda.** El modelo adoptado es LightGBM con objetivo Tweedie y
 estrategia por bloques semanales, con un WRMSSE de 1,0422 (XGBoost queda un 0,7 % por delante, 1,0352). El hallazgo metodológico es que **la
 estrategia de horizonte pesó unas tres veces más que la elección de biblioteca**: con la
-formulación ingenua ningún modelo supera a una media móvil. Una búsqueda de hiperparámetros
+formulación ingenua los modelos apenas superan a una media móvil. Una búsqueda de hiperparámetros
 posterior confirmó que el margen restante no estaba en la configuración del modelo —mejora
 del −0,02% en WRMSSE—, mientras que **reformular el objetivo como el total del ciclo redujo el
 error un 15,7% y eliminó un sesgo del −7,4%**. Las dos comprobaciones apuntan en la misma
@@ -40,8 +40,7 @@ dirección: el rendimiento estaba en el planteamiento, no en el modelo.
 La revisión de la tutoría añadió dos cambios al modelo final. Medido **por semanas** (WAPE semanal),
 que es como se repone, el error baja del 76% al 40%, porque más de la mitad de los días no hay
 ventas. Y entrenar con **400 días de historia** en lugar de 180, con variables de evento a nivel
-semanal, mejora el WRMSSE un 5,7% en diciembre y un 3,3% en noviembre sin empeorar el resto del año
-(1,0378 de media en febrero-abril), y el modelo aprende por sí solo el cierre del 25 de diciembre.
+semanal, mejora el WRMSSE un 5,6% en diciembre y un 3,7% en noviembre sin empeorar el resto del año (1,0381 de media en febrero-abril), y el modelo aprende por sí solo el cierre del 25 de diciembre.
 
 **OE4 — Los agregados.** Sumar las predicciones individuales es válido y preferible a modelar
 cada nivel por separado: el enfoque ascendente gana en los cuatro niveles evaluados (error del
@@ -161,7 +160,7 @@ siguen siendo donde el error de predicción es mayor, y la comparación de §7.4
 segmento CZ la media móvil simple supera al modelo.
 
 **Predicción de productos sin histórico.** Una referencia nueva llega al lineal sin retardos ni
-medias móviles, es decir sin el 86% de la información que usa el modelo, y es justo el momento en
+medias móviles, es decir sin el 88% de la información que usa el modelo, y es justo el momento en
 que un error de dimensionamiento resulta más caro. La vía natural es predecir su nivel de demanda
 a partir de sus atributos y del comportamiento de la misma referencia en la tienda más parecida,
 lo que da un uso operativo a la comparación de tiendas de §7.2.

@@ -96,7 +96,7 @@ reglas.
 - La demanda no es homogénea: **solo 5 de los 15 productos más vendidos** son comunes a las tres
   ciudades, y el parecido entre tiendas no respeta las fronteras de ciudad.
 - **La estrategia de horizonte pesó unas tres veces más que la elección de biblioteca.** Con la
-  formulación ingenua ningún modelo supera a una media móvil.
+  formulación ingenua los modelos apenas superan a una media móvil.
 - Reformular el objetivo como el total del ciclo reduce el error un **15,7%** y elimina un sesgo
   del −7,4%.
 - Sumar las predicciones individuales es válido: el enfoque ascendente gana en los cuatro niveles de agregación a Prophet y SARIMA.
