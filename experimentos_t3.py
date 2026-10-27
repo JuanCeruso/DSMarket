@@ -52,7 +52,7 @@ SMALL_PARAMS = dict(objective='tweedie', tweedie_variance_power=1.1, learning_ra
 
 
 def gbm_pequeno(V, P, cs, cal, meta, s, e):
-    """LightGBM con 8 variables, 15 hojas y 300 árboles; 180 días de historia; 4 bloques semanales."""
+    """LightGBM con 7 variables, 15 hojas y 300 árboles; 180 días de historia; 4 bloques semanales."""
     M = np.zeros((V.shape[0], e - s), np.float32)
     for b in range(4):
         ml = 7 * (b + 1)
@@ -79,7 +79,7 @@ def complejidad(solo=None):
         modelos = {}
         modelos['1 Media móvil 28 d'] = fw.media_movil_28(V, P, s, e)
         modelos['2 Media móvil × día de la semana'] = ma28_por_dia_semana(V, P, cal, meta, s, e)
-        t = time.time(); modelos['3 LightGBM pequeño (8 variables, 15 hojas)'] = gbm_pequeno(V, P, cs, cal, meta, s, e)
+        t = time.time(); modelos['3 LightGBM pequeño (7 variables, 15 hojas)'] = gbm_pequeno(V, P, cs, cal, meta, s, e)
         print(f"fold{i} GBM pequeño {time.time()-t:.0f}s", flush=True)
         modelos['4 LightGBM completo (96 hojas, 180 d)'] = pickle.load(open(f"{CACHE}/pred2_fold{i}.pkl", 'rb'))['pred_lgb']
         if i == 2:

@@ -28,9 +28,9 @@ evidencia**: el co-movimiento aparente entre productos se explica por el calenda
 de la tienda, y lo que queda no supera el nivel de ruido medido entre establecimientos distintos
 (1,27% frente al 1,00% esperable por azar).
 
-**OE3 — Predecir la demanda.** El mejor resultado corresponde a LightGBM con objetivo Tweedie y
-estrategia por bloques semanales, con un WRMSSE de 1,0407. El hallazgo metodológico es que **la
-estrategia de horizonte pesó unas diez veces más que la elección de biblioteca**: con la
+**OE3 — Predecir la demanda.** El modelo adoptado es LightGBM con objetivo Tweedie y
+estrategia por bloques semanales, con un WRMSSE de 1,0422 (XGBoost queda un 0,7 % por delante, 1,0352). El hallazgo metodológico es que **la
+estrategia de horizonte pesó unas tres veces más que la elección de biblioteca**: con la
 formulación ingenua ningún modelo supera a una media móvil. Una búsqueda de hiperparámetros
 posterior confirmó que el margen restante no estaba en la configuración del modelo —mejora
 del −0,02% en WRMSSE—, mientras que **reformular el objetivo como el total del ciclo redujo el
@@ -130,7 +130,7 @@ Se enumeran las que afectan a la validez de las conclusiones, ordenadas por impo
    una forma útil y estable de ordenar el catálogo, no tipos naturales de producto.
 5. **La temporada alta sigue siendo el período más difícil.** Entrenar con 400 días, que incluyen
    el año anterior, corrigió el fallo más grave —el cierre del 25 de diciembre— y mejoró
-   diciembre un 5,7 %, pero el pico del 31 de diciembre sigue infravalorado y la validación en
+   diciembre un 5,3 %, pero el pico del 31 de diciembre sigue infravalorado y la validación en
    temporada alta se apoya en un solo año.
 6. **El calendario de eventos es el proporcionado.** No se dispone de promociones planificadas ni
    de acciones de la competencia, que son determinantes conocidos de la demanda minorista.
@@ -192,5 +192,5 @@ intervalo ya estaba bien calibrado, aportando garantía formal pero no rendimien
 de afinidad entre productos** se ejecutó y no encontró señal por encima del ruido. Y quedan
 descartadas sin ejecutar, por diagnóstico previo, las **arquitecturas neuronales genéricas**,
 superadas por los ensambles de árboles en problemas de esta estructura, y un **modelo de mayor
-capacidad**, dado que la media móvil de 28 días concentra el 58,2% de la importancia y el techo
+capacidad**, dado que la media móvil de 28 días concentra el 54,1% de la importancia y el techo
 lo pone el ruido de la serie.

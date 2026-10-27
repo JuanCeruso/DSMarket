@@ -7,7 +7,7 @@ import os, sys, gc, time, json
 import numpy as np, lightgbm as lgb
 import forecast_segmentacion as fs, forecast_semanal as fw, modelo_final as mf
 
-T0 = time.time(); LIMITE = 135
+T0 = time.time(); LIMITE = float(os.environ.get("LIMITE", 135))   # segundos por ejecución; LIMITE=1e9 entrena cada bloque de una vez
 D = f"{fs.CACHE}/exp3"; os.makedirs(D, exist_ok=True)
 OBJ = (sys.argv[1] if len(sys.argv) > 1 else 'media').split(',')
 CHUNK = 50

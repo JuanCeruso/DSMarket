@@ -294,8 +294,8 @@ La comparación de modelos de §7.3 se hizo con ventanas de 180 días, con el ar
 media móvil anual ya aporta la referencia estacional. Ese argumento resultó insuficiente: con 180
 días, el modelo que predice diciembre no ha visto ninguna Navidad, y la media anual no basta para
 que aprenda el cierre del día 25 ni la subida de las semanas previas. Se repitió la validación
-con **400 días**, que incluyen el año anterior completo: el error mejora un 5,7 % en diciembre y
-un 3,4 % en noviembre sin empeorar el resto del año. El **modelo final se entrena con 400 días**;
+con **400 días**, que incluyen el año anterior completo: el error mejora un 5,3 % en diciembre y
+un 3,2 % en noviembre sin empeorar el resto del año. El **modelo final se entrena con 400 días**;
 el coste es un tiempo de entrenamiento algo más del doble.
 
 ### 6.5.3. Validación de la segmentación

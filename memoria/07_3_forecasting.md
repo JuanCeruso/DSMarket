@@ -34,7 +34,7 @@ efecto del fin de semana lo aplica a una de venta escasa que por sí sola nunca 
 
 Con la estrategia ingenua —un solo modelo que predice los veintiocho días con información de al
 menos veintiocho días de antigüedad— **LightGBM no supera a la media móvil de 28 días**: WRMSSE de
-1,0626 frente a 1,0657, un empate técnico. XGBoost queda en 1,0631. La razón no es un mal ajuste,
+1,0639 frente a 1,0657, un empate técnico. XGBoost queda en 1,0570, un 0,8 % por debajo de la media móvil. La razón no es un mal ajuste,
 sino que el modelo único debe renunciar, también en los primeros días del horizonte, a la
 información más reciente de que se dispondría en explotación.
 
@@ -45,10 +45,10 @@ mínima tiene 7, 14, 21 y 28 días de antigüedad— la comparación se separa d
 
 | Modelo (media de los tres pliegues) | WRMSSE |
 |---|---|
-| **LightGBM, bloques semanales** | **1,0407** |
-| XGBoost, bloques semanales | 1,0430 |
-| LightGBM, modelo único | 1,0626 |
-| XGBoost, modelo único | 1,0631 |
+| **XGBoost, bloques semanales** | **1,0352** |
+| LightGBM, bloques semanales | 1,0422 |
+| XGBoost, modelo único | 1,0570 |
+| LightGBM, modelo único | 1,0639 |
 | Media móvil de 28 días | 1,0657 |
 | Media por día de la semana | 1,0855 |
 | Naive estacional | 1,4262 |
@@ -56,12 +56,14 @@ mínima tiene 7, 14, 21 y 28 días de antigüedad— la comparación se separa d
 ![**Figura 7.10.** Estrategia de predicción por bloques semanales. *Fuente: elaboración propia.*](figuras/fig_7_10.png){width=100%}
 
 El hallazgo metodológico es la magnitud relativa de los dos efectos: **la organización del horizonte
-mejora un 2 % el mismo algoritmo (de 1,0626 a 1,0407), mientras que la diferencia entre LightGBM y
-XGBoost con la misma estrategia es de 0,002**. Definir qué información puede ver el modelo rinde
-aproximadamente diez veces más que elegir la biblioteca. Se adopta LightGBM con bloques semanales.
+mejora un 2 % el mismo algoritmo (de 1,0639 a 1,0422 en LightGBM y de 1,0570 a 1,0352 en XGBoost), mientras que la
+diferencia entre ambas bibliotecas con la misma estrategia es de 0,007 (0,7 %)**. Definir qué información puede ver el
+modelo rinde unas tres veces más que elegir la biblioteca. XGBoost queda ligeramente por delante en las cuatro
+métricas; se adopta LightGBM con bloques semanales porque todo el desarrollo posterior (400 días, eventos semanales,
+modelo cuantílico y entrega) se construyó sobre él, y evaluar XGBoost en el modelo final queda como línea de mejora.
 
 El resultado se matiza según la métrica. En error absoluto medio la media móvil queda al nivel de
-los modelos (1,0401 frente a 1,0450 de LightGBM), porque el MAE trata igual a todos los productos y
+los modelos (1,0401 frente a 1,0462 de LightGBM y 1,0349 de XGBoost), porque el MAE trata igual a todos los productos y
 la mayoría son de baja rotación, donde el promedio reciente es casi imbatible. El WRMSSE pondera por
 facturación y ahí los modelos ganan: aciertan más donde está el dinero. Un WRMSSE ligeramente
 superior a 1 significa que, ponderando por facturación, el error a 28 días vista es comparable al
@@ -73,10 +75,11 @@ porque conoce el día anterior y el modelo no.
 ### 7.3.4. Qué mira el modelo y cuánta complejidad hace falta
 
 El análisis de importancia de variables arroja un resultado que conviene no maquillar: la media
-móvil de 28 días, `rmean_28`, concentra el **58,2 %** de la importancia total, y las cuatro medias
-móviles juntas (7, 28, 91 y 364 días) el **86,2 %**. El identificador del producto pesa un 7,5 %, y
+móvil de 28 días, `rmean_28`, concentra el **54,1 %** de la importancia total, y las cuatro medias
+móviles juntas (7, 28, 91 y 364 días) el **88,1 %**. El identificador del producto pesa un 6,0 %, y
 las variables de evento y de fin de semana no llegan al 1 % cada una. El grupo de producto de §7.2
-aporta un **0,16 %**: su papel es de interpretación, no de precisión. La lectura es que el modelo
+no se incluye como variable: en el experimento con y sin él pesaba un 0,18 % de la importancia y no
+mejoraba la predicción (cuaderno 03b); su papel es de interpretación, no de precisión. La lectura es que el modelo
 hace, esencialmente, una media móvil refinada, y que el valor está en estimar bien el nivel reciente
 de cada serie, no en modelar efectos de calendario producto a producto.
 
@@ -88,15 +91,15 @@ ventanas:
 | WRMSSE | Feb 2016 | Mar 2016 | Abr 2016 | Media |
 |---|---|---|---|---|
 | Media móvil de 28 días | 1,0909 | 1,0660 | 1,0402 | 1,0657 |
-| Media móvil × día de la semana | 1,0768 | 1,0518 | 1,0185 | 1,0490 |
-| LightGBM pequeño (8 variables, 15 hojas) | 1,0827 | 1,0380 | 1,0095 | 1,0434 |
-| LightGBM completo (180 días) | 1,0776 | 1,0415 | 1,0029 | 1,0407 |
-| Modelo final (400 días + eventos) | — | — | 0,9994 | — |
+| Media móvil × día de la semana | 1,0759 | 1,0517 | 1,0185 | 1,0487 |
+| LightGBM pequeño (7 variables, 15 hojas) | 1,0857 | 1,0407 | 1,0098 | 1,0454 |
+| LightGBM completo (180 días) | 1,0799 | 1,0410 | 1,0055 | 1,0422 |
+| Modelo final (400 días + eventos) | — | — | 1,0002 | — |
 
-El escalón más rentable es multiplicar la media móvil por un factor de día de la semana y grupo de
-producto (reduce el WRMSSE entre un 1,3 % y un 2,1 %) sin ningún aprendizaje automático. El
+El escalón más rentable es multiplicar la media móvil por un factor de día de la semana y departamento
+(reduce el WRMSSE entre un 1,3 % y un 2,1 %) sin ningún aprendizaje automático. El
 LightGBM pequeño queda a un 0,3 % del completo. En el período normal del año el modelo completo
-aporta entre −0,1 % y 1,5 % sobre la media móvil por día de la semana; su justificación está en la
+aporta entre −0,4 % y 1,3 % sobre la media móvil por día de la semana; su justificación está en la
 temporada alta (§7.3.5).
 
 Una búsqueda de hiperparámetros sobre un pliegue, validada en otro que no participó en la búsqueda,
@@ -110,32 +113,33 @@ arquitectura.
 Las tres ventanas corresponden a febrero-abril, pero el negocio concentra su actividad en
 noviembre y diciembre. Se evaluaron dos ventanas adicionales de 2015 (6 de noviembre a 3 de
 diciembre y 4 a 31 de diciembre), entrenando solo con datos anteriores. Con 180 días de historia el
-WRMSSE es de 1,0520 en noviembre y de **1,1119 en diciembre**, y la ventaja sobre la media móvil
+WRMSSE es de 1,0542 en noviembre y de **1,1090 en diciembre**, y la ventaja sobre la media móvil
 (1,1161) casi desaparece. El diagnóstico por días identifica tres causas: el 25 de diciembre el
-modelo predijo **36.118 unidades frente a 14 reales** (la tienda cierra), subestimó la subida de
-los días 22 a 24 (−17 %, −23 % y −22 %) y subestimó el 31 de diciembre en un 29 %.
+modelo predijo **35.966 unidades frente a 14 reales** (la tienda cierra), subestimó la subida de
+los días 22 a 24 (−17 %, −23 % y −21 %) y subestimó el 31 de diciembre en un 28 %.
 
 La causa es estructural: la ventana de entrenamiento de 180 días que precede a diciembre **no
 contiene ninguna Navidad**, de modo que el modelo no tiene información sobre el cierre ni sobre el
 desplome de demanda de ese día. Se evaluaron dos remedios:
 
 - **Eventos a nivel semanal** (cuatro variables: si hay evento esa semana, cuál, y cuántos días
-  faltan o han pasado). Con 180 días de historia no aportan nada: pesan un 0,17 % de la importancia
-  y las diferencias son de una o dos milésimas.
+  faltan o han pasado). Con 180 días de historia no aportan nada: pesan un 0,15 % de la importancia
+  y las diferencias son de unas pocas milésimas (0,004 como máximo).
 - **Más historia: 400 días.** Para predecir diciembre de 2015 el modelo ya ha observado la Navidad
   de 2014.
 
 | WRMSSE | 180 días | 400 días | 400 días + eventos semanales |
 |---|---|---|---|
-| Noviembre 2015 | 1,0520 | **1,0177** | **1,0177** |
-| Diciembre 2015 | 1,1119 | 1,0497 | **1,0484** |
-| Media febrero-abril 2016 | 1,0407 | 1,0382 | **1,0378** |
+| Noviembre 2015 | 1,0542 | 1,0205 | **1,0156** |
+| Diciembre 2015 | 1,1090 | 1,0504 | **1,0469** |
+| Media febrero-abril 2016 | 1,0422 | **1,0373** | 1,0381 |
 
-Diciembre mejora un **5,7 %** y noviembre un **3,3 %**, y el resto del año no empeora. Casi toda la
-mejora procede de la historia adicional; las variables semanales añaden un 0,1 % en diciembre. Con
-400 días el modelo **aprende por sí solo el cierre**: predice 123 unidades para el 25 de diciembre
-de 2015 frente a 14 reales (antes, unas 36.000), la semana del 18 al 24 pasa de un error del −10,1 %
-al −6,2 %, y la semana de Black Friday de +10,3 % a +0,2 %. El pico del 31 de diciembre sigue sin
+Diciembre mejora un **5,3 %** y noviembre un **3,2 %** solo por la historia (5,6 % y 3,7 % con los eventos
+semanales), y el resto del año no empeora. Casi toda la mejora procede de la historia adicional; las variables
+semanales añaden entre un 0,3 % y un 0,5 % en temporada alta y restan un 0,1 % en febrero-abril. Con
+400 días el modelo **aprende por sí solo el cierre**: predice 161 unidades para el 25 de diciembre
+de 2015 frente a 14 reales (antes, unas 36.000), la semana del 18 al 24 pasa de un error del −9,7 %
+al −5,2 %, y la semana de Black Friday de +9,5 % a +0,3 %. El pico del 31 de diciembre sigue sin
 captarse del todo (−27 %). La regla de cierre sobre `dim_calendario` se mantiene en la carga de
 predicciones como salvaguarda, pero ya no es la que corrige el error.
 
@@ -147,9 +151,9 @@ La reposición no necesita saber cuánto se venderá en promedio, sino cuánto p
 peor caso razonable. Se entrenó por ello un segundo conjunto de modelos con **regresión
 cuantílica** al percentil 90, minimizando la pérdida pinball descrita en §6.6.1.
 
-La calibración resultó ser buena: la **cobertura empírica del percentil 90 fue del 90,0 %** frente
-a un objetivo del 90 %, con una pérdida pinball de 0,3101 frente a 0,5297 si se usara la predicción
-media y 0,3667 con el atajo «media móvil × 2,5». La predicción media cubre únicamente el **67,9 %**
+La calibración resultó ser buena: la **cobertura empírica del percentil 90 fue del 89,4 %** frente
+a un objetivo del 90 %, con una pérdida pinball de 0,3059 frente a 0,5266 si se usara la predicción
+media y 0,3667 con el atajo «media móvil × 2,5». La predicción media cubre únicamente el **67,7 %**
 de las observaciones, de modo que dimensionar el inventario con ella produciría rotura en una de
 cada tres combinaciones producto-día.
 
@@ -164,7 +168,7 @@ Y 89,22→89,78, Z 90,96→91,80. Lo que se gana no es precisión sino **rigor**
 nivel de servicio respaldado por una garantía formal y no por una observación afortunada.
 
 El precio de esa cobertura también se cuantificó: pasar del 68 % al 90 % de nivel de servicio exige
-un **127 % más de inventario** (2.629.378 unidades frente a 1.160.682 para las mismas cuatro
+un **128 % más de inventario** (2.630.372 unidades frente a 1.151.452 para las mismas cuatro
 semanas). La decisión de dónde situarse en esa curva no es estadística sino económica, y se
 resuelve en §7.4.
 
@@ -172,12 +176,12 @@ resuelve en §7.4.
 
 ### 7.3.7. Calibración del sesgo
 
-El modelo subestima de forma sistemática (un 1,9 % en la última ventana). Se examinó si un factor
-multiplicativo lo corrige. Los factores necesarios en cada pliegue son **1,0733, 1,0255 y 1,0198**:
+El modelo subestima de forma sistemática (un 1,8 % en la última ventana). Se examinó si un factor
+multiplicativo lo corrige. Los factores necesarios en cada pliegue son **1,0733, 1,0251 y 1,0186**:
 el sesgo no es una constante, cambia con el período. Calibrar con el promedio de los dos primeros
-pliegues (1,0494) sobrecorrige: el sesgo del último pliegue pasa de −1,94 % a +2,91 % y el WRMSSE y
-el MAE empeoran. Calibrar con el pliegue más reciente (1,0255) lo deja en +0,56 % con el WRMSSE
-prácticamente intacto (1,0029 a 1,0034).
+pliegues (1,0492) sobrecorrige: el sesgo del último pliegue pasa de −1,83 % a +3,00 % y el WRMSSE y
+el MAE empeoran. Calibrar con el pliegue más reciente (1,0251) lo deja en +0,63 % con el WRMSSE
+prácticamente intacto (1,0055 a 1,0059).
 
 La conclusión no es la magnitud del sesgo sino su **inestabilidad**. La calibración se aplica con la
 ventana de validación más reciente y se recalcula en cada reentrenamiento, nunca como un factor fijo.
@@ -194,20 +198,20 @@ SARIMA y una media móvil. Error porcentual medio de las tres ventanas:
 
 | Nivel | Ascendente | Prophet | SARIMA | Media móvil |
 |---|---|---|---|---|
-| Total compañía | **5,48 %** | 5,80 % | 6,50 % | 12,79 % |
-| Ciudad | **6,76 %** | 7,25 % | 7,72 % | 13,50 % |
-| Tienda | **8,03 %** | 8,59 % | 8,54 % | 14,55 % |
-| Departamento | **9,93 %** | 10,71 % | 10,33 % | 13,95 % |
+| Total compañía | **5,52 %** | 5,79 % | 6,50 % | 12,79 % |
+| Ciudad | **6,83 %** | 7,28 % | 7,72 % | 13,50 % |
+| Tienda | **8,14 %** | 8,59 % | 8,54 % | 14,55 % |
+| Departamento | **10,14 %** | 10,69 % | 10,33 % | 13,95 % |
 
-El ascendente gana en los cuatro niveles, por 0,3 a 0,5 puntos. La respuesta a Paul Rogers es que
+El ascendente gana en los cuatro niveles, por 0,2 a 0,5 puntos. La respuesta a Paul Rogers es que
 **sumar las previsiones individuales es válido y mejora a modelar cada agregado por separado**:
 basta un único modelo a nivel tienda-producto y todos los informes se obtienen sumando, sin
 resolver inconsistencias entre totales. Prophet y SARIMA capturan bien la estacionalidad del
 agregado, pero no pueden aprovechar la información de las 30.490 series individuales, que es de
-donde procede la ventaja. El error se compensa hacia arriba: baja del 9,9 % en departamento al
+donde procede la ventaja. El error se compensa hacia arriba: baja del 10,1 % en departamento al
 5,5 % en compañía, de modo que la precisión del número que ve el comité de dirección no informa
 sobre la que necesita quien repone un producto en una tienda. Todos los enfoques subestiman
-(el ascendente un 1,8 %), el sesgo tratado en §7.3.7.
+(el ascendente un 1,8 %, Prophet un 1,3 %, la media móvil un 2,4 % y SARIMA un 3,8 %), el sesgo tratado en §7.3.7.
 
 Un ejercicio complementario de reconciliación óptima (MinT) sobre los seis niveles de la jerarquía,
 con una medida de error distinta, mejoró al enfoque ascendente del 15,12 % al 13,71 % y añade la
@@ -297,12 +301,12 @@ predecir, en lugar de mantener el último, cambia solo 793 de las 30.490 series 
 0,04 %. Los ficheros de entrega mantienen el precio arrastrado para no alterar las cifras del resto
 del proyecto.
 
-**El modelo final** combina 400 días de historia, las variables de evento semanal y el grupo de
-producto actual. En la última ventana de validación (28 de marzo a 24 de abril de 2016) obtiene un
-WRMSSE de **0,9994**, el primero por debajo de 1, y un WAPE semanal del **37,8 %** frente al 38,5 % de
-la media móvil. Su percentil 90 cubre el **89,4 %** de los días-producto, frente al 67,8 % de la
-predicción media, y la media queda un 2,3 % por debajo de la demanda real. Es el modelo que genera
-los ficheros de entrega (1.169.238 unidades de media y 2.647.580 de percentil 90 para el 25 de abril
+**El modelo final** combina 400 días de historia y las variables de evento semanal, sin el grupo de
+producto. En la última ventana de validación (28 de marzo a 24 de abril de 2016) obtiene un
+WRMSSE de **1,0002** y un WAPE semanal del **37,8 %** frente al 38,5 % de
+la media móvil. Su percentil 90 cubre el **89,4 %** de los días-producto, frente al 67,7 % de la
+predicción media, y la media queda un 2,7 % por debajo de la demanda real. Es el modelo que genera
+los ficheros de entrega (1.165.140 unidades de media y 2.640.527 de percentil 90 para el 25 de abril
 al 22 de mayo de 2016) y el que usa la simulación de §7.4.
 
 ### 7.3.12. Límites reconocidos
@@ -310,7 +314,7 @@ al 22 de mayo de 2016) y el que usa la simulación de §7.4.
 El capítulo deja tres problemas abiertos, que se recogen en las conclusiones y en la propuesta
 de trabajo futuro:
 
-1. **Temporada alta.** Con 400 días de historia diciembre mejora un 5,7 %, pero sigue siendo el
+1. **Temporada alta.** Con 400 días de historia diciembre mejora un 5,3 %, pero sigue siendo el
    mes con más error: el modelo aún no capta del todo el pico del 31 de diciembre, y la política
    de reposición no se ha simulado en esos meses.
 2. **Demanda errática.** En las series de clase Z y en la venta esporádica el error de

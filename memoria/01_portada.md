@@ -39,7 +39,7 @@ por avance y se simula una política de reposición derivada de la teoría del *
 Los resultados principales son los siguientes. La demanda no es homogénea: solo cinco de los
 quince productos más vendidos son comunes a las tres ciudades, y el parecido entre tiendas no
 coincide con las fronteras geográficas. El mejor modelo de previsión alcanza un
-WRMSSE de 1,0407 (0,9994 en la última ventana con el modelo final de 400 días de historia), y la estrategia de horizonte resulta unas diez veces más influyente que la
+WRMSSE de 1,0422 (1,0002 en la última ventana con el modelo final de 400 días de historia), y la estrategia de horizonte resulta unas tres veces más influyente que la
 elección de biblioteca; reformular el objetivo como el total del ciclo de reposición reduce el
 error un 15,7% adicional y elimina un sesgo del −7,4%. Sumar las predicciones individuales
 mejora a modelar cada agregado por separado (Prophet, SARIMA) en los cuatro niveles evaluados. La política

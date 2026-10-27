@@ -444,18 +444,18 @@ def fig_7_11():
     """Comparación de modelos: media de los tres pliegues y evolución por ventana.
 
     Valores de §7.3.3 y §7.3.4, procedentes del cuaderno 03 (WRMSSE, menor es mejor)."""
-    medias = [("LightGBM, bloques semanales", 1.0407), ("XGBoost, bloques semanales", 1.0430),
-              ("LightGBM, modelo único", 1.0626), ("XGBoost, modelo único", 1.0631),
+    medias = [("XGBoost, bloques semanales", 1.0352), ("LightGBM, bloques semanales", 1.0422),
+              ("XGBoost, modelo único", 1.0570), ("LightGBM, modelo único", 1.0639),
               ("Media móvil de 28 días", 1.0657), ("Media por día de la semana", 1.0855),
               ("Naive estacional", 1.4262)]
     escalera = {"Media móvil de 28 días": [1.0909, 1.0660, 1.0402],
-                "Media móvil × día de la semana": [1.0768, 1.0518, 1.0185],
-                "LightGBM pequeño": [1.0827, 1.0380, 1.0095],
-                "LightGBM completo": [1.0776, 1.0415, 1.0029]}
+                "Media móvil × día de la semana": [1.0759, 1.0517, 1.0185],
+                "LightGBM pequeño": [1.0857, 1.0407, 1.0098],
+                "LightGBM completo": [1.0799, 1.0410, 1.0055]}
     fig, axes = plt.subplots(1, 2, figsize=(6.8, 3.0), gridspec_kw={"wspace": 0.55, "width_ratios": [1.15, 1]})
     a = axes[0]
     y = np.arange(len(medias))[::-1]
-    col = [AZUL if i == 0 else (REJILLA if i >= 4 else "#9ec5f4") for i in range(len(medias))]
+    col = [AZUL if i == 1 else (REJILLA if i >= 4 else "#9ec5f4") for i in range(len(medias))]
     a.barh(y, [v for _, v in medias], color=col, height=0.62, zorder=2)
     for yi, (n, v) in zip(y, medias):
         a.text(v + 0.015, yi, es_num(v, 4), va="center", fontsize=6.8, color=TINTA2)
@@ -472,14 +472,11 @@ def fig_7_11():
 
 
 def fig_7_12():
-    """Importancia de las variables del modelo con bloques semanales de 180 días (media de los tres pliegues)."""
-    ss = []
-    for k in range(3):
-        d = cache(f"semanal_actual_fold{k}.pkl")["importancia"]
-        s_ = pd.Series({str(n): v for n, v in d.items()}, dtype=float)
-        ss.append(s_ / s_.sum() * 100)
-    pct = pd.concat(ss, axis=1).mean(axis=1).sort_values(ascending=False)
-    top = pct.head(14)[::-1]
+    """Importancia de las variables del LightGBM de bloques semanales (valores del cuaderno 03, sección 6)."""
+    pct = pd.Series({"rmean_28": 54.1, "rmean_91": 12.9, "rmean_364": 12.1, "rmean_7": 9.0, "item_id": 6.0,
+                     "lag_0": 1.2, "rstd_28": 1.1, "lag_4": 0.7, "is_weekend": 0.5, "event": 0.4,
+                     "week_of_year": 0.3, "price_chg": 0.2})
+    top = pct.head(12)[::-1]
     fig, ax = plt.subplots(figsize=(6.4, 3.4))
     col = [AZUL if n.startswith("rmean") else REJILLA for n in top.index]
     ax.barh(range(len(top)), top.values, color=col, height=0.66, zorder=2)
@@ -525,10 +522,12 @@ def fig_7_13():
 
 def fig_7_14():
     """Calibración del intervalo: cobertura empírica frente a la nominal."""
-    p90 = np.asarray(cache("p90_eval.npy"), dtype=np.float32)
+    p90 = np.asarray(cache("final_eval_p90.npy"), dtype=np.float32)
     V = np.asarray(cache("V_ventas.npy"))
     y = V[:, -p90.shape[1]:].astype(np.float32)
-    media = np.asarray(cache("pred_fold2.pkl")["pred_lgb"], dtype=np.float32)
+    media = np.asarray(cache("final_eval_media.npy"), dtype=np.float32)
+    ok = (p90 > 0) | (y > 0)        # solo celdas con el producto a la venta (sin precio, la predicción es 0)
+    y, media, p90 = y[ok], media[ok], p90[ok]
     sigma = np.maximum(p90 - media, 0) / 1.2816
     fig, axes = plt.subplots(1, 2, figsize=(6.4, 2.8), gridspec_kw={"wspace": 0.32})
     niveles = np.array([0.50, 0.60, 0.70, 0.80, 0.90, 0.95, 0.99])
@@ -568,8 +567,8 @@ def fig_7_14():
 def fig_7_15():
     """Ascendente frente a modelado directo del agregado (valores de §7.3.8, cuaderno 03)."""
     niveles = ["Total compañía", "Ciudad", "Tienda", "Departamento"]
-    datos = {"Ascendente (suma de LightGBM)": [5.48, 6.76, 8.03, 9.93],
-             "Prophet": [5.80, 7.25, 8.59, 10.71],
+    datos = {"Ascendente (suma de LightGBM)": [5.52, 6.83, 8.14, 10.14],
+             "Prophet": [5.79, 7.28, 8.59, 10.69],
              "SARIMA": [6.50, 7.72, 8.54, 10.33],
              "Media móvil": [12.79, 13.50, 14.55, 13.95]}
     fig, ax = plt.subplots(figsize=(6.6, 3.1))
