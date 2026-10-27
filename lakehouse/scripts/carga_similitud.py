@@ -10,7 +10,7 @@ Escribe dos tablas:
                             (menor = más parecidas). Alimenta la matriz de parecido del panel.
 
 Las seis variables de perfil son las del cuaderno 02: variabilidad diaria, fin de semana frente a
-entre semana, diciembre frente al resto del año, índice de precio, % alimentación y % hogar. El volumen
+entre semana, diciembre frente al resto del año, índice de precio, % supermercado y % hogar. El volumen
 se excluye: mide el tamaño de la tienda, no su forma de vender.
 
 Salida: lakehouse/gold/*.parquet y lakehouse/gold_csv/*.csv
@@ -23,7 +23,7 @@ from pipeline import conectar, GOLD, RAIZ
 CSV = os.path.join(RAIZ, "gold_csv")
 VARIABLES = {"cv_diaria": "Variabilidad diaria", "fin_semana": "Fin de semana vs. entre semana",
              "diciembre": "Diciembre vs. resto del año", "indice_precio": "Índice de precio (%)",
-             "pct_alimentacion": "% alimentación", "pct_hogar": "% hogar"}
+             "pct_alimentacion": "% supermercado", "pct_hogar": "% hogar"}
 
 
 def main():
