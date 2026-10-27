@@ -115,10 +115,7 @@ El problema de obtener previsiones coherentes en una jerarquía de agregación t
 soluciones clásicas —ascendente, descendente y por niveles— superadas por el enfoque de
 combinación óptima de Hyndman, Ahmed, Athanasopoulos y Shang (2011) y su refinamiento posterior,
 el método MinT de Wickramasuriya, Athanasopoulos y Hyndman (2019), que obtiene la reconciliación
-minimizando la traza de la matriz de covarianzas del error de reconciliación. Este último es el
-método con el que se contrastó la reconciliación en §7.3.8 como ejercicio complementario al
-enfoque ascendente, y su propiedad más valiosa para la organización no es la mejora del error
-sino la garantía de coherencia entre niveles.
+minimizando la traza de la matriz de covarianzas del error de reconciliación. Este trabajo emplea el enfoque ascendente, que es coherente por construcción, y lo contrasta en §7.3.8 con el modelado directo de cada nivel; la reconciliación óptima queda como mejora posible.
 
 ### 4.4.4. Teoría de inventarios
 

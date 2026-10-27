@@ -118,8 +118,7 @@ convención.
 **Segunda**, el nivel de servicio del 90% que el trabajo emplea como referencia es un valor
 fijado a mano. El ratio crítico indica cuál debería ser: con un margen del 25% y un coste de
 posesión del 5%, $\tau^{*} \approx 0{,}83$; con un producto perecedero de merma del 20%,
-$\tau^{*} \approx 0{,}50$. La distancia respecto del 0,90 uniforme es considerable, y la
-consecuencia es que hoy el sistema pide de más en unos productos y de menos en otros.
+$\tau^{*} \approx 0{,}50$. La distancia respecto del 0,90 uniforme es considerable, y la consecuencia es que hoy el sistema pide de más en unos productos y de menos en otros. Este ratio no contradice el óptimo del 99 % de §7.4.6, que procede de supuestos distintos: aquel cálculo, como el cuaderno 04, valora el coste de mantener una unidad con un 25 % anual sobre su coste, unos dos céntimos en nueve días, mientras que este experimento lo cobra como un 5 % del precio en cada ciclo. Con un coste de mantenimiento tan bajo, el ratio crítico sube al 98 % y el óptimo de la curva, al 99 %.
 
 **Tercera**, si la función de pérdida cambia, el modelo ganador puede cambiar. Esta última
 afirmación se sometió a prueba de forma directa: se compararon cinco candidatos sobre el mismo

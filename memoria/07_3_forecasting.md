@@ -213,10 +213,7 @@ donde procede la ventaja. El error se compensa hacia arriba: baja del 10,1 % en 
 sobre la que necesita quien repone un producto en una tienda. Todos los enfoques subestiman
 (el ascendente un 1,8 %, Prophet un 1,3 %, la media móvil un 2,4 % y SARIMA un 3,8 %), el sesgo tratado en §7.3.7.
 
-Un ejercicio complementario de reconciliación óptima (MinT) sobre los seis niveles de la jerarquía,
-con una medida de error distinta, mejoró al enfoque ascendente del 15,12 % al 13,71 % y añade la
-propiedad de coherencia garantizada entre niveles. No cambia la respuesta: sumar es válido, y
-reconciliar es una mejora opcional.
+El enfoque ascendente tiene además la ventaja de ser coherente por construcción: la suma de las tiendas coincide siempre con el total de la ciudad. Los métodos de reconciliación óptima (§4.4.3) quedan como mejora posible, pero no cambian la respuesta: sumar es válido.
 
 ![**Figura 7.15.** Error porcentual medio por nivel: enfoque ascendente frente a modelado directo del agregado. *Fuente: elaboración propia.*](figuras/fig_7_15.png){width=100%}
 
