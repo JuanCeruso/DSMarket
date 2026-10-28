@@ -1,12 +1,5 @@
 # 8. Referencias
 
-> **Nota para el equipo.** Las referencias siguen formato APA 7.ª edición. Antes de la entrega
-> conviene verificar volumen, número y páginas de las cuatro marcadas con [v] contra la fuente
-> original, y añadir el DOI a todas las que lo tengan.
-
-Aitchison, J. (1982). The statistical analysis of compositional data. *Journal of the Royal
-Statistical Society: Series B (Methodological), 44*(2), 139–177.
-
 Angrist, J. D., & Pischke, J.-S. (2009). *Mostly harmless econometrics: An empiricist's
 companion*. Princeton University Press.
 
@@ -17,14 +10,13 @@ on Innovative Data Systems Research (CIDR)*.
 Arrow, K. J., Harris, T., & Marschak, J. (1951). Optimal inventory policy. *Econometrica, 19*(3),
 250–272.
 
+Bellman, R. (1961). *Adaptive control processes: A guided tour*. Princeton University Press.
+
 Berry, S., Levinsohn, J., & Pakes, A. (1995). Automobile prices in market equilibrium.
 *Econometrica, 63*(4), 841–890.
 
 Bijmolt, T. H. A., van Heerde, H. J., & Pieters, R. G. M. (2005). New empirical generalizations
-on the determinants of price elasticity. *Journal of Marketing Research, 42*(2), 141–156. [v]
-
-Caliński, T., & Harabasz, J. (1974). A dendrite method for cluster analysis. *Communications in
-Statistics, 3*(1), 1–27.
+on the determinants of price elasticity. *Journal of Marketing Research, 42*(2), 141–156.
 
 Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system. *Proceedings of the
 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining*, 785–794.
@@ -35,31 +27,28 @@ Correia, S. (2017). *A feasible estimator for linear models with multi-way fixed
 Croston, J. D. (1972). Forecasting and stock control for intermittent demands. *Operational
 Research Quarterly, 23*(3), 289–303.
 
-Davies, D. L., & Bouldin, D. W. (1979). A cluster separation measure. *IEEE Transactions on
-Pattern Analysis and Machine Intelligence, PAMI-1*(2), 224–227.
-
 Frisch, R., & Waugh, F. V. (1933). Partial time regressions as compared with individual trends.
 *Econometrica, 1*(4), 387–401.
 
 Gneiting, T., & Raftery, A. E. (2007). Strictly proper scoring rules, prediction, and estimation.
 *Journal of the American Statistical Association, 102*(477), 359–378.
 
-Guimarães, P., & Portugal, P. (2010). A simple feasible procedure to fit models with
-high-dimensional fixed effects. *The Stata Journal, 10*(4), 628–649.
-
 Gruen, T. W., Corsten, D. S., & Bharadwaj, S. (2002). *Retail out-of-stocks: A worldwide
 examination of extent, causes and consumer responses*. Grocery Manufacturers of America, Food
 Marketing Institute & CIES – The Food Business Forum.
 
+Guimarães, P., & Portugal, P. (2010). A simple feasible procedure to fit models with
+high-dimensional fixed effects. *The Stata Journal, 10*(4), 628–649.
+
 Hubert, L., & Arabie, P. (1985). Comparing partitions. *Journal of Classification, 2*(1),
 193–218.
+
+Hyndman, R. J., & Athanasopoulos, G. (2021). *Forecasting: Principles and practice* (3rd ed.).
+OTexts. https://otexts.com/fpp3/
 
 Hyndman, R. J., Ahmed, R. A., Athanasopoulos, G., & Shang, H. L. (2011). Optimal combination
 forecasts for hierarchical time series. *Computational Statistics & Data Analysis, 55*(9),
 2579–2589.
-
-Hyndman, R. J., & Athanasopoulos, G. (2021). *Forecasting: Principles and practice* (3rd ed.).
-OTexts. https://otexts.com/fpp3/
 
 Januschowski, T., Gasthaus, J., Wang, Y., Salinas, D., Flunkert, V., Bohlke-Schneider, M., &
 Callot, L. (2020). Criteria for classifying forecasting methods. *International Journal of
@@ -78,11 +67,11 @@ Lovell, M. C. (1963). Seasonal adjustment of economic time series and multiple r
 analysis. *Journal of the American Statistical Association, 58*(304), 993–1010.
 
 Makridakis, S., Spiliotis, E., & Assimakopoulos, V. (2022). M5 accuracy competition: Results,
-findings, and conclusions. *International Journal of Forecasting, 38*(4), 1346–1364. [v]
+findings, and conclusions. *International Journal of Forecasting, 38*(4), 1346–1364.
 
 Makridakis, S., Spiliotis, E., Assimakopoulos, V., Chen, Z., Gaba, A., Tsetlin, I., & Winkler,
 R. L. (2022). The M5 uncertainty competition: Results, findings and conclusions. *International
-Journal of Forecasting, 38*(4), 1365–1385. [v]
+Journal of Forecasting, 38*(4), 1365–1385.
 
 Petropoulos, F., Apiletti, D., Assimakopoulos, V., Babai, M. Z., Barrow, D. K., Ben Taieb, S.,
 … Ziel, F. (2022). Forecasting: Theory and practice. *International Journal of Forecasting,
@@ -106,11 +95,14 @@ Syntetos, A. A., & Boylan, J. E. (2001). On the bias of intermittent demand esti
 Taylor, S. J., & Letham, B. (2018). Forecasting at scale. *The American Statistician, 72*(1),
 37–45.
 
+Thorndike, R. L. (1953). Who belongs in the family? *Psychometrika, 18*(4), 267–276.
+
 Villas-Boas, J. M., & Winer, R. S. (1999). Endogeneity in brand choice models. *Management
-Science, 45*(10), 1324–1338. [v]
+Science, 45*(10), 1324–1338.
 
 Wickramasuriya, S. L., Athanasopoulos, G., & Hyndman, R. J. (2019). Optimal forecast
 reconciliation for hierarchical and grouped time series through trace minimization. *Journal of
 the American Statistical Association, 114*(526), 804–819.
 
 Zipkin, P. H. (2000). *Foundations of inventory management*. McGraw-Hill.
+

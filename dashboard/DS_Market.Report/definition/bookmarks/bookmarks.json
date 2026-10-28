@@ -1,0 +1,62 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmarksMetadata/1.0.0/schema.json",
+  "items": [
+    {
+      "name": "b1dccaf80524c527e2e3",
+      "displayName": "Previsión · casos",
+      "children": [
+        "c9013360dc7210d01985",
+        "966dbb9326ba75a6426d",
+        "b0b2efcd87a04d407801",
+        "d5023495ca972f1827f3"
+      ]
+    },
+    {
+      "name": "376afe4f190e078a6ff5",
+      "displayName": "Colchón · casos",
+      "children": [
+        "065ab9a656f39a41d13d",
+        "268a09978610b5e884b7",
+        "eb7ed4d4486cfb3bcc64",
+        "5de488ff2be3e3484390"
+      ]
+    },
+    {
+      "name": "0e5551253cbf0fbcf29a",
+      "displayName": "Grupos de producto · casos",
+      "children": [
+        "cc0883d9f30ba2a8b489",
+        "73b46d8d90757fd283fd",
+        "a2037ccf6ee3985d77db",
+        "3450857963e6e8c12b53",
+        "fe03c75fe1ec8ad7120b"
+      ]
+    },
+    {
+      "name": "1db8ce9eb9dda3ed4861",
+      "displayName": "Panel de filtros (no tocar)",
+      "children": [
+        "00565ce2249a1ff9a217",
+        "1b6cafca74b72990aefd",
+        "441b1515259d7217f114",
+        "3436b2d229d45dfec85e",
+        "73605103b4818bada2ac",
+        "061c0d3e037a00f89021",
+        "abf99bc195f94ca9b8fe",
+        "7e45c57acd7fd5c905ec",
+        "152f8d5fd9a0e5562957",
+        "c9a2f149e5c1d88896c8",
+        "914c0de94cc308656f24",
+        "4880ebe87d50d91820fa",
+        "1ea1870ba6e50e5de346",
+        "d123b07fa6347e1a5c4d",
+        "74d2e7fa2c93f1680230",
+        "b7de25a2a5510e41f992",
+        "bb34574f79263e9aefec",
+        "f3d85365911551ad6db8",
+        "980472325a87fa5b994f",
+        "90db248dc0f7a298cc9d"
+      ]
+    }
+  ]
+}

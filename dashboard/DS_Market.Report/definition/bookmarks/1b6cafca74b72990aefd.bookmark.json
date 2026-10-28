@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.4.0/schema.json",
+  "displayName": "Ocultar filtros · Resumen ejecutivo",
+  "name": "1b6cafca74b72990aefd",
+  "options": {
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "1b4162d34b45781e3864",
+    "sections": {
+      "1b4162d34b45781e3864": {
+        "visualContainers": {},
+        "visualContainerGroups": {
+          "6e42c6baa0bb4db1b6ad": {
+            "isHidden": true
+          }
+        }
+      }
+    }
+  }
+}

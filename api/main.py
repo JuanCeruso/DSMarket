@@ -16,8 +16,8 @@ Implementa el servicio diseñado en la sección 8 del notebook 04. Tres decision
 Arranque:  uvicorn api.main:app --reload    (documentación interactiva en /docs)
 """
 from __future__ import annotations
-import os
-from datetime import date
+import os, sys
+from datetime import date, timedelta
 from typing import Literal
 
 import numpy as np
@@ -25,7 +25,10 @@ import pandas as pd
 import duckdb
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
-from scipy.stats import norm
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "operacion"))
+import politica as pol               # una sola copia de la política, compartida con la app y el almacén
+from historia import historia_reciente
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GOLD = os.path.join(RAIZ, "lakehouse", "gold")
@@ -50,6 +53,7 @@ def cargar_datos() -> None:
     DATOS["productos"] = lee("dim_producto").set_index("item")
     DATOS["tiendas"] = lee("dim_tienda").set_index("store_code")
     DATOS["horizonte"] = (pred["fecha"].min(), pred["fecha"].max())
+    DATOS["historia"] = historia_reciente(GOLD, pol.VENTANA_HISTORIA)   # (serie_id -> fila, matriz) para las series X
     con.close()
 
 # ----------------------------------------------------------------- modelos
@@ -93,8 +97,6 @@ class RespuestaReposicion(BaseModel):
     resumen: dict
 
 # ----------------------------------------------------------------- lógica
-NIVEL_POR_CELDA = {"AX": .98, "AY": .95, "AZ": .90, "BX": .95, "BY": .90,
-                   "BZ": .85, "CX": .90, "CY": .85, "CZ": .80}
 CONFIANZA = {"X": "alta", "Y": "media", "Z": "baja"}
 
 def _explicar(celda: str, arquetipo: str | None, metodo: str, servicio: float, cv: float) -> str:
@@ -104,7 +106,7 @@ def _explicar(celda: str, arquetipo: str | None, metodo: str, servicio: float, c
     partes.append({"X": "demanda estable", "Y": "demanda variable", "Z": "demanda errática"}[celda[1]]
                   + f" (CV {cv:.1f})")
     if arquetipo:
-        partes.append(f"arquetipo «{arquetipo}»")
+        partes.append(f"grupo de producto «{arquetipo}»")
     partes.append("nivel calculado con el histórico, que en series estables es más robusto que el modelo"
                   if metodo == "percentil_empirico"
                   else "nivel calculado con el modelo, que en series erráticas aporta sobre el histórico")
@@ -124,27 +126,28 @@ def sugerir(peticion: PeticionReposicion) -> RespuestaReposicion:
     cobertura = p.dias_revision + p.lead_time
     fechas = pd.date_range(peticion.fecha_revision, periods=cobertura).date
     fechas = [f for f in fechas if f <= fin]
+    fila_de, hist = DATOS["historia"]
 
     sugerencias = []
     for entrada in peticion.productos:
         try:
             bloque = DATOS["predicciones"].loc[(peticion.tienda, entrada.item, fechas), :]
             serie = DATOS["series"].loc[(entrada.item, peticion.tienda)]
+            historia = hist[fila_de[f"{entrada.item}|{peticion.tienda}"]]
         except KeyError:
             raise HTTPException(404, f"Sin datos para {entrada.item} en {peticion.tienda}")
 
         celda = f"{serie['clase_abc']}{serie['clase_xyz']}"
-        servicio = p.nivel_servicio if p.nivel_servicio is not None else NIVEL_POR_CELDA[celda]
-        media = float(bloque["prediccion_media"].sum())
-        sigma_dia = (bloque["prediccion_p90"] - bloque["prediccion_media"]).clip(lower=0) / norm.ppf(0.90)
-        sigma = float(np.sqrt((sigma_dia ** 2).sum()))
+        servicio = p.nivel_servicio if p.nivel_servicio is not None else pol.nivel_servicio(entrada.item)
+        # si la cobertura se sale del horizonte predicho, se completa con la media de los últimos 7 días
+        media_dia = pol.completar_ventana(bloque["prediccion_media"].to_numpy(), cobertura)
+        p90_dia = pol.completar_ventana(bloque["prediccion_p90"].to_numpy(), cobertura)
+        media = float(media_dia.sum())
+        sigma = float(np.sqrt((pol.sigma_desde_cuantil(p90_dia, media_dia) ** 2).sum()))
         # política híbrida (Tarea 4): en series estables el histórico gana al modelo
         metodo = "percentil_empirico" if serie["clase_xyz"] == "X" else "modelo_cuantilico"
-        if metodo == "percentil_empirico":
-            nivel = float(serie["media_dia"] * cobertura + norm.ppf(servicio) * serie["desvio_dia"] * np.sqrt(cobertura))
-        else:
-            nivel = media + norm.ppf(servicio) * sigma
-        nivel = max(nivel, 0.0)
+        empirico = float(pol.percentil_empirico(historia, cobertura, servicio)[0])
+        nivel = float(pol.nivel_hibrido(media, sigma, servicio, metodo == "percentil_empirico", empirico))
         posicion = entrada.stock_actual + entrada.en_transito
         arquetipo = DATOS["productos"].loc[entrada.item, "arquetipo"] if entrada.item in DATOS["productos"].index else None
         sugerencias.append(Sugerencia(
@@ -157,7 +160,7 @@ def sugerir(peticion: PeticionReposicion) -> RespuestaReposicion:
             motivo=_explicar(celda, arquetipo, metodo, servicio, float(serie["coef_variacion"]))))
 
     return RespuestaReposicion(
-        tienda=peticion.tienda, fecha_revision=peticion.fecha_revision, cobertura_hasta=fechas[-1],
+        tienda=peticion.tienda, fecha_revision=peticion.fecha_revision, cobertura_hasta=peticion.fecha_revision + timedelta(days=cobertura - 1),
         sugerencias=sugerencias,
         resumen={"productos": len(sugerencias),
                  "unidades_a_pedir": int(sum(s.pedido_sugerido for s in sugerencias)),
@@ -177,19 +180,20 @@ def prediccion(tienda: str, item: str,
 
 @app.get("/tiendas", tags=["catálogo"])
 def tiendas():
-    """Tiendas disponibles, con su grupo de comportamiento (Tarea 2)."""
+    """Tiendas disponibles, con la tienda más parecida a cada una (Tarea 2, sección 5.3)."""
     return DATOS["tiendas"].reset_index().to_dict("records")
 
 @app.get("/segmentos", tags=["catálogo"])
 def segmentos():
-    """Distribución del catálogo por celda ABC/XYZ y nivel de servicio aplicado a cada una."""
+    """Distribución del catálogo por celda ABC/XYZ y método de reposición aplicado a cada una."""
     s = DATOS["series"].reset_index()
     s["celda"] = s["clase_abc"] + s["clase_xyz"]
     resumen = (s.groupby("celda")
                  .agg(series=("item", "count"), facturacion_90d=("facturacion_90d", "sum"))
                  .reset_index())
     resumen["pct_facturacion"] = (resumen["facturacion_90d"] / resumen["facturacion_90d"].sum() * 100).round(1)
-    resumen["nivel_servicio"] = resumen["celda"].map(NIVEL_POR_CELDA)
+    resumen["metodo"] = resumen["celda"].str[1].map(
+        {"X": "percentil_empirico", "Y": "modelo_cuantilico", "Z": "modelo_cuantilico"})
     return resumen.drop(columns="facturacion_90d").to_dict("records")
 
 @app.get("/salud", tags=["operación"])

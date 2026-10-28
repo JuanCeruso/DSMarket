@@ -2,6 +2,7 @@
 """Pruebas de humo de la API: arranca el servicio en proceso y ejerce los endpoints."""
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import numpy as np
 from fastapi.testclient import TestClient
 from api.main import app
 
@@ -41,6 +42,19 @@ with TestClient(app) as cliente:
     alto = cliente.post("/reposicion/sugerencia", json=dict(base, parametros={"nivel_servicio": 0.98})).json()
     comprobar(alto["sugerencias"][0]["pedido_sugerido"] > bajo["sugerencias"][0]["pedido_sugerido"],
               "más nivel de servicio ⇒ más pedido")
+
+    print("coherencia con el almacén (fact_reposicion)")
+    import duckdb
+    rep = duckdb.connect().execute(
+        f"SELECT * FROM read_parquet('{os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'lakehouse', 'gold', 'fact_reposicion.parquet')}')").df()
+    for fecha in ("2016-04-25", "2016-05-16"):        # la segunda es la revisión cuya ventana se sale del horizonte
+        muestra = rep[rep["fecha_revision"].astype(str) == fecha].sample(40, random_state=3)
+        difs = []
+        for _, f in muestra.iterrows():
+            j = cliente.post("/reposicion/sugerencia", json={"tienda": f["store_code"], "fecha_revision": fecha,
+                             "productos": [{"item": f["item"], "stock_actual": 0}]}).json()["sugerencias"][0]
+            difs.append(abs(np.ceil(j["nivel_objetivo"]) - f["nivel_objetivo"]))
+        comprobar(max(difs) <= 1, f"la API y el almacén dan el mismo nivel objetivo el {fecha}")
 
     print("errores")
     comprobar(cliente.post("/reposicion/sugerencia", json=dict(cuerpo, tienda="XXX")).status_code == 404,

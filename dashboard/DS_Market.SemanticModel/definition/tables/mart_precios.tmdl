@@ -1,0 +1,56 @@
+table mart_precios
+	lineageTag: 4ace9259-4ead-4547-8efd-0de3bfa52789
+
+	column serie_id
+		dataType: string
+		lineageTag: c10d7079-affa-4b4a-8077-ca5e6696055f
+		summarizeBy: none
+		sourceColumn: serie_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column item
+		dataType: string
+		lineageTag: 193fb977-4ab2-4cb2-ab87-a72afc9ce44d
+		summarizeBy: none
+		sourceColumn: item
+
+		annotation SummarizationSetBy = Automatic
+
+	column store_code
+		dataType: string
+		lineageTag: be645803-5e0c-480c-8ddf-d9b6f715c02b
+		summarizeBy: none
+		sourceColumn: store_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column precio_medio
+		dataType: double
+		formatString: \$#,0.00
+		lineageTag: cb93c03b-e2e9-4425-962e-dc93fd0b47dc
+		summarizeBy: none
+		sourceColumn: precio_medio
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_precios = m
+		mode: import
+		source =
+				// ===== mart_precios (30,490 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_precios.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"serie_id", type text},
+				        {"item", type text},
+				        {"store_code", type text},
+				        {"precio_medio", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

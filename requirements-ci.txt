@@ -1,0 +1,18 @@
+# Lo mínimo para ejecutar la suite de pruebas en integración continua.
+#
+# Deliberadamente NO incluye lightgbm, xgboost, prophet, streamlit ni fastapi: las
+# pruebas cubren la política de reposición, las métricas de monitorización, los
+# contratos de datos y el registro de modelos, y nada de eso entrena ni sirve nada.
+# Instalar el entorno completo añadiría tres minutos a cada ejecución sin cubrir
+# una línea más.
+#
+# Las versiones van fijadas con ~= : se aceptan parches, no cambios menores. Una
+# suite que se rompe sola un martes porque una dependencia sacó versión no es una
+# señal, es ruido.
+numpy~=2.1
+pandas~=2.2
+scipy~=1.14
+duckdb~=1.1
+pyarrow~=17.0
+pytest~=8.3
+pytest-randomly~=3.15

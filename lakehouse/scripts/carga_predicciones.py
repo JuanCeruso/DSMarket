@@ -11,20 +11,27 @@ sueltos por ahí. Es lo que convierte cuatro notebooks en un sistema.
 """
 import os, sys, time, logging
 import numpy as np, pandas as pd, duckdb
-from scipy.stats import norm
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from pipeline import conectar, GOLD, CACHE, RAIZ, log
+from pipeline import conectar, GOLD, CACHE, PROYECTO, log
 
-MODELO, VERSION = "lightgbm_bloques_tweedie", "v1"
+sys.path.insert(0, os.path.join(PROYECTO, "operacion"))
+import politica as pol
+from historia import historia_reciente
+
+MODELO, VERSION = "lightgbm_400d_eventos_semanales", "v2"
 R, L = 7, 2                       # ciclo de revisión y plazo de entrega
-NIVEL_POR_CELDA = {'AX':.98,'AY':.95,'AZ':.90,'BX':.95,'BY':.90,'BZ':.85,'CX':.90,'CY':.85,'CZ':.80}
+# La política (niveles de servicio por categoría, percentil empírico, nivel híbrido) vive en
+# operacion/politica.py. Aquí solo se aplica: una sola copia de la regla, para que el almacén,
+# la API, la app y el notebook 04 no puedan divergir.
+
 
 def cargar(con):
     meta = pd.read_csv(f"{CACHE}/meta.csv")
-    media = np.load(f"{CACHE}/pred_futuro.npy")
-    p90 = np.load(f"{CACHE}/p90_final.npy")
-    ultima = con.execute("SELECT max(fecha) FROM dim_calendario").fetchone()[0]
+    # modelo final de la Tarea 3 (notebook 03, sección 12): 400 días + eventos semanales
+    media = np.load(f"{CACHE}/final_futuro_media.npy")
+    p90 = np.maximum(np.load(f"{CACHE}/final_futuro_p90.npy"), media)
+    ultima = con.execute("SELECT max(fecha) FROM dim_calendario WHERE NOT es_futuro").fetchone()[0]
     fechas = pd.date_range(pd.Timestamp(ultima) + pd.Timedelta(days=1), periods=media.shape[1])
     log.info(f"predicciones de {fechas[0].date()} a {fechas[-1].date()} para {media.shape[0]:,} series")
 
@@ -57,31 +64,31 @@ def cargar(con):
     serie['fila'] = [orden[(i, s)] for i, s in zip(serie['item'], serie['store_code'])]
     serie = serie.sort_values('fila').reset_index(drop=True)
 
-    hist = con.execute(f"""
-        SELECT item, store_code, fecha, unidades FROM fact_ventas
-        WHERE fecha > DATE '{ultima}' - INTERVAL 180 DAY
-    """).df().pivot_table(index=['item','store_code'], columns='fecha', values='unidades', fill_value=0)
-    hist = hist.reindex(pd.MultiIndex.from_arrays([serie['item'], serie['store_code']])).fillna(0).to_numpy()
-    ventanas = np.lib.stride_tricks.sliding_window_view(hist, R + L, axis=1).sum(axis=2)
-    percentil_empirico = np.percentile(ventanas, 90, axis=1)
+    fila_de, hist_total = historia_reciente(GOLD, pol.VENTANA_HISTORIA)
+    hist = np.vstack([hist_total[fila_de[f"{i}|{s}"]] for i, s in zip(serie['item'], serie['store_code'])])
+    niveles = np.array([pol.nivel_servicio(i) for i in serie['item']])
+    percentil_empirico = pol.percentil_empirico(hist, R + L, niveles)
 
-    sigma = np.maximum(p90 - media, 0) / norm.ppf(0.90)
-    z = np.array([norm.ppf(NIVEL_POR_CELDA[c]) for c in serie['celda']])
+    sigma = pol.sigma_desde_cuantil(p90, media)
     usa_empirico = (serie['clase_xyz'] == 'X').to_numpy()
+    # la última revisión cubre más días de los que quedan predichos: se completa la ventana
+    media_ext = np.hstack([media, np.zeros((n_series, R + L))])
+    media_ext[:, n_dias:] = pol.completar_ventana(media, n_dias + R + L)[:, n_dias:]
+    sigma_ext = np.hstack([sigma, np.zeros((n_series, R + L))])
+    sigma_ext[:, n_dias:] = pol.completar_ventana(sigma, n_dias + R + L)[:, n_dias:]
 
     filas = []
     for t in range(0, n_dias, R):
-        ventana = slice(t, min(t + R + L, n_dias))
-        mu = media[:, ventana].sum(axis=1)
-        sd = np.sqrt((sigma[:, ventana] ** 2).sum(axis=1))
-        nivel_modelo = mu + z * sd
-        nivel = np.where(usa_empirico, percentil_empirico, nivel_modelo)
+        ventana = slice(t, t + R + L)
+        mu = media_ext[:, ventana].sum(axis=1)
+        sd = np.sqrt((sigma_ext[:, ventana] ** 2).sum(axis=1))
+        nivel = pol.nivel_hibrido(mu, sd, niveles, usa_empirico, percentil_empirico)
         filas.append(pd.DataFrame({
             'fecha_revision': fechas[t], 'cobertura_dias': R + L,
             'item': serie['item'], 'store_code': serie['store_code'], 'segmento': serie['celda'],
             'demanda_esperada': mu.round(2), 'nivel_objetivo': np.ceil(nivel).astype(int),
             'stock_seguridad': np.ceil(nivel - mu).clip(0).astype(int),
-            'nivel_servicio': [NIVEL_POR_CELDA[c] for c in serie['celda']],
+            'nivel_servicio': niveles,
             'metodo': np.where(usa_empirico, 'percentil_empirico', 'modelo_cuantilico')}))
     rep = pd.concat(filas, ignore_index=True)
     rep['modelo'] = MODELO; rep['version'] = VERSION

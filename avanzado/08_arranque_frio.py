@@ -14,14 +14,13 @@ Es un problema real de distribución y hoy el proyecto no lo resuelve.
 LA IDEA
 -------
 Si no hay historia propia, se usa la de los productos parecidos. Con los atributos que sí existen
-el día del alta —categoría, departamento, tienda, ciudad, grupo de comportamiento de la tienda,
-precio— se predice la **demanda media diaria** del producto y su **perfil semanal**, aprendiendo
+el día del alta —categoría, departamento, tienda, ciudad, precio— se predice la **demanda media diaria** del producto y su **perfil semanal**, aprendiendo
 de las 30.490 series que sí tienen historia.
 
 Y hay una segunda vía que aprovecha lo que el proyecto ya tiene: **la misma referencia en otra
-tienda**. Un producto nuevo en Brooklyn puede llevar dos años vendiéndose en Boston. El grupo de
-comportamiento de tienda —el que reveló que Tribeca se parece a Boston— dice de qué tienda
-conviene copiar.
+tienda**. Un producto nuevo en Brooklyn puede llevar dos años vendiéndose en Boston. La tienda
+más parecida de la Tarea 2 (sección 5.3, la que reveló que Tribeca se parece a Boston) dice de
+qué tienda conviene copiar.
 
 CÓMO SE EVALÚA, Y POR QUÉ ESTO ES LO DIFÍCIL
 --------------------------------------------
@@ -67,7 +66,7 @@ def cargar(con, ventana):
             GROUP BY 1, 2
         )
         SELECT b.*, p.categoria, p.departamento, p.arquetipo,
-               t.ciudad, t.tienda, t.grupo_comportamiento
+               t.ciudad, t.tienda, t.tienda_mas_parecida
         FROM base b
         JOIN dim_producto p USING (item)
         JOIN dim_tienda   t USING (store_code)
@@ -99,18 +98,13 @@ def main(n_prueba, semilla):
     # ---------- C: la misma referencia en la tienda más parecida ----------
     # (el producto está oculto en TODAS las tiendas, así que esta vía solo aplica cuando el
     #  producto ya existe en otra tienda: se simula ocultándolo solo en la tienda evaluada)
-    vecina = {}
-    for grupo, g in df.groupby("grupo_comportamiento"):
-        tiendas = g["store_code"].unique()
-        for s in tiendas:
-            otras = [o for o in tiendas if o != s]
-            vecina[s] = otras[0] if otras else None
+    vecina = df.drop_duplicates("store_code").set_index("store_code")["tienda_mas_parecida"].to_dict()
     ref = df.set_index(["item", "store_code"])["media_dia"]
     tst["C"] = [ref.get((it, vecina.get(sc)), np.nan)
                 for it, sc in zip(tst["item"], tst["store_code"])]
 
     # ---------- D: modelo por atributos ----------
-    cats = ["categoria", "departamento", "ciudad", "grupo_comportamiento", "store_code"]
+    cats = ["categoria", "departamento", "ciudad", "store_code"]
     for c in cats:
         codigos = pd.Categorical(pd.concat([ent[c], tst[c]]).astype(str)).categories
         ent[c + "_id"] = pd.Categorical(ent[c].astype(str), categories=codigos).codes
@@ -165,10 +159,10 @@ Lo relevante no es cuánto gana el modelo, es **cuánto gana sobre lo que haría
 la media de la categoría en la tienda ya se acerca, la conclusión honesta es que para un producto
 nuevo una regla simple basta, y eso también se escribe.
 
-Mirá sobre todo la columna de cobertura de la vía C: solo aplica cuando el producto ya se vende
-en otra tienda del mismo grupo de comportamiento. Cuando aplica suele ser la mejor, y eso conecta
-directamente con el hallazgo de §7.2 —que el grupo de tienda cruza las fronteras de ciudad—: el
-agrupamiento no era un adorno descriptivo, sirve para decidir de qué tienda copiar.
+Mira sobre todo la columna de cobertura de la vía C: solo aplica cuando el producto ya se vende
+en la tienda más parecida. Cuando aplica suele ser la mejor, y eso conecta directamente con el
+hallazgo de §7.2 —que el parecido entre tiendas cruza las fronteras de ciudad—: la comparación de
+tiendas no era un adorno descriptivo, sirve para decidir de qué tienda copiar.
 
 Y la limitación que hay que declarar: esto predice el **nivel medio**, no la serie diaria. Para
 las primeras semanas de un producto nuevo es suficiente, porque la política de reposición solo

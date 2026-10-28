@@ -1,0 +1,7 @@
+expression RutaGold = "C:\Users\jceruso\OneDrive - PageGroup\Documents\Proyecto\lakehouse\gold_csv" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = type text]
+	lineageTag: b733fd67-4924-400a-903c-1686375f2019
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Text
+

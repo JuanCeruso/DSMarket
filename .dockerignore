@@ -1,0 +1,23 @@
+# Lo que no tiene por qué entrar en la imagen. Sin esto, el contexto de
+# construcción son 800 MB y cada «docker build» empieza copiándolos.
+data_dsmarket/
+lakehouse/bronze/
+lakehouse/silver/
+lakehouse/gold/
+cache_forecast/
+memoria/
+figuras/
+defensa/
+documentacion/
+dashboard/
+avanzado/resultados/
+*.ipynb
+.venv/
+.venv_*/
+__pycache__/
+*.py[cod]
+.git/
+.github/
+*.bak
+*.bak_*
+.DS_Store

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "DS_Market"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "f41d68a3-7473-4d0b-af57-a73c5b4dae24"
+  }
+}

@@ -1,0 +1,57 @@
+table mart_producto_top_dias
+	lineageTag: 0c1f0347-ffb6-4300-ad40-853248663ea6
+
+	column item
+		dataType: string
+		lineageTag: c0f40ace-fe78-4bb4-b361-e29561d5cf7e
+		summarizeBy: none
+		sourceColumn: item
+
+		annotation SummarizationSetBy = Automatic
+
+	column posicion
+		dataType: int64
+		lineageTag: 5a246f6a-9a18-4b61-b73c-d39f76e2f628
+		summarizeBy: none
+		sourceColumn: posicion
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: af1a8fd8-7513-4a32-94c8-1858b1c223f4
+		summarizeBy: none
+		sourceColumn: fecha
+
+		annotation SummarizationSetBy = Automatic
+
+	column unidades
+		dataType: double
+		formatString: #,0
+		lineageTag: 8eacb3d0-46fe-40df-8bd4-b1dcaf2d9579
+		summarizeBy: none
+		sourceColumn: unidades
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_producto_top_dias = m
+		mode: import
+		source =
+				// ===== mart_producto_top_dias (15,245 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_producto_top_dias.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"item", type text},
+				        {"posicion", Int64.Type},
+				        {"fecha", type date},
+				        {"unidades", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

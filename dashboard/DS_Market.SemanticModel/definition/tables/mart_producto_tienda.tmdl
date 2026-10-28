@@ -1,0 +1,122 @@
+table mart_producto_tienda
+	lineageTag: 95c688b5-eaa6-4725-afaa-7740828d1e12
+
+	column serie_id
+		dataType: string
+		lineageTag: 987b5de7-8d83-402a-8d6e-1d1db975c7be
+		summarizeBy: none
+		sourceColumn: serie_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column item
+		dataType: string
+		lineageTag: 5f4c6e71-06a0-4ab6-84e0-e7fcf991e1bd
+		summarizeBy: none
+		sourceColumn: item
+
+		annotation SummarizationSetBy = Automatic
+
+	column store_code
+		dataType: string
+		lineageTag: 8c02e10f-874a-4056-83ca-b92cd888c02d
+		summarizeBy: none
+		sourceColumn: store_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column arquetipo
+		dataType: string
+		lineageTag: 5191c08f-82f6-4b21-b8b3-efb7d19b751a
+		summarizeBy: none
+		sourceColumn: arquetipo
+
+		annotation SummarizationSetBy = Automatic
+
+	column categoria
+		dataType: string
+		lineageTag: 8f7b673e-6338-4fa5-8690-50330565e726
+		summarizeBy: none
+		sourceColumn: categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column departamento
+		dataType: string
+		lineageTag: 5ece9dc6-a27c-4fed-b7e2-d8e18039c4f5
+		summarizeBy: none
+		sourceColumn: departamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column ciudad
+		dataType: string
+		lineageTag: d45cde39-1052-402a-a140-617204e39fd2
+		summarizeBy: none
+		sourceColumn: ciudad
+
+		annotation SummarizationSetBy = Automatic
+
+	column tienda
+		dataType: string
+		lineageTag: b58f152f-7e2a-4789-b797-731613fb2cfb
+		summarizeBy: none
+		sourceColumn: tienda
+
+		annotation SummarizationSetBy = Automatic
+
+	column unidades_total
+		dataType: double
+		lineageTag: 1694ccc1-2b8a-4157-9132-63f09ce4ab76
+		summarizeBy: sum
+		sourceColumn: unidades_total
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column facturacion_total
+		dataType: double
+		lineageTag: 65f906f1-324e-4991-85f1-aa75fbc9d677
+		summarizeBy: sum
+		sourceColumn: facturacion_total
+
+		annotation SummarizationSetBy = Automatic
+
+	column precio_medio
+		dataType: double
+		lineageTag: 9d9dd9d6-7f3a-4121-81c0-515f368a0a62
+		summarizeBy: sum
+		sourceColumn: precio_medio
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition mart_producto_tienda = m
+		mode: import
+		source =
+				// ===== mart_producto_tienda (30,490 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_producto_tienda.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"serie_id", type text},
+				        {"item", type text},
+				        {"store_code", type text},
+				        {"arquetipo", type text},
+				        {"categoria", type text},
+				        {"departamento", type text},
+				        {"ciudad", type text},
+				        {"tienda", type text},
+				        {"unidades_total", type number},
+				        {"facturacion_total", type number},
+				        {"precio_medio", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

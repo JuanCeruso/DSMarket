@@ -28,7 +28,7 @@ la política de reposición.
 
 ## 4.2. Por qué la decisión de reposición es el problema
 
-La distribución minorista de alimentación opera con márgenes brutos estrechos y volúmenes muy
+La distribución minorista de gran consumo opera con márgenes brutos estrechos y volúmenes muy
 altos, una combinación que convierte las decisiones repetidas de bajo importe unitario en la
 principal palanca de resultado. La reposición es la más repetida de todas: se toma para cada
 referencia, en cada tienda, cada semana.
@@ -45,7 +45,7 @@ afectado, y una fracción sustancial se traduce en tráfico que se va a la compe
 
 Esta asimetría es la razón por la que el trabajo abandona en §7.4 las métricas de error y pasa a
 expresar los resultados en unidades monetarias. También explica por qué el diagnóstico económico
-de la política de partida —catorce dólares de margen perdido por cada dólar de inventario
+de la política de partida —casi quince dólares de margen perdido por cada dólar de inventario
 inmovilizado— orienta toda la optimización posterior en una única dirección.
 
 ## 4.3. Por qué el problema no es trivial
@@ -115,9 +115,7 @@ El problema de obtener previsiones coherentes en una jerarquía de agregación t
 soluciones clásicas —ascendente, descendente y por niveles— superadas por el enfoque de
 combinación óptima de Hyndman, Ahmed, Athanasopoulos y Shang (2011) y su refinamiento posterior,
 el método MinT de Wickramasuriya, Athanasopoulos y Hyndman (2019), que obtiene la reconciliación
-minimizando la traza de la matriz de covarianzas del error de reconciliación. Este último es el
-método empleado en §7.3.8, y su propiedad más valiosa para la organización no es la mejora del
-error sino la garantía de coherencia entre niveles.
+minimizando la traza de la matriz de covarianzas del error de reconciliación. Este trabajo emplea el enfoque ascendente, que es coherente por construcción, y lo contrasta en §7.3.8 con el modelado directo de cada nivel; la reconciliación óptima queda como mejora posible.
 
 ### 4.4.4. Teoría de inventarios
 
@@ -133,14 +131,14 @@ esperado del vendedor de periódicos y la pérdida pinball evaluada en el ratio 
 articula los capítulos §7.3 y §7.4 de esta memoria y la que sostiene su principal aportación
 metodológica.
 
-### 4.4.5. Segmentación y datos composicionales
+### 4.4.5. Segmentación
 
-La segmentación de productos y tiendas emplea métodos clásicos de agrupamiento cuya validación
-se apoya en el coeficiente de silueta (Rousseeuw, 1987), el índice de Davies y Bouldin (1979) y
-el de Caliński y Harabasz (1974), junto con el índice de Rand ajustado de Hubert y Arabie (1985)
-para medir la concordancia entre particiones. La limitación metodológica reconocida en §7.2.1
-—el tratamiento de perfiles normalizados como si vivieran en un espacio euclídeo— corresponde al
-problema de los datos composicionales formulado por Aitchison (1982).
+La segmentación de productos emplea *k*-medias, con el número de grupos elegido por el método
+del codo (Thorndike, 1953) y contrastado con el coeficiente de silueta (Rousseeuw, 1987). La estabilidad de la
+partición se mide con el índice de Rand ajustado de Hubert y Arabie (1985) entre ejecuciones
+con distinta semilla. La decisión de no aplicar agrupamiento a las diez tiendas se apoya en la
+maldición de la dimensionalidad descrita por Bellman (1961): con más variables que
+observaciones, las distancias pierden capacidad de discriminar.
 
 ### 4.4.6. Identificación del efecto del precio
 
@@ -183,5 +181,4 @@ literaturas por separado; su uso como criterio de selección de modelo, sustituy
 métrica simétrica, es lo que este trabajo propone y documenta.
 
 **El uso sistemático de pruebas de falsación.** Cada conclusión relevante se acompaña de la
-prueba que la habría desmentido. En tres ocasiones la prueba desmintió efectivamente una
-conclusión propia, y esos tres casos se documentan como resultado y no como incidencia.
+prueba que la habría desmentido. En cuatro ocasiones la prueba desmintió efectivamente una conclusión propia, y esos cuatro casos se documentan como resultado y no como incidencia.

@@ -1,0 +1,196 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "2f8f6f1de0428149be1b",
+  "position": {
+    "x": 230,
+    "y": 690,
+    "z": 270,
+    "height": 360,
+    "width": 1660,
+    "tabOrder": 270
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "fact_reposicion"
+                    }
+                  },
+                  "Property": "segmento"
+                }
+              },
+              "queryRef": "fact_reposicion.segmento",
+              "nativeQueryRef": "segmento",
+              "displayName": "Segmento ABC/XYZ"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Series en la revisión"
+                }
+              },
+              "queryRef": "_Medidas.Series en la revisión",
+              "nativeQueryRef": "Series en la revisión",
+              "displayName": "Series"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Demanda esperada (revisión)"
+                }
+              },
+              "queryRef": "_Medidas.Demanda esperada (revisión)",
+              "nativeQueryRef": "Demanda esperada (revisión)",
+              "displayName": "Demanda esperada"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Nivel objetivo (revisión)"
+                }
+              },
+              "queryRef": "_Medidas.Nivel objetivo (revisión)",
+              "nativeQueryRef": "Nivel objetivo (revisión)",
+              "displayName": "Nivel objetivo"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Stock de seguridad (revisión)"
+                }
+              },
+              "queryRef": "_Medidas.Stock de seguridad (revisión)",
+              "nativeQueryRef": "Stock de seguridad (revisión)",
+              "displayName": "Stock de seguridad"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Colchón sobre demanda % (revisión)"
+                }
+              },
+              "queryRef": "_Medidas.Colchón sobre demanda % (revisión)",
+              "nativeQueryRef": "Colchón sobre demanda % (revisión)",
+              "displayName": "Colchón / demanda"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Medidas"
+                    }
+                  },
+                  "Property": "Nivel de servicio (revisión)"
+                }
+              },
+              "queryRef": "_Medidas.Nivel de servicio (revisión)",
+              "nativeQueryRef": "Nivel de servicio (revisión)",
+              "displayName": "Nivel de servicio"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Medidas"
+                  }
+                },
+                "Property": "Demanda esperada (revisión)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Colchón por Segmento (A = Más Valor, X = Más Estable) en la Revisión de Referencia'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

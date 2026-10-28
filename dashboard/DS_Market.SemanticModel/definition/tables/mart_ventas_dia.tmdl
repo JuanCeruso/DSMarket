@@ -1,0 +1,96 @@
+table mart_ventas_dia
+	lineageTag: bfa8a00f-e296-4ece-b529-21e1b4157022
+
+	column fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 89939683-3a61-4aea-afca-9c9c4682782a
+		summarizeBy: none
+		sourceColumn: fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column store_code
+		dataType: string
+		lineageTag: d787536a-c6b3-4bfd-b1c3-9586f1c7d634
+		summarizeBy: none
+		sourceColumn: store_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column ciudad
+		dataType: string
+		lineageTag: 01d465fc-914e-4f2d-aa7e-f179580c59ac
+		summarizeBy: none
+		sourceColumn: ciudad
+
+		annotation SummarizationSetBy = Automatic
+
+	column tienda
+		dataType: string
+		lineageTag: 0343825e-e223-48c3-8f64-9ddb618abfb6
+		summarizeBy: none
+		sourceColumn: tienda
+
+		annotation SummarizationSetBy = Automatic
+
+	column categoria
+		dataType: string
+		lineageTag: 5e3a7ed1-9802-4002-96b3-111eeb970b3b
+		summarizeBy: none
+		sourceColumn: categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column departamento
+		dataType: string
+		lineageTag: bc99178a-0197-4f5e-ac84-f803de51f9a3
+		summarizeBy: none
+		sourceColumn: departamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column unidades
+		dataType: double
+		lineageTag: 5c68bedf-b112-4184-8583-d087a34ccd7f
+		summarizeBy: sum
+		sourceColumn: unidades
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column importe
+		dataType: double
+		lineageTag: 1d83b597-6eee-4a45-99e9-fb0e050c6d66
+		summarizeBy: sum
+		sourceColumn: importe
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_ventas_dia = m
+		mode: import
+		source =
+				// ===== mart_ventas_dia (133,910 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_ventas_dia.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"fecha", type date},
+				        {"store_code", type text},
+				        {"ciudad", type text},
+				        {"tienda", type text},
+				        {"categoria", type text},
+				        {"departamento", type text},
+				        {"unidades", type number},
+				        {"importe", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

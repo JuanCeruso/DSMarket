@@ -1,0 +1,57 @@
+table mart_arquetipo_mes
+	lineageTag: 2273cbe3-018d-4ca9-b55a-13a96b0d9a15
+
+	column arquetipo
+		dataType: string
+		lineageTag: 3e419f8c-db03-4175-a228-76d8e3beb6b8
+		summarizeBy: none
+		sourceColumn: arquetipo
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes
+		dataType: string
+		lineageTag: 9a991c08-4854-4002-a80d-c1205ea2a5ab
+		summarizeBy: none
+		sourceColumn: mes
+		sortByColumn: orden
+
+		annotation SummarizationSetBy = Automatic
+
+	column orden
+		dataType: int64
+		lineageTag: 9301e5ed-ef66-43ee-8c6d-e78da1fc73bc
+		summarizeBy: none
+		sourceColumn: orden
+
+		annotation SummarizationSetBy = Automatic
+
+	column indice
+		dataType: double
+		formatString: 0.00
+		lineageTag: abb38474-4080-49bd-8b24-8b2b9caefa59
+		summarizeBy: none
+		sourceColumn: indice
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_arquetipo_mes = m
+		mode: import
+		source =
+				// ===== mart_arquetipo_mes (72 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_arquetipo_mes.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"arquetipo", type text},
+				        {"mes", type text},
+				        {"orden", Int64.Type},
+				        {"indice", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

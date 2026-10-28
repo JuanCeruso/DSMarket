@@ -21,8 +21,8 @@ enseñarlo en la defensa.
 |---|---|---|
 | `POST` | `/reposicion/sugerencia` | El principal: cuánto pedir de cada producto |
 | `GET` | `/prediccion/{tienda}/{item}` | Serie de predicción diaria (media y p90) |
-| `GET` | `/tiendas` | Catálogo de tiendas con su grupo de comportamiento |
-| `GET` | `/segmentos` | Distribución ABC/XYZ y nivel de servicio de cada celda |
+| `GET` | `/tiendas` | Catálogo de tiendas con su tienda más parecida (Tarea 2) |
+| `GET` | `/segmentos` | Distribución ABC/XYZ y método de reposición de cada celda |
 | `GET` | `/salud` | Comprobación de vida y horizonte de datos cargado |
 
 ### Ejemplo
@@ -32,7 +32,7 @@ curl -X POST http://127.0.0.1:8000/reposicion/sugerencia \
   -H "Content-Type: application/json" -d '{
     "tienda": "NYC_1",
     "fecha_revision": "2016-04-25",
-    "productos": [{"item": "SUPERMARKET_3_511", "stock_actual": 200, "en_transito": 50}],
+    "productos": [{"item": "SUPERMARKET_3_511", "stock_actual": 180, "en_transito": 30}],
     "parametros": {"dias_revision": 7, "lead_time": 2}
   }'
 ```
@@ -41,14 +41,16 @@ curl -X POST http://127.0.0.1:8000/reposicion/sugerencia \
 {
   "item": "SUPERMARKET_3_511",
   "segmento": "AX",
-  "demanda_esperada": 183.35,
-  "nivel_objetivo": 258.29,
-  "stock_seguridad": 74.95,
-  "pedido_sugerido": 9,
-  "nivel_servicio_aplicado": 0.98,
+  "arquetipo": "Pico de diciembre",
+  "demanda_esperada": 189.47,
+  "nivel_objetivo": 239.27,
+  "stock_seguridad": 49.8,
+  "posicion_stock": 210.0,
+  "pedido_sugerido": 30,
+  "nivel_servicio_aplicado": 0.9,
   "metodo": "percentil_empirico",
   "confianza": "alta",
-  "motivo": "Segmento AX; alta facturación; demanda estable (CV 0.4); arquetipo «Fin de año»; nivel calculado con el histórico, que en series estables es más robusto que el modelo; objetivo de servicio 98%."
+  "motivo": "Segmento AX; alta facturación; demanda estable (CV 0.4); grupo de producto «Pico de diciembre»; nivel calculado con el histórico, que en series estables es más robusto que el modelo; objetivo de servicio 90%."
 }
 ```
 
@@ -62,7 +64,8 @@ el pico de las revisiones semanales no compite con ningún entrenamiento.
 **2. Los parámetros viajan en la petición.** `dias_revision`, `lead_time` y `nivel_servicio` son
 del cliente, no del código. Finanzas puede subir el nivel de servicio de una categoría, o
 probarlo en dos tiendas antes de extenderlo, sin redesplegar nada. Si no se envía
-`nivel_servicio`, cada producto usa el que le corresponde por su celda ABC/XYZ.
+`nivel_servicio`, cada producto usa el de su categoría: 90% en SUPERMARKET y 95% en ACCESORIES y
+HOME_&_GARDEN (Tarea 4, sección 7: lo decide la merma).
 
 **3. Cada sugerencia se explica.** La respuesta incluye `segmento`, `metodo`, `confianza` y un
 `motivo` en lenguaje natural. No es decoración: en la sección 8 del notebook 04 identificamos

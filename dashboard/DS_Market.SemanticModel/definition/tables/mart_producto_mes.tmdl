@@ -1,0 +1,57 @@
+table mart_producto_mes
+	lineageTag: 6293f1ae-37b6-4c0b-81a4-74e5ec3dc64e
+
+	column item
+		dataType: string
+		lineageTag: 8bd0ce8b-2183-469e-ac7e-3e3dca362bf7
+		summarizeBy: none
+		sourceColumn: item
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes
+		dataType: string
+		lineageTag: 8c7ccd90-005a-4722-8d70-da6e4f2aa134
+		summarizeBy: none
+		sourceColumn: mes
+		sortByColumn: orden
+
+		annotation SummarizationSetBy = Automatic
+
+	column orden
+		dataType: int64
+		lineageTag: e24a20d8-d042-42ca-80b0-414d061e8f47
+		summarizeBy: none
+		sourceColumn: orden
+
+		annotation SummarizationSetBy = Automatic
+
+	column indice
+		dataType: double
+		formatString: 0.00
+		lineageTag: b9c6240b-21f1-4f1b-9b92-614063a4fff3
+		summarizeBy: none
+		sourceColumn: indice
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_producto_mes = m
+		mode: import
+		source =
+				// ===== mart_producto_mes (36,588 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_producto_mes.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"item", type text},
+				        {"mes", type text},
+				        {"orden", Int64.Type},
+				        {"indice", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

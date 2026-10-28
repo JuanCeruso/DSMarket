@@ -15,8 +15,7 @@ servicio web necesitan las mismas cifras, cada uno acaba con su propia lectura, 
 limpieza y su propia interpretación de las columnas. La divergencia no aparece de golpe;
 aparece meses después, cuando dos informes dan números distintos y nadie sabe cuál es el bueno.
 
-La solución adoptada —el almacén analítico descrito en §6.3— convierte cuatro cuadernos
-independientes en un sistema con una única fuente de verdad.
+La solución adoptada —el almacén analítico descrito en §6.3— convierte un conjunto de cuadernos independientes en un sistema con una única fuente de verdad.
 
 ### 7.6.2. Lo que se construyó
 
@@ -34,8 +33,7 @@ entradas, y cualquier consumidor puede cruzar previsión y realidad con una uni�
 
 **El servicio de reposición.** Una interfaz de programación que responde la pregunta operativa
 —cuántas unidades pedir de un producto en una tienda, dado el stock actual— aplicando la misma
-política del capítulo §7.4. Carga las tablas de la capa de oro en memoria al arrancar y expone
-cuatro operaciones. Dispone de doce pruebas automáticas que verifican tanto los casos normales
+política del capítulo §7.4. Carga las tablas de la capa de oro en memoria al arrancar y expone cinco operaciones. Dispone de trece comprobaciones automáticas que verifican tanto los casos normales
 como los límite.
 
 **El panel interactivo.** Una aplicación que expone la misma política en una pantalla, pensada
@@ -49,8 +47,7 @@ capa de oro.
 Los tres consumidores —servicio, panel y cuadro de mando— leen exactamente las mismas tablas.
 No pueden discrepar, y esa propiedad es verificable.
 
-> **[FIGURA 7.22]** *El sistema completo, de los ficheros de origen a los tres consumidores.*
-> `Fuente: Diagrama de elaboración propia. Debe mostrar el bucle de realimentación de las predicciones.`
+![**Figura 7.25.** El sistema completo, de los ficheros de origen a los tres consumidores. *Fuente: elaboración propia.*](figuras/fig_7_25.png){width=100%}
 
 ### 7.6.3. La capa de lenguaje natural y su regla de diseño
 
@@ -66,16 +63,14 @@ motor. La tercera, el SQL generado atraviesa un validador que admite únicamente
 lectura sobre las nueve vistas conocidas, rechaza sentencias múltiples y añade un límite de
 filas si no lo trae; además se muestra siempre al usuario antes de ejecutarse.
 
-La justificación no es tecnológica sino de responsabilidad: un sistema que sugiere pedidos de
-mercadería no puede permitirse una cifra inventada, y la única garantía sólida contra eso es que
+La justificación no es tecnológica sino de responsabilidad: un sistema que sugiere pedidos de mercancía no puede permitirse una cifra inventada, y la única garantía sólida contra eso es que
 el modelo no tenga la posibilidad de producirla.
 
-> **[FIGURA 7.23]** *Las cinco pantallas del panel de reposición.*
-> `Fuente: Capturas de la aplicación en ejecución sobre el almacén completo, a 200 ppp.`
+![**Figura 7.26.** Pantalla principal del panel de reposición («Hoy en la tienda»). *Fuente: captura de la aplicación en ejecución.*](figuras/fig_7_26.png){width=100%}
 
 ### 7.6.4. Las trampas encontradas
 
-Se documentan aquí tres errores de implementación que se detectaron durante el trabajo, porque
+Se documentan aquí varios errores de implementación que se detectaron durante el trabajo, porque
 son silenciosos —no producen excepción, producen cifras equivocadas— y porque su documentación
 es parte del valor de ingeniería del proyecto.
 
@@ -117,6 +112,46 @@ ejemplo más claro de por qué los contratos de datos se ejecutan también **des
 las predicciones y no solo sobre los datos de entrada: este defecto no está en el origen, lo
 produce el propio sistema.
 
+**El fin de semana corrido dos días.** La columna `es_fin_de_semana` de la dimensión temporal
+se calculaba como `weekday_int IN (5, 6)`, que es la fórmula correcta si el índice del día
+empieza en cero el lunes. En este conjunto de datos no empieza ahí: la columna de origen numera
+**1 = sábado … 7 = viernes**. El resultado es que la bandera marcaba como fin de semana el
+**miércoles y el jueves**, en 1.094 de los 1.913 días del histórico.
+
+El defecto es representativo de una clase entera, y por eso se documenta. No produce excepción
+ni valores imposibles: la columna es booleana y siempre tiene un valor plausible. No lo detecta
+ninguna comprobación de tipos, ni de nulos, ni de rangos. Y `is_weekend` es **una de las
+variables de entrada del modelo**, de modo que el efecto no se queda en un gráfico descriptivo.
+
+Su forma peligrosa es la segunda mitad del hallazgo. Los días futuros de la dimensión, que no
+existen en el fichero de origen, se rellenaban con una expresión distinta —`dayofweek(fecha) IN
+(0, 6)`, esta vez correcta—, de modo que la bandera significaba **una cosa en los días con los
+que se entrena y otra en los días que se predicen**. Es un desajuste entre entrenamiento y
+servicio en su forma más pura: sin error, sin alerta, y permanente.
+
+La corrección deriva la bandera del **nombre** del día en lugar del índice, que es lo único que
+no depende de una convención, y usa la misma definición para el histórico y para el horizonte.
+Se añadieron además dos contratos bloqueantes —uno por cada mitad del defecto— y sus dos pruebas
+de regresión. El efecto colateral fue confirmar la segmentación del catálogo: con la bandera
+corregida, el grupo «Pico de fin de semana» pasa a encabezar la elevación de fin de semana con
+un ×1,42, cifra que antes quedaba invisible y que es la que justifica su nombre (§7.2.3).
+
+**La ventana predicha, corrida un horizonte entero.** El contrato que exige que toda predicción
+se apoye en una fila de la dimensión temporal falló sobre las 853.720 filas de
+`fact_predicciones`, es decir sobre todas. El último día con venta es el 24 de abril de 2016 y
+la dimensión llega, correctamente, veintiocho días más allá, al 22 de mayo. Las predicciones
+cubrían del **23 de mayo al 19 de junio**: los días 29 a 56, no los 28 primeros.
+
+La causa es que el cuaderno tomaba como origen el final de la dimensión temporal —que ya
+incluye el horizonte— en lugar del último día con venta. El resultado es un pronóstico
+perfectamente válido para las cuatro semanas equivocadas, y con él unos niveles de reposición
+igualmente corridos. La etapa `predecir.py` de la capa de operación ancla el horizonte en el
+último día observado y no en el final del calendario, que es lo que corresponde.
+
+Ninguno de los dos defectos se descubrió mirando los datos: los descubrieron los contratos, uno
+de ellos escrito después y a propósito de una figura que no salía. Es el argumento de esta
+sección entera.
+
 **La dimensión temporal incompleta.** La tabla de calendario terminaba en el último día con
 venta, de modo que las predicciones a veintiocho días no tenían fila de dimensión donde
 apoyarse. Se extendió con los días futuros y una bandera que los distingue.
@@ -132,17 +167,18 @@ Un sistema no se distingue de un conjunto de cuadernos por los modelos que conti
 que sabe de sí mismo. Se incorporaron por ello cuatro piezas que no producen ningún resultado
 analítico y sin las cuales el trabajo seguiría siendo un prototipo.
 
-**Orquestación.** Un único comando ejecuta las nueve etapas en orden —construcción de las tres
-capas, contratos, entrenamiento, predicción, reposición, contratos otra vez y monitorización—,
+**Orquestación.** Un único comando ejecuta las diez etapas en orden —construcción de las tres
+capas, contratos, entrenamiento, puerta de promoción, predicción, reposición, contratos otra vez y monitorización—,
 cronometra cada una, se detiene ante el primer fallo bloqueante y registra el resultado en una
 tabla de ejecuciones. Permite además reanudar desde la etapa que falló, que es lo que convierte
 un fallo en una incidencia y no en una repetición completa.
 
-**Contratos de datos.** Trece comprobaciones que **detienen** el proceso en lugar de advertir: el
+**Contratos de datos.** Quince comprobaciones que **detienen** el proceso en lugar de advertir: el
 panel producto-tienda completo, ausencia de ventas sin precio, coherencia entre importe y
 producto de unidades por precio, integridad referencial con las dimensiones, cobertura de la
 dimensión temporal sobre el horizonte, ausencia de duplicados en el grano y no negatividad y
-ordenación de los cuantiles predichos. La distinción entre un contrato y una comprobación de
+ordenación de los cuantiles predichos, y la coherencia de la bandera de fin de semana con el
+nombre del día tanto en el histórico como en el horizonte. La distinción entre un contrato y una comprobación de
 calidad está en qué ocurre cuando falla: un almacén que publica datos rotos porque la
 comprobación escribió una advertencia en un registro que nadie lee es peor que uno que no
 comprueba nada, porque produce una falsa sensación de control. Los contratos se ejecutan dos
@@ -171,7 +207,7 @@ mostrarlas sin ninguna integración adicional.
 
 Un sistema que decide compras no se despliega de una vez. La ruta propuesta tiene tres fases,
 cada una con su criterio de avance y su criterio de parada, y la razón de que existan es que un
-error de reposición no se corrige con un despliegue nuevo: se corrige con mercadería.
+error de reposición no se corrige con un despliegue nuevo: se corrige con mercancía.
 
 **Fase 1 — Modo sombra (4 semanas).** El sistema calcula pedidos para las diez tiendas y no los
 envía a nadie. Se registra la sugerencia junto a lo que el encargado pidió realmente. No hay
@@ -180,8 +216,7 @@ decisiones sobre la demanda que realmente ocurrió. *Criterio de avance:* que el
 peor que la práctica actual en coste simulado, y que ninguna de las alertas del monitor se haya
 disparado por causas ajenas a los datos.
 
-**Fase 2 — Piloto (8 semanas, dos tiendas).** Se eligen dos establecimientos de grupos de
-comportamiento distintos y se aplican las sugerencias en el segmento AX, que concentra el 56% de
+**Fase 2 — Piloto (8 semanas, dos tiendas).** Se eligen dos establecimientos con perfiles de venta distintos (§7.2.4) y se aplican las sugerencias en el segmento AX, que concentra el 56% de
 la facturación y es el de demanda más estable. El resto del catálogo sigue con el procedimiento
 actual, lo que proporciona un grupo de control interno. *Criterio de avance:* mejora del nivel de
 servicio sin aumento del inventario medio. *Criterio de parada:* dos semanas consecutivas con el

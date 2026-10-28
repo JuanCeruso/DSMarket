@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.4.0/schema.json",
+  "displayName": "Mostrar filtros · Cómo se compra",
+  "name": "73605103b4818bada2ac",
+  "options": {
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "6415728520a7f7f0549c",
+    "sections": {
+      "6415728520a7f7f0549c": {
+        "visualContainers": {},
+        "visualContainerGroups": {
+          "bd3ee826112a7f2e574a": {
+            "isHidden": false
+          }
+        }
+      }
+    }
+  }
+}

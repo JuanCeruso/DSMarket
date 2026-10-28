@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.4.0/schema.json",
+  "displayName": "Productos · ver todo",
+  "name": "cc0883d9f30ba2a8b489",
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "1e473f24bd27e84f8995",
+    "sections": {
+      "1e473f24bd27e84f8995": {
+        "visualContainers": {},
+        "filters": {
+          "byExpr": []
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+table 'eje_campana'
+	lineageTag: 066e40e0-7ba5-42f5-863f-47ab78917025
+
+	column 'z'
+		dataType: double
+		formatString: 0.0
+		lineageTag: c43a23c0-07b6-4121-b9a7-9b5a4548e650
+		summarizeBy: none
+		sourceColumn: z
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'eje_campana' = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromColumns({List.Transform({-40..40}, each _ / 10)}, {"z"}),
+				    Tipo = Table.TransformColumnTypes(Origen, {{"z", type number}})
+				in
+				    Tipo
+
+	annotation PBI_ResultType = Table

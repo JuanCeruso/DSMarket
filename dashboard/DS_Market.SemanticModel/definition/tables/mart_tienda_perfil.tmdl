@@ -1,0 +1,85 @@
+table mart_tienda_perfil
+	lineageTag: 71c7290e-0cee-4fd4-b819-62640a308530
+
+	column store_code
+		dataType: string
+		lineageTag: 32905e20-8419-4d3e-9cc5-c0a98f987842
+		summarizeBy: none
+		sourceColumn: store_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column tienda
+		dataType: string
+		lineageTag: f944ab84-c9f6-4877-8b1e-218acba40aaa
+		summarizeBy: none
+		sourceColumn: tienda
+
+		annotation SummarizationSetBy = Automatic
+
+	column ciudad
+		dataType: string
+		lineageTag: c2a465ea-f4f0-4df9-a7ee-f366ac2f43a2
+		summarizeBy: none
+		sourceColumn: ciudad
+
+		annotation SummarizationSetBy = Automatic
+
+	column variable
+		dataType: string
+		sortByColumn: orden_variable
+		lineageTag: bb84597e-303e-4268-bb81-d03c4f62ab95
+		summarizeBy: none
+		sourceColumn: variable
+
+		annotation SummarizationSetBy = Automatic
+
+	column orden_variable
+		dataType: int64
+		formatString: 0
+		lineageTag: 6a9b6f22-d1f8-424e-b798-fb5963556e53
+		summarizeBy: none
+		sourceColumn: orden_variable
+
+		annotation SummarizationSetBy = Automatic
+
+	column valor
+		dataType: double
+		formatString: 0.00
+		lineageTag: e4b1db6b-ff85-41ba-a98a-9b06919e278c
+		summarizeBy: none
+		sourceColumn: valor
+
+		annotation SummarizationSetBy = Automatic
+
+	column z
+		dataType: double
+		formatString: 0.0
+		lineageTag: 69559fe9-f39e-4783-97df-7ec3b5cf4258
+		summarizeBy: none
+		sourceColumn: z
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_tienda_perfil = m
+		mode: import
+		source =
+				// ===== mart_tienda_perfil (60 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_tienda_perfil.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"store_code", type text},
+				        {"tienda", type text},
+				        {"ciudad", type text},
+				        {"variable", type text},
+				        {"orden_variable", Int64.Type},
+				        {"valor", type number},
+				        {"z", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,43 @@
+table fact_ventas_reciente
+	lineageTag: 632e82d8-7e4e-45a8-bb24-2204ad5b2506
+
+	column serie_id
+		dataType: string
+		lineageTag: 68583481-ea95-425f-ae32-96be418120fe
+		summarizeBy: none
+		sourceColumn: serie_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: fb21020f-33c6-4a8b-9f87-f96dd7c7aa24
+		summarizeBy: none
+		sourceColumn: fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column unidades
+		dataType: int64
+		formatString: #,0
+		lineageTag: ae5f03a5-28a4-4065-a523-6debac7aedd4
+		summarizeBy: sum
+		sourceColumn: unidades
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_ventas_reciente = m
+		mode: import
+		source =
+				// ===== fact_ventas_reciente (1.280.580 filas): ventas por producto y tienda de los últimos 42 días
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\fact_ventas_reciente.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {{"serie_id", type text}, {"fecha", type date}, {"unidades", Int64.Type}}, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,48 @@
+table mart_precios_tienda
+	lineageTag: ec65318a-5380-422e-a7d9-fad3958825b9
+
+	column store_code
+		dataType: string
+		lineageTag: 51c59281-55ec-4894-bb69-cdaa90d331da
+		summarizeBy: none
+		sourceColumn: store_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column indice_precio_pct
+		dataType: double
+		formatString: 0.00
+		lineageTag: 90a67635-b505-43a7-9629-7842355950bd
+		summarizeBy: none
+		sourceColumn: indice_precio_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column pct_productos_mas_caros
+		dataType: double
+		formatString: 0.0
+		lineageTag: 569fded3-4fe4-4eaf-a902-0e5e4764acf7
+		summarizeBy: none
+		sourceColumn: pct_productos_mas_caros
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_precios_tienda = m
+		mode: import
+		source =
+				// ===== mart_precios_tienda (10 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_precios_tienda.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"store_code", type text},
+				        {"indice_precio_pct", type number},
+				        {"pct_productos_mas_caros", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

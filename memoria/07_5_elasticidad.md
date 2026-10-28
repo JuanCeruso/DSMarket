@@ -33,15 +33,16 @@ variable, y se estima $\beta$ sobre los residuos.
 ### 7.5.2. Un resultado excelente
 
 La estimación arroja una elasticidad de **−0,395** con un estadístico $t$ de **−19,3**. El signo
-es el correcto, la magnitud es plausible para bienes de alimentación, la significación
-estadística es abrumadora y la descomposición por arquetipo de producto tiene sentido: los
-grupos de rotación estable resultan menos elásticos que los de compra ocasional.
+es el correcto, la magnitud es plausible para bienes de gran consumo, la significación
+estadística es abrumadora y la descomposición por grupo de producto de §7.2 tiene sentido: la
+alta rotación diaria, barata y de compra frecuente, es la más sensible (−0,62); el grupo de
+precio alto y pocas unidades, de los menos (−0,26); y la venta esporádica con pico en eventos y el pico de diciembre, que
+se compran por la fecha, no reaccionan.
 
 Es exactamente el tipo de resultado que una memoria presentaría como hallazgo principal y sobre
 el que construiría una recomendación de política de precios.
 
-> **[FIGURA 7.19]** *Elasticidad estimada por arquetipo de producto.*
-> `Fuente: Cuaderno 05. Puntos con su intervalo de confianza.`
+![**Figura 7.22.** Elasticidad estimada por grupo de producto, con intervalo de confianza del 95 %. *Fuente: elaboración propia.*](figuras/fig_7_22.png){width=100%}
 
 ### 7.5.3. La prueba que lo derriba
 
@@ -58,8 +59,7 @@ que las mueve a la vez. La causa más plausible es la política comercial de la 
 precios se fijan en función de la demanda esperada, no al azar—, lo que constituye un problema de
 endogeneidad de manual.
 
-> **[FIGURA 7.20]** *Coeficiente estimado frente al coeficiente placebo con el precio de la semana siguiente.*
-> `Fuente: Cuaderno 05. Es la figura central del capítulo: los dos intervalos, prácticamente superpuestos.`
+![**Figura 7.23.** Coeficiente estimado frente al coeficiente placebo con el precio de la semana siguiente. *Fuente: elaboración propia.*](figuras/fig_7_23.png){width=100%}
 
 Como comprobación adicional se estimó el modelo en **primeras diferencias**, que elimina
 cualquier componente de nivel persistente. La elasticidad estimada pasa a **+0,02**: el efecto
@@ -90,11 +90,17 @@ mueven, que es exactamente el problema que impide identificar el efecto con dato
 
 El cálculo de potencia, realizado sobre la variabilidad observada en el propio panel, determina
 el tamaño necesario: **451 series por brazo durante ocho semanas** para detectar una elasticidad
-de −0,4 con una potencia del 80% y un nivel de significación del 5%. Es un experimento
+de −0,5 con una potencia del 80% y un nivel de significación del 5%. Es un experimento
 perfectamente asumible para una cadena de diez tiendas.
 
-> **[FIGURA 7.21]** *Curva de potencia frente al tamaño de muestra por brazo.*
-> `Fuente: Cuaderno 05. Marcar el punto de 451 series y potencia 0,80.`
+Dos precisiones sobre el diseño. La primera: el precio se cambiaría por tienda, y las series de
+una misma tienda comparten clientes, días y clima, de modo que no son independientes. La muestra
+efectiva se acerca más al número de tiendas que al de series, y el análisis debe usar errores
+agrupados por tienda; las 451 series son, por tanto, un mínimo. La segunda: para reducir la
+varianza, cada tienda tratada se empareja con la tienda que más se le parece (§7.2.4) y no con
+otra de su ciudad, porque el parecido entre tiendas no respeta las fronteras de ciudad.
+
+![**Figura 7.24.** Curva de potencia frente al tamaño de muestra por brazo. *Fuente: elaboración propia.*](figuras/fig_7_24.png){width=100%}
 
 ### 7.5.6. El valor de un resultado negativo
 
@@ -104,7 +110,7 @@ de falsación, el trabajo habría entregado una recomendación de precios apoyad
 correlación espuria, y una recomendación así aplicada a una cadena real tiene un coste que no es
 académico.
 
-Es el tercero de los tres momentos en que una prueba refutó una conclusión propia del trabajo.
+Es el tercero de los cuatro momentos en que una prueba refutó una conclusión propia del trabajo.
 
 ### 7.5.7. Qué abre el capítulo siguiente
 

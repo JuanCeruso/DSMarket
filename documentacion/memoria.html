@@ -221,7 +221,7 @@ code{font-family:"JetBrains Mono",monospace;font-size:.87em;background:var(--sup
         <span class="cifra">solo <b>5 de 15</b> productos top comunes a las 3 ciudades</span>
         <span class="cifra">Filadelfia <b>4/15</b> vs Boston <b>10/15</b></span>
         <span class="cifra">dispersión SUPERMARKET <b>2,75%</b></span>
-        <span class="cifra">Labor Day, SuperBowl, Easter <b>+15-22%</b></span>
+        <span class="cifra">Labor Day <b>+28%</b> frente a un lunes normal</span>
       </div>
     </div>
   </article>
@@ -234,13 +234,13 @@ code{font-family:"JetBrains Mono",monospace;font-size:.87em;background:var(--sup
     </div>
     <div class="cap-cuerpo">
       <p class="pregunta-guia">«Agrupá productos que se comporten parecido, para evaluar campañas» — Joelle, Marketing</p>
-      <p>Cinco arquetipos de producto y tres grupos de tienda. El hallazgo que más rinde en la defensa es que <strong>el perfil de demanda no respeta las fronteras de ciudad</strong>: Tribeca se comporta como una tienda de Boston. Y se sostiene: en la validación <em>leave-one-out</em> ese grupo se mantiene unido en las diez iteraciones.</p>
-      <p>La segmentación fina revela dos micro-segmentos que la gruesa disuelve, y ambos reaparecen en todos los capítulos siguientes.</p>
+      <p>Seis grupos de producto, elegidos con el método del codo, y una comparación directa entre tiendas en lugar de agruparlas: con diez tiendas, cualquier agrupación sería inestable. El hallazgo que más rinde en la defensa es que <strong>el perfil de demanda no respeta las fronteras de ciudad</strong>: Tribeca se parece más a las tiendas de Boston que a las de Nueva York.</p>
+      <p>Dos grupos tienen un comportamiento muy marcado y reaparecen en los capítulos siguientes: Pico de diciembre y Venta esporádica con pico en eventos.</p>
       <div class="cifras">
-        <span class="cifra">K=5 arquetipos · K=10 campañas</span>
-        <span class="cifra">grupo Boston+Tribeca estable <b>100%</b></span>
-        <span class="cifra">segmento navideño <b>×2,29</b> en diciembre</span>
-        <span class="cifra">segmento de eventos <b>×1,99</b></span>
+        <span class="cifra">K=6 grupos de producto</span>
+        <span class="cifra">partición estable <b>ARI 0,98</b></span>
+        <span class="cifra">Pico de diciembre <b>×1,89</b></span>
+        <span class="cifra">venta esporádica <b>+26 %</b> en eventos</span>
       </div>
     </div>
   </article>
@@ -254,11 +254,11 @@ code{font-family:"JetBrains Mono",monospace;font-size:.87em;background:var(--sup
     <div class="cap-cuerpo">
       <p class="pregunta-guia">«¿Sigue siendo válido sumar las predicciones para obtener los agregados?» — Paul Rogers, CFO</p>
       <p>El capítulo más técnico y el que más honestidad exige. Se comparan baselines, LightGBM, XGBoost, Prophet y SARIMA con validación <em>walk-forward</em>. La conclusión incómoda que hay que contar: <strong>con la estrategia ingenua los modelos no le ganan a una media móvil</strong>, y solo la organización por bloques semanales abre una ventaja real.</p>
-      <p>La respuesta a Paul se da en dos niveles: sumar es mejor que modelar cada nivel por separado, y <strong>reconciliar con MinT es mejor que sumar</strong> — y además garantiza que todos los informes cierren entre sí.</p>
+      <p>La respuesta a Paul se da en dos niveles: sumar es mejor que modelar cada nivel por separado (Prophet, SARIMA): <strong>el ascendente gana en los cuatro niveles evaluados</strong>, y basta un único modelo tienda-producto.</p>
       <div class="cifras">
-        <span class="cifra">WRMSSE <b>1,0414</b></span>
-        <span class="cifra"><code>rmean_28</code> explica el <b>71,7%</b></span>
-        <span class="cifra">MinT mejora <b>9,3%</b> sobre bottom-up</span>
+        <span class="cifra">WRMSSE <b>1,0422</b></span>
+        <span class="cifra"><code>rmean_28</code> explica el <b>56,6%</b></span>
+        <span class="cifra">error del total <b>5,5%</b> · departamento <b>9,9%</b></span>
         <span class="cifra">cobertura p90 real <b>90,0%</b></span>
       </div>
     </div>
@@ -275,7 +275,7 @@ code{font-family:"JetBrains Mono",monospace;font-size:.87em;background:var(--sup
       <p>Del <em>newsvendor</em> a una política simulada sobre las 30.490 series con demanda real. El número que abre el capítulo: la política actual <strong>pierde 161.353 dólares en margen por faltantes y solo 11.527 en coste de mantener stock</strong>. No es cara por inmovilizar capital, es cara porque deja de vender.</p>
       <p>Y el hallazgo que hay que contar aunque nos contradiga: <strong>la simulación refutó nuestra propia conclusión del capítulo anterior</strong> sobre dónde aporta el modelo.</p>
       <div class="cifras">
-        <span class="cifra">servicio <b>86,3% → 96,0%</b></span>
+        <span class="cifra">servicio <b>86,6% → 96,2%</b></span>
         <span class="cifra">coste <b>−61%</b></span>
         <span class="cifra">del 68% al 90% de servicio: <b>+127%</b> de stock</span>
         <span class="cifra">el óptimo lo decide <b>la merma</b>, no el margen</span>
@@ -338,7 +338,7 @@ code{font-family:"JetBrains Mono",monospace;font-size:.87em;background:var(--sup
     <span class="hilo-marca">T3 → T4</span>
     <div>
       <h3>Una métrica de error no es una métrica de negocio</h3>
-      <p>Concluimos que el modelo servía en el núcleo estable y no en la cola larga. La simulación de la política demostró lo contrario: aporta un 19,3% en la cola larga y pierde un 7,9% en el núcleo. Elegir la política por el RMSSE nos habría llevado a la decisión opuesta en dos segmentos.</p>
+      <p>El menor error de predicción estaba en Alta rotación diaria y uno de los mayores en Venta esporádica con pico en eventos. La simulación de la política demostró lo contrario de lo que eso sugiere: el modelo aporta un 26% en la venta esporádica y pierde un 7% en la alta rotación diaria. Elegir la política por el RMSSE nos habría llevado a la decisión opuesta en los dos extremos.</p>
     </div>
   </div>
   <div class="hilo-item">

@@ -160,7 +160,7 @@ td code{font-weight:400}
                                 <b>api/</b>          <b>app/</b>        <b>PowerBI</b></div>
 
 <div class="aviso">
-  <p><strong>El eslabón frágil, dicho de frente.</strong> El gold lee <code>cache_forecast/clusters_producto.csv</code> y <code>clusters_tienda.csv</code>, que hoy se generan a mano a partir de los resultados del notebook 02. Si reejecutás el clustering y cambian los grupos, <em>esos CSV no se regeneran solos</em> y el resto del sistema seguiría usando los viejos. El paso 4 explica cómo cerrar ese hueco.</p>
+  <p><strong>De dónde salen los grupos.</strong> El gold lee <code>cache_forecast/segmentacion_productos.csv</code> y <code>cache_forecast/tienda_mas_parecida.csv</code>, que escribe el propio notebook 02. Si reejecutás el clustering, basta con regenerar el gold (paso 4) para que el resto del sistema use los grupos nuevos.</p>
 </div>
 
 <h2>Primera vez</h2>
@@ -190,7 +190,7 @@ ls -l /opt/homebrew/opt/libomp/lib/libomp.dylib
 python3 -c "import lightgbm, xgboost; print(lightgbm.__version__, xgboost.__version__)"</pre>
     <p>Después de <code>brew install libomp</code> hay que <strong>reiniciar el kernel</strong> del notebook: no hace falta reinstalar LightGBM, el binario ya estaba bien.</p>
 
-    <p><strong>Si no tenés Homebrew</strong>, instalalo primero — y ejecutá las líneas que imprime bajo «Next steps», porque sin ellas <code>brew</code> sigue sin existir como comando:</p>
+    <p><strong>Si no se dispone de Homebrew</strong>, se instala primero y se ejecutan las líneas que imprime bajo «Next steps», porque sin ellas <code>brew</code> sigue sin existir como comando:</p>
 <pre>xcode-select --install
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
@@ -217,7 +217,7 @@ pip install streamlit fastapi "uvicorn[standard]"</pre>
 <div class="paso">
   <div class="paso-cab"><span class="paso-n">02</span><h3 class="paso-t">Verificar los datos de origen</h3><span class="paso-tiempo">10 s</span></div>
   <div class="paso-cuerpo">
-    <p>Los tres CSV tienen que estar descomprimidos en su sitio. Si solo tenés el <code>.zip</code>, descomprimilo primero.</p>
+    <p>Los tres CSV tienen que estar descomprimidos en su sitio. Si solo se dispone del <code>.zip</code>, hay que descomprimirlo primero.</p>
 <pre>ls -la data_dsmarket/data_dsmarket/</pre>
     <div class="espera">daily_calendar_with_events.csv      <b>54 KB</b>
 item_prices.csv                    <b>370 MB</b>
@@ -245,25 +245,19 @@ GOLD — modelo dimensional
 <div class="paso">
   <div class="paso-cab"><span class="paso-n">04</span><h3 class="paso-t">Notebooks 01 y 02 · EDA y clustering</h3><span class="paso-tiempo">~2 min</span></div>
   <div class="paso-cuerpo">
-    <p>Se abren y se ejecutan de arriba abajo. Producen los hallazgos descriptivos y los grupos de productos y tiendas.</p>
+    <p>Se abren y se ejecutan de arriba abajo. Producen los hallazgos descriptivos, los grupos de producto y la tienda más parecida a cada una.</p>
 <pre>jupyter notebook 01_EDA_DSMarket.ipynb
 jupyter notebook 02_Clustering_DSMarket.ipynb</pre>
-    <p><strong>Si cambiás algo del clustering</strong>, hay que regenerar los CSV de grupos que consume el gold. Añadí esta celda al final del notebook 02 y el hueco de reproducibilidad queda cerrado:</p>
-<pre><span class="c"># exporta los grupos para que los consuma el lakehouse</span>
-item_feat[['cluster_k5','cluster_k10']].rename_axis('item') \
-    .to_csv('cache_forecast/clusters_producto.csv')
-store_feat[['store','region','cluster_k3']].rename_axis('store_code') \
-    .to_csv('cache_forecast/clusters_tienda.csv')
-
-<span class="c"># y después, desde la terminal:</span>
-<span class="c"># python3 lakehouse/scripts/pipeline.py gold</span></pre>
+    <p>El notebook 02 deja en <code>cache_forecast/</code> los dos CSV que consume el gold: <code>segmentacion_productos.csv</code> (grupo de cada producto) y <code>tienda_mas_parecida.csv</code>. <strong>Si se cambia algo del clustering</strong>, basta con reejecutarlo y regenerar el gold:</p>
+<pre><span class="c"># desde la terminal:</span>
+python3 lakehouse/scripts/pipeline.py gold</pre>
   </div>
 </div>
 
 <div class="paso">
   <div class="paso-cab"><span class="paso-n">05</span><h3 class="paso-t">Notebook 03 · Forecasting</h3><span class="paso-tiempo">15 s o 20 min</span></div>
   <div class="paso-cuerpo">
-    <p>Este es el que tiene truco. Si la carpeta <code>cache_forecast/</code> está poblada, el notebook <strong>carga los modelos ya entrenados y corre en 15 segundos</strong>. Si la borrás, reentrena todo desde cero: unos 20 minutos.</p>
+    <p>Este es el que tiene truco. Si la carpeta <code>cache_forecast/</code> está poblada, el notebook <strong>carga los modelos ya entrenados y corre en 15 segundos</strong>. Si se borra, reentrena todo desde cero: unos 20 minutos.</p>
 <pre>jupyter notebook 03_Forecasting_DSMarket.ipynb
 
 <span class="c"># para forzar el reentrenamiento completo:</span>
@@ -277,7 +271,7 @@ store_feat[['store','region','cluster_k3']].rename_axis('store_code') \
   <div class="paso-cuerpo">
     <p>Ambos leen del lakehouse y de la caché de predicciones. No entrenan nada: el 04 es simulación vectorizada y el 05 son regresiones con efectos fijos.</p>
 <pre>jupyter notebook 04_Abastecimiento_DSMarket.ipynb   <span class="c"># ~10 s</span>
-jupyter notebook 05_Elasticidad_DSMarket.ipynb     <span class="c"># ~31 s</span></pre>
+jupyter notebook 05_Elasticidad_DSMarket.ipynb     <span class="c"># ~2 min</span></pre>
     <p>El 04 escribe además los dos CSV de entrega: <code>predicciones_28dias.csv</code> y <code>predicciones_28dias_p90.csv</code>.</p>
   </div>
 </div>
@@ -286,7 +280,11 @@ jupyter notebook 05_Elasticidad_DSMarket.ipynb     <span class="c"># ~31 s</span
   <div class="paso-cab"><span class="paso-n">07</span><h3 class="paso-t">Cerrar el círculo: predicciones al almacén</h3><span class="paso-tiempo">~5 s</span></div>
   <div class="paso-cuerpo">
     <p>Vuelca las salidas de los modelos al gold como tablas de hechos. <strong>Sin este paso, la API, el panel y PowerBI no ven las predicciones.</strong></p>
-<pre>python3 lakehouse/scripts/carga_predicciones.py</pre>
+<pre>python3 lakehouse/scripts/carga_predicciones.py
+python3 lakehouse/scripts/carga_clusters.py     <span class="c"># grupos de producto (Tarea 2)</span>
+python3 lakehouse/scripts/carga_precios.py      <span class="c"># marts de la página «Precios»</span>
+python3 lakehouse/scripts/carga_similitud.py    <span class="c"># marts de la página «Parecido de tiendas»</span>
+python3 lakehouse/scripts/exportar_powerbi.py   <span class="c"># gold → gold_csv, siempre el último</span></pre>
     <div class="espera">predicciones de 2016-04-25 a 2016-05-22 para 30.490 series
   fact_predicciones        <b>853.720 filas</b>   5,4 MB
   fact_reposicion          <b>121.960 filas</b>   0,5 MB</div>
@@ -297,7 +295,7 @@ jupyter notebook 05_Elasticidad_DSMarket.ipynb     <span class="c"># ~31 s</span
   <div class="paso-cab"><span class="paso-n">08</span><h3 class="paso-t">API y panel</h3><span class="paso-tiempo">~30 s</span></div>
   <div class="paso-cuerpo">
     <p>Son dos procesos independientes: el panel <em>no</em> necesita que la API esté levantada, porque lee el lakehouse directamente y aplica la misma política.</p>
-<pre><span class="c"># comprobar que la API responde bien (12 pruebas)</span>
+<pre><span class="c"># comprobar que la API responde bien (13 pruebas)</span>
 python3 api/test_api.py
 
 <span class="c"># levantarla · documentación navegable en /docs</span>
@@ -323,14 +321,14 @@ export ANTHROPIC_API_KEY="tu-clave"</pre>
     <tr><td>Una regla de limpieza</td><td><code>pipeline.py silver</code> → <code>pipeline.py gold</code></td><td>35 s</td></tr>
     <tr><td>El clustering</td><td>Exportar los CSV (paso 4) → <code>pipeline.py gold</code></td><td>15 s</td></tr>
     <tr><td>Los modelos</td><td>Notebook 03 sin caché → <code>carga_predicciones.py</code></td><td>20 min</td></tr>
-    <tr><td>Solo el texto de un notebook</td><td><code>python3 build_notebook_0X.py</code></td><td>2 s</td></tr>
-    <tr><td>Nada, querés ver el dashboard</td><td>PowerBI → Actualizar</td><td>10 s</td></tr>
+    <tr><td>Solo el texto de un notebook</td><td>Editar el <code>.ipynb</code> directamente</td><td>—</td></tr>
+    <tr><td>Nada, solo se quiere ver el dashboard</td><td>PowerBI → Actualizar</td><td>10 s</td></tr>
   </tbody>
 </table>
 </div>
 
 <div class="aviso">
-  <p><strong>Los notebooks no se editan a mano.</strong> Los cuatro se generan desde <code>build_notebook_0X.py</code>. Si editás el <code>.ipynb</code> directamente y después alguien regenera, tu cambio se pierde. Editá el script y volvé a correrlo.</p>
+  <p><strong>Los cuadernos son la fuente.</strong> Los cinco <code>.ipynb</code> se editan y se ejecutan directamente; no hay scripts que los generen.</p>
 </div>
 
 <h2>La forma corta: un solo comando</h2>

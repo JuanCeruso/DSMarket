@@ -107,11 +107,11 @@ def _preguntar(sistema: str, usuario: str, max_tokens: int = 500) -> str:
 
 # --------------------------------------------------------------- explicador
 SISTEMA_EXPLICADOR = """Sos analista de reposición en DSMarket, una cadena de supermercados.
-Escribís para el encargado de una tienda: alguien práctico, con poco tiempo, que necesita
+Escribes para el encargado de una tienda: alguien práctico, con poco tiempo, que necesita
 entender por qué el sistema le sugiere pedir esa cantidad y decidir si le hace caso.
 
 Reglas estrictas:
-- NO calcules ni estimes ningún número. Usá exclusivamente las cifras que te paso.
+- NO calcules ni estimes ningún número. Usa exclusivamente las cifras que se facilitan.
 - NO inventes causas que no estén en los datos (clima, competencia, promociones).
 - Máximo 4 frases, en español rioplatense neutro, sin tecnicismos innecesarios.
 - Si la confianza es baja, decilo con claridad: el encargado tiene que saber cuándo dudar.
@@ -124,7 +124,7 @@ def explicar(item: str, tienda: str, serie, resultado: dict, arquetipo: str) -> 
         return explicacion_base(serie, resultado, arquetipo)
     contexto = f"""Producto: {item}   Tienda: {tienda}
 Segmento ABC/XYZ: {serie['celda']}  (A/B/C = peso en facturación; X/Y/Z = predictibilidad)
-Arquetipo de comportamiento: {arquetipo}
+Grupo de producto: {arquetipo}
 Coeficiente de variación de la demanda diaria: {serie['coef_variacion']:.2f}
 Días sin ninguna venta en los últimos 90 días: {serie['frac_dias_sin_venta']:.0%}
 Facturación de los últimos 90 días: {serie['facturacion_90d']:,.0f} USD
@@ -155,8 +155,8 @@ Esquema disponible (todas son vistas ya registradas):
   fact_predicciones(item, store_code, fecha, prediccion_media, prediccion_p90)
   fact_reposicion(fecha_revision, item, store_code, segmento, demanda_esperada,
                   nivel_objetivo, stock_seguridad, nivel_servicio, metodo)
-  dim_producto(item, categoria, departamento, cluster_k5, cluster_k10, arquetipo)
-  dim_tienda(store_code, tienda, ciudad, grupo_comportamiento)
+  dim_producto(item, categoria, departamento, grupo_producto, arquetipo)   -- arquetipo = nombre del grupo de producto
+  dim_tienda(store_code, tienda, ciudad, tienda_mas_parecida)
   dim_serie(item, store_code, unidades_90d, facturacion_90d, media_dia, desvio_dia,
             frac_dias_sin_venta, coef_variacion, clase_abc, clase_xyz)
   dim_calendario(fecha, dia_semana, anio, mes, semana_iso, evento, es_fin_de_semana,
@@ -168,7 +168,7 @@ Reglas:
 - Una sola sentencia SELECT. Nunca INSERT, UPDATE, DELETE, CREATE, DROP, COPY ni ATTACH.
 - Incluí siempre un LIMIT (máximo 200 filas).
 - fact_ventas tiene 58 millones de filas: filtrá por fecha o agregá siempre que puedas, y
-  usá mart_ventas_dia cuando la pregunta sea de nivel ciudad/tienda/departamento.
+  usa mart_ventas_dia cuando la pregunta sea de nivel ciudad/tienda/departamento.
 - Cuidado con el fan-out: fact_ventas es diaria y fact_reposicion semanal. Si hay que
   combinarlas, agregá cada una por separado en CTEs y unilas después.
 - Nombrá las columnas de salida en español."""

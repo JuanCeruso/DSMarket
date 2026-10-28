@@ -1,0 +1,189 @@
+table fact_reposicion
+	lineageTag: 2d4b4a5d-4f7b-4ecb-bcbc-418d8490f167
+
+	column serie_id
+		dataType: string
+		lineageTag: 88ece215-3b39-455c-8118-c5e11930acd0
+		summarizeBy: none
+		sourceColumn: serie_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column item
+		dataType: string
+		lineageTag: 588fe09f-08ec-4cef-b1f9-c6a83b70fa6f
+		summarizeBy: none
+		sourceColumn: item
+
+		annotation SummarizationSetBy = Automatic
+
+	column store_code
+		dataType: string
+		lineageTag: 1cf9ab55-f6d1-4968-9fe7-923f8c9a0e2f
+		summarizeBy: none
+		sourceColumn: store_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column fecha_revision
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 7cd28ea0-7b0b-4434-9f70-52451133ad93
+		summarizeBy: none
+		sourceColumn: fecha_revision
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column cobertura_dias
+		dataType: int64
+		formatString: 0
+		lineageTag: bc6fffe4-ffbc-4694-9929-f1f9fe6f8362
+		summarizeBy: sum
+		sourceColumn: cobertura_dias
+
+		annotation SummarizationSetBy = Automatic
+
+	column segmento
+		dataType: string
+		lineageTag: 46aaf448-11e9-464f-b41d-ac9eba63cc94
+		summarizeBy: none
+		sourceColumn: segmento
+
+		annotation SummarizationSetBy = Automatic
+
+	column demanda_esperada
+		dataType: double
+		lineageTag: d0a06e63-f4a1-4a8d-bd4c-3b7652590ee8
+		summarizeBy: sum
+		sourceColumn: demanda_esperada
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column nivel_objetivo
+		dataType: int64
+		formatString: 0
+		lineageTag: b36ea11a-bf92-4ad4-a0c0-8e42bb07e372
+		summarizeBy: sum
+		sourceColumn: nivel_objetivo
+
+		annotation SummarizationSetBy = Automatic
+
+	column stock_seguridad
+		dataType: int64
+		formatString: 0
+		lineageTag: f66af2e0-dcfe-4a08-b7c5-62884bc7f137
+		summarizeBy: sum
+		sourceColumn: stock_seguridad
+
+		annotation SummarizationSetBy = Automatic
+
+	column nivel_servicio
+		dataType: double
+		lineageTag: 0c2f3bf9-48f7-4137-8477-39fb8b0686ae
+		summarizeBy: sum
+		sourceColumn: nivel_servicio
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column metodo
+		dataType: string
+		lineageTag: 79515cd9-8bdd-42cd-9e2d-bb467d81bdb6
+		summarizeBy: none
+		sourceColumn: metodo
+
+		annotation SummarizationSetBy = Automatic
+
+	column modelo
+		dataType: string
+		lineageTag: 03ece700-cccd-49d8-ac57-5d4161fd489c
+		summarizeBy: none
+		sourceColumn: modelo
+
+		annotation SummarizationSetBy = Automatic
+
+	column version
+		dataType: string
+		lineageTag: 08f836ff-1504-4c32-867f-0929a45a557e
+		summarizeBy: none
+		sourceColumn: version
+
+		annotation SummarizationSetBy = Automatic
+
+	column ventana_completa =
+			fact_reposicion[fecha_revision] + fact_reposicion[cobertura_dias] - 1 <= MAX ( fact_predicciones[fecha] )
+		dataType: boolean
+		lineageTag: b46ed266-c42c-4d42-9417-a0e2ecf00abd
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column tramo_demanda =
+			SWITCH ( TRUE (),
+			    fact_reposicion[demanda_esperada] < 1, "Menos de 1",
+			    fact_reposicion[demanda_esperada] < 3, "De 1 a 3",
+			    fact_reposicion[demanda_esperada] < 10, "De 3 a 10",
+			    fact_reposicion[demanda_esperada] < 30, "De 10 a 30",
+			    "30 o más" )
+		dataType: string
+		lineageTag: ed4b2665-a445-439f-8b08-4e185f794032
+		summarizeBy: none
+		sortByColumn: orden_tramo
+
+		annotation SummarizationSetBy = Automatic
+
+	column orden_tramo =
+			SWITCH ( TRUE (),
+			    fact_reposicion[demanda_esperada] < 1, 1,
+			    fact_reposicion[demanda_esperada] < 3, 2,
+			    fact_reposicion[demanda_esperada] < 10, 3,
+			    fact_reposicion[demanda_esperada] < 30, 4,
+			    5 )
+		dataType: int64
+		formatString: 0
+		lineageTag: e12b9c72-ef35-4ad3-8faf-b40d4207f387
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column revision_txt =
+			FORMAT ( fact_reposicion[fecha_revision], "dd/mm" )
+		dataType: string
+		lineageTag: 0572bb6f-a36c-4f1d-b164-0fce488722c3
+		summarizeBy: none
+		sortByColumn: fecha_revision
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_reposicion = m
+		mode: import
+		source =
+				// ===== fact_reposicion (121,960 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\fact_reposicion.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"serie_id", type text},
+				        {"item", type text},
+				        {"store_code", type text},
+				        {"fecha_revision", type date},
+				        {"cobertura_dias", Int64.Type},
+				        {"segmento", type text},
+				        {"demanda_esperada", type number},
+				        {"nivel_objetivo", Int64.Type},
+				        {"stock_seguridad", Int64.Type},
+				        {"nivel_servicio", type number},
+				        {"metodo", type text},
+				        {"modelo", type text},
+				        {"version", type text}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,196 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "6be485d29516e4edca6b",
+  "position": {
+    "x": 230,
+    "y": 680,
+    "z": 60,
+    "height": 370,
+    "width": 1655,
+    "tabOrder": 60
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_precios_producto"
+                    }
+                  },
+                  "Property": "item"
+                }
+              },
+              "queryRef": "mart_precios_producto.item",
+              "nativeQueryRef": "item",
+              "displayName": "Producto"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_precios_producto"
+                    }
+                  },
+                  "Property": "categoria"
+                }
+              },
+              "queryRef": "mart_precios_producto.categoria",
+              "nativeQueryRef": "categoria",
+              "displayName": "Categoría"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_precios_producto"
+                    }
+                  },
+                  "Property": "precio_min"
+                }
+              },
+              "queryRef": "mart_precios_producto.precio_min",
+              "nativeQueryRef": "precio_min",
+              "displayName": "Precio mínimo"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_precios_producto"
+                    }
+                  },
+                  "Property": "precio_max"
+                }
+              },
+              "queryRef": "mart_precios_producto.precio_max",
+              "nativeQueryRef": "precio_max",
+              "displayName": "Precio máximo"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_precios_producto"
+                    }
+                  },
+                  "Property": "dispersion_pct"
+                }
+              },
+              "queryRef": "mart_precios_producto.dispersion_pct",
+              "nativeQueryRef": "dispersion_pct",
+              "displayName": "Dispersión (%)"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_precios_producto"
+                    }
+                  },
+                  "Property": "tienda_mas_barata"
+                }
+              },
+              "queryRef": "mart_precios_producto.tienda_mas_barata",
+              "nativeQueryRef": "tienda_mas_barata",
+              "displayName": "Tienda más barata"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "mart_precios_producto"
+                    }
+                  },
+                  "Property": "tienda_mas_cara"
+                }
+              },
+              "queryRef": "mart_precios_producto.tienda_mas_cara",
+              "nativeQueryRef": "tienda_mas_cara",
+              "displayName": "Tienda más cara"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "mart_precios_producto"
+                  }
+                },
+                "Property": "dispersion_pct"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Productos con Mayor Dispersión de Precio entre Tiendas'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'center'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

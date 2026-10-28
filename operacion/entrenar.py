@@ -11,8 +11,13 @@ no vuelve a entrenar, carga lo que se entrenó hoy. Y el identificador que devue
 cada predicción, de modo que dentro de tres semanas se puede saber qué modelo produjo un pedido
 concreto.
 
+**Entrenar ya no despliega.** Lo que sale de aquí es un *candidato*: queda registrado con sus
+métricas, su SHA de git y la huella del almacén con el que se entrenó, pero no predice nada
+hasta que `promocion.py` lo compare con el vigente y decida. Esa separación es lo que impide el
+fallo más caro de todos, que es que un modelo peor sustituya en silencio al que funcionaba.
+
     python3 operacion/entrenar.py
-    python3 operacion/entrenar.py --dias 365      # ventana de entrenamiento más larga
+    python3 operacion/entrenar.py --dias 180      # ventana corta (la versión anterior del modelo)
 """
 from __future__ import annotations
 import argparse, os, sys, time
@@ -23,6 +28,7 @@ from comun import (cargar_matrices, construir_matriz, a_float32, FEATURES, CATEG
                    HORIZONTE, mae, rmse)
 from base import OPER
 import modelos as reg
+import procedencia
 import lightgbm as lgb
 
 DIRECTORIO = os.path.join(OPER, "modelos")
@@ -87,18 +93,20 @@ def main(dias_entrenamiento, rondas):
         fecha_corte=cal["fecha"].iloc[-1].date(),
         metricas=metricas,
         notas="4 bloques semanales por objetivo; validación en las últimas 4 semanas")
-    with open(os.path.join(DIRECTORIO, "vigente.txt"), "w") as f:
-        f.write(modelo_id)
 
-    print(f"\nmodelo registrado: {modelo_id}")
+    print(f"\ncandidato registrado: {modelo_id}")
     for k, v in metricas.items():
         print(f"  {k}: {v:.4f}")
+    print(f"  procedencia: {procedencia.sha_git()} · almacén {procedencia.huella_datos()}")
     print(f"pesos guardados en {DIRECTORIO}  ·  total {(time.time()-t0)/60:.1f} min")
+    print("\nTodavía no predice nada. Para que llegue a producción tiene que pasar la puerta:")
+    print("    python3 operacion/promocion.py")
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dias", type=int, default=180, help="ventana de entrenamiento")
+    ap.add_argument("--dias", type=int, default=400,
+                    help="ventana de entrenamiento (400 días: incluye el año anterior completo, Tarea 3 sección 9.2)")
     ap.add_argument("--rondas", type=int, default=800, help="número máximo de árboles")
     a = ap.parse_args()
     main(a.dias, a.rondas)

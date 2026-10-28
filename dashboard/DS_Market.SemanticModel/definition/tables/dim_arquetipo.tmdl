@@ -1,0 +1,157 @@
+table dim_arquetipo
+	lineageTag: 092462c1-e8ae-4b7e-a260-e141c0a8519a
+
+	column grupo
+		dataType: int64
+		lineageTag: 7383053c-cac6-42c6-b407-6c11ee18974a
+		summarizeBy: none
+		sourceColumn: grupo
+
+		annotation SummarizationSetBy = Automatic
+
+	column arquetipo
+		dataType: string
+		lineageTag: 4956a00d-afbe-4871-8812-5fbde9940d68
+		summarizeBy: none
+		sourceColumn: arquetipo
+
+		annotation SummarizationSetBy = Automatic
+
+	column productos
+		dataType: int64
+		formatString: #,0
+		lineageTag: 77392691-f189-43c1-8d80-58ffd3ebe9fb
+		summarizeBy: none
+		sourceColumn: productos
+
+		annotation SummarizationSetBy = Automatic
+
+	column pct_catalogo
+		dataType: double
+		formatString: 0.0
+		lineageTag: a6b1ec04-aedc-4e5f-a53d-8227464c412e
+		summarizeBy: none
+		sourceColumn: pct_catalogo
+
+		annotation SummarizationSetBy = Automatic
+
+	column pct_facturacion
+		dataType: double
+		formatString: 0.0
+		lineageTag: 4be5d10c-2cab-4779-b910-e75df987642c
+		summarizeBy: none
+		sourceColumn: pct_facturacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column unidades_dia
+		dataType: double
+		formatString: 0.0
+		lineageTag: 4f31f20a-85d4-4bdb-8422-006b05548676
+		summarizeBy: none
+		sourceColumn: unidades_dia
+
+		annotation SummarizationSetBy = Automatic
+
+	column pct_dias_sin_venta
+		dataType: double
+		formatString: 0.0
+		lineageTag: dd8e535e-2c6b-4fa4-bdcf-a58f62bace0d
+		summarizeBy: none
+		sourceColumn: pct_dias_sin_venta
+
+		annotation SummarizationSetBy = Automatic
+
+	column fin_semana_vs_semana
+		dataType: double
+		formatString: 0.00
+		lineageTag: 7de50352-36f6-4e7e-81e7-79626f6a535a
+		summarizeBy: none
+		sourceColumn: fin_semana_vs_semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column diciembre_vs_resto
+		dataType: double
+		formatString: 0.00
+		lineageTag: 137126c6-2524-48b5-8404-561de850ed26
+		summarizeBy: none
+		sourceColumn: diciembre_vs_resto
+
+		annotation SummarizationSetBy = Automatic
+
+	column eventos_vs_normal
+		dataType: double
+		formatString: 0.00
+		lineageTag: 9707c271-a8ba-4ad6-84da-e5acb4383803
+		summarizeBy: none
+		sourceColumn: eventos_vs_normal
+
+		annotation SummarizationSetBy = Automatic
+
+	column precio_medio
+		dataType: double
+		formatString: \$#,0.00
+		lineageTag: b702b668-d94c-48e4-8309-16023c4521e7
+		summarizeBy: none
+		sourceColumn: precio_medio
+
+		annotation SummarizationSetBy = Automatic
+
+	column pct_accesorios
+		dataType: double
+		formatString: 0
+		lineageTag: 967fbdb3-86cb-43f1-9b4e-2fa06110a586
+		summarizeBy: none
+		sourceColumn: pct_accesorios
+
+		annotation SummarizationSetBy = Automatic
+
+	column pct_hogar
+		dataType: double
+		formatString: 0
+		lineageTag: e9e1aaaf-0b15-4e0e-862d-8b9dd4e2a849
+		summarizeBy: none
+		sourceColumn: pct_hogar
+
+		annotation SummarizationSetBy = Automatic
+
+	column pct_alimentacion
+		dataType: double
+		formatString: 0
+		lineageTag: 8b3fb1c7-661d-4246-a0af-6ab80c2e8eb8
+		summarizeBy: none
+		sourceColumn: pct_alimentacion
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_arquetipo = m
+		mode: import
+		source =
+				// ===== dim_arquetipo (6 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\dim_arquetipo.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"grupo", Int64.Type},
+				        {"arquetipo", type text},
+				        {"productos", Int64.Type},
+				        {"pct_catalogo", type number},
+				        {"pct_facturacion", type number},
+				        {"unidades_dia", type number},
+				        {"pct_dias_sin_venta", type number},
+				        {"fin_semana_vs_semana", type number},
+				        {"diciembre_vs_resto", type number},
+				        {"eventos_vs_normal", type number},
+				        {"precio_medio", type number},
+				        {"pct_accesorios", type number},
+				        {"pct_hogar", type number},
+				        {"pct_alimentacion", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

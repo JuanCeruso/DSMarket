@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/1.4.0/schema.json",
+  "displayName": "Mostrar filtros · Parecido de tiendas",
+  "name": "1ea1870ba6e50e5de346",
+  "options": {
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "00cd16b9d3698dd88a31",
+    "sections": {
+      "00cd16b9d3698dd88a31": {
+        "visualContainers": {},
+        "visualContainerGroups": {
+          "5cb771359d8d69d66350": {
+            "isHidden": false
+          }
+        }
+      }
+    }
+  }
+}

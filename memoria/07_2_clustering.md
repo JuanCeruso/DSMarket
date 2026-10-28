@@ -1,142 +1,137 @@
 ## 7.2. Cómo se comportan los productos y las tiendas
 
-> «Necesitamos agrupar productos que se comporten de forma parecida, para poder evaluar
-> campañas sobre grupos y no sobre referencias sueltas.»
+> «Necesitamos agrupar productos que se comporten de forma parecida, para poder evaluar campañas
+> sobre grupos y no sobre referencias sueltas.»
 > — Joelle, área de marketing
 
-El capítulo anterior estableció que la demanda no es homogénea. Este construye las agrupaciones
-que capturan esa heterogeneidad, con dos requisitos: que sean estables —que no dependan de qué
-tiendas concretas entran en el cálculo— y que admitan una lectura de negocio.
+El capítulo anterior estableció que la demanda no es homogénea. Este construye una segmentación
+de productos que recoja esa heterogeneidad, con tres requisitos: que el número de grupos se
+justifique con un criterio objetivo, que la partición sea estable y que cada grupo admita una
+lectura de negocio. Responde además a la segunda pregunta del encargo, si tiene sentido agrupar
+también las tiendas.
 
 ### 7.2.1. Qué se agrupa y con qué variables
 
-La segmentación se realiza sobre el **perfil de demanda**, no sobre los atributos del producto.
-Dos referencias de departamentos distintos que se venden igual pertenecen al mismo grupo; dos
-referencias del mismo departamento que se venden de forma distinta, no. Esto es lo que hace la
-segmentación útil para diseñar campañas: agrupa por comportamiento, que es lo que una campaña
-puede mover, y no por catálogo, que ya está en la ficha del producto.
+La segmentación se realiza sobre el **comportamiento de venta**, no sobre los atributos del
+producto. Dos referencias de departamentos distintos que se venden igual pertenecen al mismo
+grupo; dos del mismo departamento que se venden de forma distinta, no. La categoría y el
+departamento se reservan para describir los grupos una vez formados.
 
-El vector que describe cada producto reúne cuatro bloques:
+Se partió de ocho variables candidatas por producto, calculadas sobre la suma de las diez tiendas:
+venta diaria media (en logaritmo), coeficiente de variación diario, proporción de días sin venta,
+elevación en fin de semana, elevación en diciembre, elevación en los días de SuperBowl, Easter y
+Labor Day, tendencia y precio medio. De esos tres días, solo Labor Day es un pico propio en el
+total de la empresa; los otros dos caen en domingo, por lo que esta variable recoge en parte el
+efecto fin de semana (§6.2.3 y limitación 7 de §7.8.3).
 
-- **Perfil semanal**: la distribución de la venta entre los siete días de la semana, normalizada.
-- **Perfil mensual**: la distribución entre los doce meses, normalizada, que captura la
-  estacionalidad.
-- **Elevación en diciembre** (`dec_lift`): el cociente entre la venta media de diciembre y la
-  venta media anual.
-- **Elevación en eventos** (`event_lift`): el mismo cociente para los días con evento relevante.
+**Todas se miden desde la primera venta de cada producto.** El 17,8 % de los días-producto son
+anteriores a esa primera venta: el producto aún no estaba en el catálogo. Contarlos como «días sin
+venta» confundiría un lanzamiento tardío con un producto de compra ocasional. En una primera versión
+del análisis se contaban así, y el efecto era visible: la tendencia y la proporción de días sin
+venta tenían una correlación de 0,81, porque las dos medían sobre todo cuándo había llegado el
+producto. Medidas desde el lanzamiento, esa correlación desaparece (0,10).
 
-Las dos últimas variables se añadieron precisamente para que la segmentación pudiera distinguir
-comportamientos de campaña, que era la finalidad del encargo.
+La revisión de correlaciones obligó a descartar dos variables. El coeficiente de variación y la
+proporción de días sin venta tienen una correlación de **0,89**: un producto que muchos días no
+vende es, por fuerza, un producto que vende a saltos, y con las dos dentro la misma idea pesaría
+doble en la distancia. La tendencia se descartó por otro motivo: describe el ciclo de vida del
+producto, no cuándo y cómo se compra, que es lo que necesita el diseño de campañas; la tendencia ya
+la recoge el modelo de predicción con sus medias móviles. La segmentación final usa **seis
+variables**: venta diaria, proporción de días sin venta, fin de semana, diciembre, eventos y
+precio.
 
-**Limitación reconocida.** Los perfiles semanal y mensual son datos composicionales: sus
-componentes suman uno por construcción, de modo que operar sobre ellos con distancia euclídea
-—como hace *k*-medias— no respeta la geometría del símplex en el que viven. El tratamiento
-riguroso pasaría por una transformación logarítmica de razones antes de agrupar. No se aplicó,
-y se consigna como limitación metodológica; los resultados de estabilidad de §7.2.5 sugieren que
-el efecto práctico sobre esta partición concreta es menor, pero eso es evidencia indirecta y no
-una demostración.
+Las variables se estandarizaron con `StandardScaler`. Se probó también `RobustScaler`, que reduce la
+influencia de los valores extremos en el cálculo de la escala, pero tiene el efecto contrario sobre
+la segmentación: deja los valores extremos aún más alejados y, a partir de ocho grupos, *k*-medias
+los aísla en grupos de un solo producto.
 
 ### 7.2.2. Elección del número de grupos
 
-Se aplicó *k*-medias sobre el vector normalizado, explorando el número de grupos entre 2 y 12 y
-evaluando cada partición con las tres métricas internas descritas en §6.6.2. El coeficiente de
-silueta desciende de forma monótona con el número de grupos, como es habitual, de modo que la
-decisión no puede tomarse solo con él. El criterio combinado —silueta aceptable, mínimo local
-del índice de Davies-Bouldin y máximo relativo del de Calinski-Harabasz— apuntó a **K = 5** como
-partición gruesa.
+El número de grupos se eligió con el **método del codo**: se entrenó *k*-medias con *K* entre 2 y
+14 y se registró la inercia de cada partición. La curva es suave, sin un quiebre visible, como es
+habitual cuando los productos se reparten de forma continua. Para localizar el codo de forma
+objetiva se midió qué puntos de la curva se alejan más de la recta que une sus extremos: la zona
+del codo va de **6 a 8 grupos**, y dentro de ella **K = 6** tiene la mejor silueta (0,167).
 
-Se retuvo además una partición fina de **K = 10** con un propósito distinto y explícito: la
-partición de cinco grupos responde a la pregunta «¿cómo se comporta este producto?», y la de
-diez responde a «¿sobre qué grupo lanzo esta campaña?». No compiten; se usan para cosas
-distintas y ambas se publican en la dimensión de producto del almacén.
+La silueta es más alta con dos, tres o cuatro grupos, pero esas particiones solo separan productos
+de mucha y de poca venta y no distinguen el fin de semana, la Navidad o los eventos, que es lo que
+el encargo necesita. La silueta moderada se explica por la misma razón: los grupos tienen bordes
+difusos porque los productos forman un continuo.
 
-Como comprobación de que la estructura encontrada no es un artefacto del método, la misma
-partición se obtuvo con agrupamiento jerárquico de Ward y con un **modelo de mezclas
-gaussianas**. La concordancia entre las tres, medida con el índice de Rand ajustado, resultó
-alta y sostiene que los grupos describen una estructura presente en los datos y no una
-imposición del algoritmo. El modelo de mezclas aporta además una lectura que *k*-medias no da:
-la pertenencia probabilística permite identificar los productos que quedan a caballo entre dos
-arquetipos, que son precisamente los que una campaña dirigida debería tratar con cuidado.
+La estabilidad se comprobó repitiendo la segmentación con diez semillas aleatorias distintas: el
+índice de Rand ajustado medio respecto a la primera ejecución es **0,98** (mínimo 0,96). La
+partición no depende del punto de partida del algoritmo.
 
-> **[FIGURA 7.5]** *Métricas internas de agrupamiento frente al número de grupos.*
-> `Fuente: Cuaderno 02. Tres paneles: silueta, Davies-Bouldin y Calinski-Harabasz, con K=5 señalado.`
+![**Figura 7.5.** Método del codo: inercia y silueta frente al número de grupos, con la zona del codo y K = 6 señalados. *Fuente: elaboración propia.*](figuras/fig_7_5.png){width=100%}
 
-### 7.2.3. Los cinco arquetipos de producto
+**Respuesta a la pregunta de marketing.** El encargo planteaba 5, 10 o 20 grupos. Con 5, el grupo
+de Navidad se diluye dentro de otro mayor. Con 10, la silueta empeora (0,145) y los grupos grandes
+de supermercado y hogar se parten en subgrupos que solo se diferencian en matices. Con 20, uno de
+los grupos contiene un único producto. Seis grupos es la partición que el método justifica y la
+más manejable para planificar campañas. Trabajar con una única segmentación evita además
+mantener dos clasificaciones del mismo producto que no encajan entre sí.
 
-Los cinco grupos admiten una interpretación directa en términos de comportamiento comercial. Se
-describen aquí por su perfil característico y no por su composición de catálogo, que es
-heterogénea en todos ellos, lo que confirma que la agrupación por comportamiento no reproduce la
-agrupación por departamento.
+### 7.2.3. Los seis grupos de producto
 
-| Arquetipo | Referencias | Rasgo que lo define |
-|---|---|---|
-| **Núcleo estable** | 948 | Perfil semanal plano y estacionalidad apagada. Concentra la mayor parte de la facturación y es el que mejor se predice. |
-| **Fin de semana/hogar** | 859 | Venta concentrada en sábado y domingo. |
-| **Fin de año** | 569 | Elevación marcada en diciembre. |
-| **Cola larga/eventos** | 484 | Demanda esporádica, muchos días sin venta, reacción a fechas señaladas. |
-| **Premium/accesorios** | 189 | El grupo más pequeño, de mayor precio unitario y rotación baja. |
+Cada grupo se resume en una ficha con su tamaño, los valores medios de las variables y dos
+variables que no intervinieron en la segmentación: la composición por categoría y el peso en la
+facturación. Con ellas se asignó a cada grupo un nombre que describe su comportamiento de compra (ritmo de venta, momento de compra o precio), ya que la segmentación se hizo por comportamiento y no por categoría; la categoría predominante se indica solo como contexto en la descripción.
 
-El grupo de **Núcleo estable** es el que sostiene la facturación y el que la previsión acierta con
-holgura; el de **Cola larga/eventos** es el que la política de reposición tratará de forma
-distinta en §7.4. El de **Fin de año** es donde aparece el caso descrito a continuación.
+| Grupo | Productos | % facturación | Rasgo que lo define |
+|---|---|---|---|
+| **Alta rotación diaria** | 679 | 42,4 % | 72 % supermercado, el precio más bajo (2,6 $). Venta muy alta (37 unidades al día entre las diez tiendas) y casi diaria: 5 % de días sin venta. |
+| **Pico de fin de semana** | 882 | 25,4 % | 45 % hogar y jardín. La mayor elevación en fin de semana (+42 %), y también sube en los eventos. |
+| **Rotación baja sin picos** | 745 | 14,7 % | Mixto. Venta baja (6 unidades al día) y sin picos: los que menos reaccionan al fin de semana, a diciembre y a los eventos. |
+| **Precio alto, pocas unidades** | 218 | 11,1 % | 48 % accesorios y 43 % hogar. Precio medio de 17,4 $, más del triple que el resto. |
+| **Venta esporádica con pico en eventos** | 405 | 4,2 % | Mixto. No venden nada en el 39 % de los días en que están a la venta, pero venden un 26 % más en los días de evento. |
+| **Pico de diciembre** | 120 | 2,1 % | Mixto (accesorios, supermercado y hogar: mesa y regalo). Venden casi el doble en diciembre (1,89 veces). |
 
-> **[FIGURA 7.6]** *Perfil semanal y mensual medio de los cinco arquetipos de producto.*
-> `Fuente: Cuaderno 02. Rejilla de cinco filas con dos paneles cada una.`
+Los dos primeros grupos reúnen el 68 % de la facturación. El grupo de venta esporádica con pico en eventos ocupa el 13 % del
+catálogo y aporta el 4 %: es el grupo donde la pregunta pertinente no es solo cuánto reponer sino
+si mantener la referencia.
 
-### 7.2.4. Lo que la partición fina revela y la gruesa disuelve
+![**Figura 7.6.** Proyección PCA de los productos coloreados por grupo, y peso de cada grupo en el catálogo y en la facturación. *Fuente: elaboración propia.*](figuras/fig_7_6.png){width=100%}
 
-Al pasar de cinco a diez grupos aparecen dos micro-segmentos que en la partición gruesa quedaban
-absorbidos y que son exactamente los que interesan para campañas:
+Dentro del grupo «Pico de diciembre» destaca **`SUPERMARKET_3_069`**, con una elevación en diciembre de
+**7,66**, la mayor del catálogo. Sus cuatro mejores días en cinco años son cuatro 31 de diciembre
+consecutivos: se trata, con toda probabilidad, de un artículo de Nochevieja. El caso ilustra un
+límite del enfoque predictivo que se desarrolla en §7.3: un modelo entrenado sobre una ventana de
+180 días nunca ve un 31 de diciembre cuando predice diciembre. Por eso el modelo final se entrena
+con 400 días de historia, de forma que vea al menos un ejemplo de cada fecha señalada.
 
-- Un **segmento navideño**, con una elevación en diciembre de **2,29** veces la media anual.
-- Un **segmento de eventos**, con una elevación en fechas señaladas de **1,99**.
+![**Figura 7.7.** Serie diaria de SUPERMARKET_3_069 con sus mejores días señalados. *Fuente: elaboración propia a partir de `fact_ventas`.*](figuras/fig_7_7.png){width=100%}
 
-Ambos reaparecen en los capítulos siguientes: son los segmentos donde la predicción falla en
-temporada alta (§7.3) y donde la política de reposición necesita un nivel de servicio distinto
-(§7.4).
+### 7.2.4. Las tiendas: comparación directa en lugar de agrupamiento
 
-Dentro del segmento navideño, un producto se separa del resto de forma llamativa:
-**`SUPERMARKET_3_069`**, con una elevación en diciembre de **7,66**. La inspección de sus días
-de máxima venta muestra que los cuatro primeros son cuatro 31 de diciembre consecutivos. Se
-trata, con toda probabilidad, de un artículo de Nochevieja. El caso se destaca porque ilustra
-un límite del enfoque adoptado: un modelo entrenado sobre una ventana de 180 días nunca ve un
-31 de diciembre cuando predice noviembre, y por tanto no puede anticipar ese pico. La solución
-para productos así no es un modelo mejor, es una regla de calendario.
+El encargo preguntaba también si tendría sentido agrupar las tiendas. **Con estos datos, no
+mediante un algoritmo.** Son solo diez tiendas, y describir su perfil de demanda requiere en torno
+a doce variables (volumen, estabilidad, fin de semana, diciembre, nivel de precio y el peso de cada
+departamento). Con más dimensiones que observaciones, las distancias pierden capacidad de
+discriminar —la maldición de la dimensionalidad— y cualquier agrupación resultante depende de qué
+tiendas entren en el cálculo. Diez elementos, además, se comparan mejor directamente.
 
-> **[FIGURA 7.7]** *Serie diaria de SUPERMARKET_3_069 con los cuatro 31 de diciembre señalados.*
-> `Fuente: Cuaderno 02. Es la figura que hace evidente el argumento del párrafo siguiente.`
+Las tiendas se compararon con una tabla de perfil, un mapa de calor de desviaciones respecto a la
+media y una matriz de distancias calculada sobre las variables de perfil (variabilidad, fin de
+semana, diciembre, índice de precio y peso de supermercado y hogar). El volumen se dejó fuera de la
+distancia porque mide el tamaño de la tienda, no su forma de vender.
 
-### 7.2.5. Las tiendas, y un hallazgo que cruza fronteras
+La comparación arroja tres resultados:
 
-La misma metodología aplicada a las diez tiendas —sobre su perfil de demanda por categoría, día
-de la semana y mes— produce **tres grupos de comportamiento**. El resultado interesante es que
-**esos grupos no coinciden con las ciudades**:
+- **Tribeca, en Nueva York, se parece más a las tiendas de Boston que a las de su ciudad.** Sus
+  dos tiendas más parecidas son Back Bay y South End. Comparte con ellas un precio por debajo de la
+  media (−0,39 %, frente a valores de entre −0,55 % y −0,85 % en Boston y de +0,36 % a +0,40 % en el
+  resto de Nueva York), baja variabilidad diaria y un fin de semana moderado.
+- **Las tres tiendas de Boston forman el conjunto más homogéneo**, coherente con lo observado en
+  §7.1 sobre los productos más vendidos.
+- **Harlem y Midtown Village no se parecen a ninguna otra tienda.** Harlem tiene la mayor
+  elevación de fin de semana (+50 %) y el mayor peso de hogar; Midtown Village es la única tienda
+  que vende más en diciembre que el resto del año y, junto con Yorktown, la de venta más irregular.
 
-| Grupo | Tiendas | Ciudades que mezcla |
-|---|---|---|
-| A | Greenwich Village, Brooklyn, Queen Village, Yorktown | Nueva York y Filadelfia |
-| B | Harlem, Midtown Village | Nueva York y Filadelfia |
-| **C** | **South End, Roxbury, Back Bay, Tribeca** | **Boston y Nueva York** |
+La lectura de negocio es que el perfil de una tienda no viene determinado por su ciudad. Para una apertura, la referencia de surtido y de previsión inicial debería ser la tienda existente que se espere más parecida (por tipo de zona y de clientela), no la media de su ciudad.
 
-El grupo C reúne los tres establecimientos de Boston con **Tribeca**, en Nueva York. Ninguno de
-los tres grupos respeta la frontera de ciudad.
+![**Figura 7.8.** Perfil de cada tienda respecto a la media y matriz de parecido entre tiendas. *Fuente: elaboración propia.*](figuras/fig_7_8.png){width=100%}
 
-Un resultado así invita a la sospecha, porque es el tipo de hallazgo que puede deberse a la
-inestabilidad del algoritmo con solo diez observaciones. Se sometió por ello a una validación
-por exclusión sucesiva: se repitió la segmentación diez veces, eliminando cada vez una tienda
-distinta, y se midió con el índice de Jaccard cuánto se conservaba cada grupo. **El grupo que
-reúne a las tiendas de Boston con Tribeca se mantuvo unido en las diez iteraciones**, con
-similitud de Jaccard igual a 1 en todos los casos.
-
-La lectura de negocio es que el perfil de demanda de una tienda lo determina su entorno —el tipo
-de barrio, la clientela, la competencia próxima— más que su ciudad administrativa. Para el
-diseño de campañas eso significa que la unidad de segmentación geográfica no debería ser la
-ciudad.
-
-> **[FIGURA 7.8]** *Grupos de tienda y estabilidad en la validación por exclusión sucesiva.*
-> `Fuente: Cuaderno 02. Proyección de las diez tiendas con el color del grupo, y tabla de Jaccard.`
-
-### 7.2.6. Segmentación operativa ABC/XYZ
+### 7.2.5. Segmentación operativa ABC/XYZ
 
 Además de la segmentación por comportamiento, se construyó la clasificación **ABC/XYZ** que
 utiliza la política de reposición del capítulo §7.4. La dimensión ABC ordena las series por
@@ -144,16 +139,20 @@ facturación acumulada; la dimensión XYZ, por predictibilidad, medida con el co
 variación de la demanda diaria.
 
 La matriz resultante concentra la información de gestión en una sola tabla: la celda **AX**
-—alta facturación, demanda estable— reúne alrededor del **56% de la facturación** de la cadena,
+—alta facturación, demanda estable— reúne alrededor del **56 % de la facturación** de la cadena,
 y es donde la automatización de la reposición rinde más. En el extremo opuesto, la celda **CZ**
-representa cerca del **28% del catálogo** por apenas el **3,5% de la facturación**: series donde
-una regla simple es preferible a un modelo, y donde la pregunta pertinente no es cuánto reponer
-sino si mantener la referencia.
+representa cerca del **28 % del catálogo** por apenas el **3,5 % de la facturación**: series
+erráticas donde, además de cuánto reponer, la pregunta pertinente es si mantener la referencia.
 
-> **[FIGURA 7.9]** *Matriz ABC/XYZ: recuento de series y peso en la facturación.*
-> `Fuente: Cuaderno 02. Dos mapas de calor 3x3 con los valores impresos.`
+Las dos segmentaciones responden a preguntas distintas y se complementan: el grupo de
+comportamiento dice *cómo* se vende un producto (diario, fin de semana, Navidad, eventos), y la
+clase XYZ dice *cuánto se puede fiar* la previsión de cada serie. En los extremos cuentan casi la
+misma historia —el grupo de alta rotación diaria es el único con mayoría de series estables
+(53 % X) y el de venta esporádica es casi todo errático (77 % Z)—, y en el medio se complementan.
 
-### 7.2.7. Una hipótesis que no sobrevivió: la afinidad entre productos
+![**Figura 7.9.** Matriz ABC/XYZ de las series producto-tienda. *Fuente: elaboración propia a partir de `dim_serie`.*](figuras/fig_7_9.png){width=100%}
+
+### 7.2.6. Una hipótesis que no sobrevivió: la afinidad entre productos
 
 La segmentación por comportamiento sugiere una pregunta natural que el encargo no formulaba:
 si hay productos que se comportan igual, ¿los hay que se compran juntos? La respuesta a esa
@@ -172,15 +171,15 @@ mes, un evento, el tráfico de la tienda—. Se aplicó por tanto el mismo proce
 §7.5: residualizar cada serie contra esos factores y medir el co-movimiento sobre lo que queda.
 
 La residualización funcionó: la correlación media entre pares cae de **+0,041 a +0,001**, y la
-proporción de pares con correlación superior a 0,30 pasa del **5,17% al 2,55%**. Buena parte de
+proporción de pares con correlación superior a 0,30 pasa del **5,17 % al 2,55 %**. Buena parte de
 la asociación aparente era, en efecto, calendario.
 
 **La prueba que decide.** Un producto de una tienda y otro de una tienda distinta no pueden
 compartir cesta por construcción, de modo que la distribución de sus correlaciones residuales es
 el nivel de ruido. Sobre 14.280 pares entre establecimientos distintos, el percentil 99 se sitúa
 en **+0,3875**: pares que físicamente no pueden estar relacionados alcanzan correlaciones de
-casi 0,4. De los pares del mismo establecimiento, solo el **1,27%** supera ese umbral, frente al
-1,00% esperable por azar.
+casi 0,4. De los pares del mismo establecimiento, solo el **1,27 %** supera ese umbral, frente al
+1,00 % esperable por azar.
 
 **No hay señal.** El exceso es indistinguible del ruido. Las parejas mejor clasificadas lo
 parecen, pero al desplazar una de las dos series un solo día la correlación apenas cae —nitidez
@@ -190,11 +189,9 @@ La conclusión práctica para DSMarket es concreta: el dato que permitiría resp
 es el **identificador de ticket** en el registro de ventas, y hoy no existe. Es la tercera
 recomendación de incorporación de datos de este trabajo, después de la merma y el inventario.
 
-### 7.2.8. Qué abre el capítulo siguiente
+### 7.2.7. Qué abre el capítulo siguiente
 
-Con productos y tiendas agrupados, y con la clasificación operativa construida, el trabajo
-dispone de la estructura necesaria para modelar. Los grupos entran como variables categóricas en
-los modelos de predicción, y la clasificación ABC/XYZ determinará más adelante qué método de
-reposición se aplica a cada serie.
+Con los productos segmentados y la clasificación operativa construida, el trabajo dispone de la
+estructura necesaria para modelar. El grupo de producto se probó como variable del modelo de predicción y no mejoró la precisión, por lo que se usa para describir el error por tipo de producto; la clase XYZ determina más adelante qué método de reposición se aplica a cada serie.
 
 La pregunta siguiente es la que el encargo formula de forma más directa: cuánto se va a vender.

@@ -3,8 +3,8 @@
 Etapa de reposición.
 
 Convierte las predicciones en niveles objetivo por serie y escribe `fact_reposicion`. Aplica la
-misma política híbrida que la API y el panel: el término de incertidumbre sale del desvío
-histórico en las series de clase X y del modelo cuantílico en las Y y Z.
+misma política híbrida que la API, la app y el notebook 04: percentil empírico del histórico en
+las series de clase X y demanda predicha más stock de seguridad del modelo cuantílico en las Y y Z.
 
 Esta etapa no decide el pedido —para eso hace falta el stock, que el sistema no tiene—: deja
 calculado el nivel objetivo, que es la parte que sí depende de los datos.
@@ -14,16 +14,20 @@ calculado el nivel objetivo, que es la parte que sí depende de los datos.
 from __future__ import annotations
 import argparse, os, time
 import numpy as np, pandas as pd
-from scipy.stats import norm
 from base import GOLD, conectar
 
-NIVEL_POR_CELDA = {"AX": .98, "AY": .95, "AZ": .90, "BX": .95, "BY": .90,
-                   "BZ": .85, "CX": .90, "CY": .85, "CZ": .80}
+# La política vive en politica.py, donde no tiene un almacén alrededor y por tanto se puede
+# probar. Aquí se importa: dos copias de la misma tabla de niveles de servicio acabarían
+# divergiendo, y la que estuviera mal sería siempre la que corre en producción.
+import politica as pol
+from historia import historia_reciente
 
 
 def main(dias_revision, lead_time):
     t0 = time.time()
     cobertura = dias_revision + lead_time
+    if cobertura > 28:
+        raise SystemExit("La cobertura (revisión + plazo) no puede superar los 28 días de predicción.")
     con = conectar()
     cols = [r[0] for r in con.execute("DESCRIBE fact_predicciones").fetchall()]
     modelo_sql = ("any_value(modelo_id) AS modelo_id" if "modelo_id" in cols
@@ -48,21 +52,23 @@ def main(dias_revision, lead_time):
     if df.empty:
         raise SystemExit("No hay predicciones cargadas. Ejecutá antes: python3 operacion/predecir.py")
 
-    df["nivel_servicio"] = df["segmento"].map(NIVEL_POR_CELDA).fillna(0.90)
-    z = norm.ppf(df["nivel_servicio"].to_numpy())
-
-    # sigma del modelo cuantílico: (p90 - media) / z_{0.90}, agregado en cuadratura
-    sigma_modelo = df["sigma_modelo"].to_numpy() / norm.ppf(0.90)
-    sigma_hist = df["desvio_dia"].to_numpy() * np.sqrt(cobertura)
+    df["nivel_servicio"] = df["item"].map(pol.nivel_servicio)
+    niveles = df["nivel_servicio"].to_numpy()
     es_x = (df["clase_xyz"] == "X").to_numpy()
 
-    df["metodo"] = np.where(es_x, "percentil empírico (histórico)", "modelo cuantílico")
-    demanda = np.where(es_x, df["media_dia"].to_numpy() * cobertura, df["demanda"].to_numpy())
-    sigma = np.where(es_x, sigma_hist, sigma_modelo)
+    # percentil empírico de las ventas en ventanas de `cobertura` días (series estables)
+    fila_de, hist = historia_reciente(GOLD, pol.VENTANA_HISTORIA)
+    H = hist[[fila_de[f"{i}|{s}"] for i, s in zip(df["item"], df["store_code"])]]
+    empirico = pol.percentil_empirico(H, cobertura, niveles)
 
-    df["demanda_esperada"] = np.maximum(demanda, 0)
-    df["stock_seguridad"] = np.maximum(z * sigma, 0)
-    df["nivel_objetivo"] = df["demanda_esperada"] + df["stock_seguridad"]
+    # incertidumbre del modelo cuantílico: (p90 - media) / z_0.90, agregada en cuadratura
+    sigma_modelo = df["sigma_modelo"].to_numpy() / pol.norm.ppf(pol.ALFA_CUANTIL)
+    nivel = pol.nivel_hibrido(df["demanda"].to_numpy(), sigma_modelo, niveles, es_x, empirico)
+
+    df["metodo"] = np.where(es_x, "percentil_empirico", "modelo_cuantilico")
+    df["demanda_esperada"] = np.maximum(df["demanda"].to_numpy(), 0)
+    df["nivel_objetivo"] = nivel
+    df["stock_seguridad"] = np.maximum(nivel - df["demanda_esperada"], 0)
     df["fecha_revision"] = df["desde"]
     df["dias_cobertura"] = cobertura
 

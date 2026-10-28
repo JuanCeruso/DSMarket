@@ -271,7 +271,7 @@ hr{border:none;border-top:1px solid var(--linea);margin:56px 0}
 
 <section id="vocabulario">
   <span class="numero">02</span>
-  <h2>Las cinco palabras que tenés que poder explicar</h2>
+  <h2>Las cinco palabras que hay que poder explicar</h2>
 
   <h3>Parquet</h3>
   <p>Un formato de archivo para datos tabulares. La diferencia con el CSV es que <strong>guarda por columnas y no por filas</strong>. Eso permite dos cosas: comprimir muchísimo mejor (los valores de una columna se parecen entre sí, así que se repiten patrones) y leer solo las columnas que la consulta necesita, sin tocar el resto del archivo.</p>
@@ -302,7 +302,7 @@ hr{border:none;border-top:1px solid var(--linea);margin:56px 0}
 
   <div class="capa bronce">
     <h3><span class="etiqueta-capa">Bronze</span> Copia fiel, sin tocar nada</h3>
-    <p>Los tres CSV convertidos a Parquet, sin una sola transformación. Ni tipos, ni nombres, ni filtros. Su única función es la <strong>trazabilidad</strong>: si mañana alguien discute un número, se puede reconstruir todo desde acá y demostrar de dónde salió.</p>
+    <p>Los tres CSV convertidos a Parquet, sin una sola transformación. Ni tipos, ni nombres, ni filtros. Su única función es la <strong>trazabilidad</strong>: si mañana alguien discute un número, se puede reconstruir todo desde aquí y demostrar de dónde salió.</p>
     <p>La regla de oro: <em>bronze nunca se modifica</em>. Si la fuente cambia, se recarga entera.</p>
   </div>
 
@@ -311,14 +311,14 @@ hr{border:none;border-top:1px solid var(--linea);margin:56px 0}
     <p>Acá viven las reglas de negocio que descubrimos en el EDA y en la Tarea 3. Son tres, y conviene que las tengas presentes porque cada una es un hallazgo del proyecto convertido en código:</p>
     <p><strong>El alineado de precios.</strong> El archivo de precios arranca cinco semanas antes que el de ventas. La transformación calcula ese desfase anclando el rango de semanas al final, y deja un control de calidad automático: <em>ventas mayores que cero sin precio debe dar cero</em>. Da cero.</p>
     <p><strong>Los eventos derivados.</strong> Christmas y Labor Day no venían en el calendario original y se calculan por regla de fecha. Black Friday se evaluó y se descartó porque no mostraba ningún patrón.</p>
-    <p><strong>La marca de días de cierre.</strong> Navidad y Thanksgiving llevan una columna <code>es_dia_cierre</code>. Esto resuelve <em>por diseño</em> el error que encontramos en la Tarea 3, cuando el modelo predijo 36.704 unidades para un 25 de diciembre en que la realidad fueron 14: ahora el dato de que la tienda cierra está en el modelo de datos y no depende de que ningún algoritmo lo adivine.</p>
+    <p><strong>La marca de días de cierre.</strong> Navidad lleva una columna <code>es_dia_cierre</code> (Thanksgiving no cierra: vende un 28 % menos que un jueves normal, pero vende). Esto resuelve <em>por diseño</em> el error que encontramos en la Tarea 3, cuando el modelo predijo 36.704 unidades para un 25 de diciembre en que la realidad fueron 14: ahora el dato de que la tienda cierra está en el modelo de datos y no depende de que ningún algoritmo lo adivine.</p>
     <p>También es donde las ventas pasan de 1.913 columnas de día a formato largo: una fila por producto, tienda y día.</p>
   </div>
 
   <div class="capa oro">
     <h3><span class="etiqueta-capa">Gold</span> Modelo dimensional, listo para consumir</h3>
     <p>Las dimensiones, las tablas de hechos y dos <em>marts</em> pre-agregados para el dashboard. Es lo único que tocan PowerBI, la API y el panel.</p>
-    <p>Y acá está la pieza que cierra el círculo: <code>fact_predicciones</code> y <code>fact_reposicion</code>. Las salidas de los modelos <strong>vuelven al almacén como tablas de hechos</strong>, con las mismas claves que las ventas reales. Por eso se puede comparar previsión contra realidad en una sola consulta, y por eso el dashboard, la API y el panel muestran exactamente los mismos números.</p>
+    <p>Y aquí está la pieza que cierra el círculo: <code>fact_predicciones</code> y <code>fact_reposicion</code>. Las salidas de los modelos <strong>vuelven al almacén como tablas de hechos</strong>, con las mismas claves que las ventas reales. Por eso se puede comparar previsión contra realidad en una sola consulta, y por eso el dashboard, la API y el panel muestran exactamente los mismos números.</p>
   </div>
 
   <div class="dato">
@@ -356,7 +356,7 @@ ON COLUMNS('^d_[0-9]+$') INTO NAME d VALUE unidades</code></pre>
   <p>Se descartan las filas sin etiqueta de semana, se calcula el desfase de cinco semanas y se expande el precio semanal a precio diario. Al final corre el control de calidad que verifica que no quede ninguna venta sin precio.</p>
 
   <h3>Paso 5 · Dimensiones del gold</h3>
-  <p>Calendario, producto, tienda y serie. Las dos primeras incorporan los resultados de la Tarea 2: cada producto lleva su arquetipo y cada tienda su grupo de comportamiento. <code>dim_serie</code> calcula la clasificación ABC/XYZ en SQL, con funciones de ventana.</p>
+  <p>Calendario, producto, tienda y serie. Las dos primeras incorporan los resultados de la Tarea 2: cada producto lleva su grupo de producto y cada tienda la tienda a la que más se parece. <code>dim_serie</code> calcula la clasificación ABC/XYZ en SQL, con funciones de ventana.</p>
 
   <h3>Paso 6 · Tabla de hechos y marts</h3>
   <p><code>fact_ventas</code> al grano atómico, valorizada con el precio. Y dos marts pre-agregados para el dashboard, porque PowerBI no necesita 58 millones de filas para mostrarle un gráfico a un director financiero.</p>
@@ -381,7 +381,7 @@ ON COLUMNS('^d_[0-9]+$') INTO NAME d VALUE unidades</code></pre>
         │                     ABC / XYZ
         │                      ▲     ▲
         └──── <b>dim_producto</b> ─┘     └─ <b>dim_tienda</b>
-              arquetipo (T2)        grupo (T2)</div>
+              grupo (T2)            parecida (T2)</div>
   <p><code>dim_serie</code> tiene una columna <code>serie_id</code> que concatena producto y tienda. Existe por una razón muy concreta: <strong>PowerBI no admite relaciones por clave compuesta</strong>, así que hay que darle una clave sustituta única.</p>
 
   <h3>La trampa del fan-out</h3>
@@ -417,7 +417,7 @@ SELECT * FROM ventas JOIN repo USING (item, store_code)</code></pre>
   <p><strong>Riesgo de calendario.</strong> El período de prueba de Fabric son 60 días y vencería justo alrededor de la defensa. Quedarse sin demo el día de la presentación es un riesgo que no vale la pena correr.</p>
   <p><strong>Escala.</strong> 490 MB no justifican una capacidad reservada en la nube. Sería una decisión difícil de defender técnicamente.</p>
   <p><strong>Complejidad de depuración.</strong> Es la plataforma más nueva de Microsoft y cambia rápido. Un problema de permisos o de capacidad puede costar una semana que no teníamos.</p>
-  <p>La alternativa que elegimos —<em>local pero portable</em>— da lo mismo sin el riesgo: mismas capas, mismo modelo, mismo SQL. Y si querés una prueba real en la nube para la defensa, <strong>BigQuery</strong> es más seguro que Fabric: su capa gratuita no expira nunca y PowerBI se conecta de forma nativa.</p>
+  <p>La alternativa que elegimos —<em>local pero portable</em>— da lo mismo sin el riesgo: mismas capas, mismo modelo, mismo SQL. Y para una prueba real en la nube durante la defensa, <strong>BigQuery</strong> es más seguro que Fabric: su capa gratuita no expira nunca y PowerBI se conecta de forma nativa.</p>
 
   <h3>Por qué tres capas y no una</h3>
   <p>Porque separan tres responsabilidades distintas. Si mañana cambia una regla de limpieza, se toca silver y se reconstruye gold, sin volver a las fuentes. Si aparece una fuente nueva, entra por bronze sin tocar lo demás. Y si el dashboard necesita otra agregación, se añade un mart en gold sin recalcular nada. Con una sola capa, cualquier cambio obliga a rehacerlo todo.</p>
@@ -460,7 +460,7 @@ SELECT * FROM ventas JOIN repo USING (item, store_code)</code></pre>
 
 <section id="correrlo">
   <span class="numero">08</span>
-  <h2>Cómo lo corrés vos</h2>
+  <h2>Cómo se ejecuta</h2>
   <p>Desde la carpeta <code>PROYECTO</code>:</p>
 <pre><code>pip install duckdb
 

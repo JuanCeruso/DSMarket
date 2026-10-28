@@ -1,0 +1,118 @@
+table mart_producto_perfil
+	lineageTag: 00c1fcef-8e10-4479-905c-8b93497d757f
+
+	column item
+		dataType: string
+		lineageTag: 175a76b4-0dea-4636-b5d1-37de21060f55
+		summarizeBy: none
+		sourceColumn: item
+
+		annotation SummarizationSetBy = Automatic
+
+	column unidades_total
+		dataType: double
+		formatString: #,0
+		lineageTag: e4ce9e34-5491-4e33-8c62-54e6a56744ac
+		summarizeBy: none
+		sourceColumn: unidades_total
+
+		annotation SummarizationSetBy = Automatic
+
+	column dias_activo
+		dataType: int64
+		formatString: #,0
+		lineageTag: 6b264d13-d3a3-4103-9ee9-0eee730a732b
+		summarizeBy: none
+		sourceColumn: dias_activo
+
+		annotation SummarizationSetBy = Automatic
+
+	column unidades_dia
+		dataType: double
+		formatString: 0.0
+		lineageTag: 96f4fbe9-b09a-4171-94c3-360143da2326
+		summarizeBy: none
+		sourceColumn: unidades_dia
+
+		annotation SummarizationSetBy = Automatic
+
+	column pct_dias_sin_venta
+		dataType: double
+		formatString: 0.0
+		lineageTag: c61a277e-3992-432c-8964-2dbca9aa690a
+		summarizeBy: none
+		sourceColumn: pct_dias_sin_venta
+
+		annotation SummarizationSetBy = Automatic
+
+	column fin_semana_vs_semana
+		dataType: double
+		formatString: 0.00
+		lineageTag: 49f79e39-7b41-46e2-b872-77fc1dcd3a00
+		summarizeBy: none
+		sourceColumn: fin_semana_vs_semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column diciembre_vs_resto
+		dataType: double
+		formatString: 0.00
+		lineageTag: 0ad6a50b-b6c6-4fb0-9fa8-2d3630111eae
+		summarizeBy: none
+		sourceColumn: diciembre_vs_resto
+
+		annotation SummarizationSetBy = Automatic
+
+	column eventos_vs_normal
+		dataType: double
+		formatString: 0.00
+		lineageTag: aa7e9adb-5dee-4271-a731-9c4736657535
+		summarizeBy: none
+		sourceColumn: eventos_vs_normal
+
+		annotation SummarizationSetBy = Automatic
+
+	column precio_medio
+		dataType: double
+		formatString: \$#,0.00
+		lineageTag: 68fe92ef-27b9-4ccd-aaf0-3c856cf7d1b6
+		summarizeBy: none
+		sourceColumn: precio_medio
+
+		annotation SummarizationSetBy = Automatic
+
+	column facturacion
+		dataType: double
+		formatString: \$#,0
+		lineageTag: 946d73fc-511b-4a1b-8d5b-4185837ef17d
+		summarizeBy: none
+		sourceColumn: facturacion
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mart_producto_perfil = m
+		mode: import
+		source =
+				// ===== mart_producto_perfil (3,049 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\mart_producto_perfil.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"item", type text},
+				        {"unidades_total", type number},
+				        {"dias_activo", Int64.Type},
+				        {"unidades_dia", type number},
+				        {"pct_dias_sin_venta", type number},
+				        {"fin_semana_vs_semana", type number},
+				        {"diciembre_vs_resto", type number},
+				        {"eventos_vs_normal", type number},
+				        {"precio_medio", type number},
+				        {"facturacion", type number}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

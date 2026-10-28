@@ -14,11 +14,16 @@ streamlit run app/inicio.py
 Se abre en http://localhost:8501. No necesita que la API esté corriendo: el panel lee el
 lakehouse directamente y aplica exactamente la misma política.
 
-## Las cinco pestañas
+## Estilo
+
+La app comparte identidad visual con el dashboard de Power BI (paleta, logotipo, tipografía). El tema está en `.streamlit/config.toml` y el CSS y los colores de los gráficos en `app/estilo.py`.
+
+## Las seis pestañas
 
 | Pestaña | Qué hace |
 |---|---|
-| **Reposición** | La herramienta principal: elegís tienda y producto, ves el histórico y la previsión con la banda del percentil 90, ponés el stock actual y te dice cuánto pedir y por qué |
+| **Hoy en la tienda** | Lista de trabajo del día: referencias a pedir ordenadas por lo que cuesta no pedirlas, con la columna «pedido final» editable y confirmación de las decisiones |
+| **Reposición** | La herramienta principal: se elige tienda y producto, se consulta el histórico y la previsión con la banda del percentil 90, se introduce el stock actual y se obtiene cuánto pedir y por qué |
 | **Explorador del catálogo** | La matriz ABC/XYZ del catálogo y los mayores pedidos sugeridos de la tienda seleccionada |
 | **Curva de servicio** | El resultado de la Tarea 4: cuánto cuesta cada punto de nivel de servicio, con un control para mover la merma y ver cómo se desplaza el óptimo |
 | **Preguntar** | Consultas en lenguaje natural traducidas a SQL sobre el almacén |
@@ -31,7 +36,7 @@ Es opcional: **el panel funciona completo sin ella**. Si existe la variable de e
 
 ```bash
 pip install anthropic
-export ANTHROPIC_API_KEY="tu-clave"
+export ANTHROPIC_API_KEY="su-clave"
 streamlit run app/inicio.py
 ```
 

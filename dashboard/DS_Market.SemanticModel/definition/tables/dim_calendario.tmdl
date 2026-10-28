@@ -1,0 +1,169 @@
+table dim_calendario
+	lineageTag: b5ad452a-da33-4d05-8bbb-a364dc4da5fb
+	dataCategory: Time
+
+	column fecha
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: 3d131dcf-eb86-4016-870b-d08f2c994f46
+		summarizeBy: none
+		sourceColumn: fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column dia_id
+		dataType: string
+		lineageTag: c5a7d99e-4a48-4c87-881e-9c9f33d53682
+		summarizeBy: none
+		sourceColumn: dia_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column dia_semana
+		dataType: string
+		lineageTag: f7a0347e-fd88-4e4f-89a2-02d2242cf338
+		summarizeBy: none
+		sourceColumn: dia_semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column weekday_int
+		dataType: int64
+		formatString: 0
+		lineageTag: e487e713-4e98-4cfd-94ad-301793ccd8fd
+		summarizeBy: none
+		sourceColumn: weekday_int
+
+		annotation SummarizationSetBy = Automatic
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 78770d44-371c-4d7f-b316-d02ee1da080b
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column mes
+		dataType: int64
+		formatString: 0
+		lineageTag: 2029248c-8fb6-4d5c-b689-1b55b2099d68
+		summarizeBy: none
+		sourceColumn: mes
+
+		annotation SummarizationSetBy = Automatic
+
+	column semana_iso
+		dataType: int64
+		formatString: 0
+		lineageTag: 49c5794f-88d4-472f-9614-85985db92331
+		summarizeBy: none
+		sourceColumn: semana_iso
+
+		annotation SummarizationSetBy = Automatic
+
+	column evento
+		dataType: string
+		lineageTag: c6ce3cf2-a53d-4a66-aa38-1a44a9558615
+		summarizeBy: none
+		sourceColumn: evento
+
+		annotation SummarizationSetBy = Automatic
+
+	column es_fin_de_semana
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 9b3ffcba-30d1-4c7b-8cb1-efe3b3e9e3c0
+		summarizeBy: none
+		sourceColumn: es_fin_de_semana
+
+		annotation SummarizationSetBy = Automatic
+
+	column es_dia_cierre
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 1abf80e8-23c2-4497-84d4-764b8ef2863e
+		summarizeBy: none
+		sourceColumn: es_dia_cierre
+
+		annotation SummarizationSetBy = Automatic
+
+	column es_temporada_alta
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 46178ca6-8e64-4ca4-a2cb-fd70afc6668a
+		summarizeBy: none
+		sourceColumn: es_temporada_alta
+
+		annotation SummarizationSetBy = Automatic
+
+	column es_futuro
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 301f3705-fa18-43f0-a85f-917be31864a5
+		summarizeBy: none
+		sourceColumn: es_futuro
+
+		annotation SummarizationSetBy = Automatic
+
+	column dia_corto =
+			SWITCH ( dim_calendario[dia_semana], "Monday", "Lun", "Tuesday", "Mar", "Wednesday", "Mié", "Thursday", "Jue", "Friday", "Vie", "Saturday", "Sáb", "Sunday", "Dom" )
+		dataType: string
+		lineageTag: 1005d42a-e903-431b-932a-652e24377826
+		summarizeBy: none
+		sortByColumn: orden_dia
+
+		annotation SummarizationSetBy = Automatic
+
+	column orden_dia =
+			SWITCH ( dim_calendario[dia_semana], "Monday", 1, "Tuesday", 2, "Wednesday", 3, "Thursday", 4, "Friday", 5, "Saturday", 6, "Sunday", 7 )
+		dataType: int64
+		formatString: 0
+		lineageTag: cc6088f3-b9e4-49d8-9f54-ce9733a62dd9
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column en_ventana_prevision =
+			// últimas 5 semanas con ventas y las 4 semanas previstas
+			VAR fin = MAX ( mart_ventas_dia[fecha] )
+			RETURN dim_calendario[fecha] >= fin - 34
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 33eb29c1-3b7a-415c-aa32-60b67de410df
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_calendario = m
+		mode: import
+		source =
+				// ===== dim_calendario (1,941 filas)
+				let
+				    Origen = Csv.Document(File.Contents(RutaGold & "\dim_calendario.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Encabezados = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    Tipos = Table.TransformColumnTypes(Encabezados, {
+				        {"fecha", type date},
+				        {"dia_id", type text},
+				        {"dia_semana", type text},
+				        {"weekday_int", Int64.Type},
+				        {"anio", Int64.Type},
+				        {"mes", Int64.Type},
+				        {"semana_iso", Int64.Type},
+				        {"evento", type text},
+				        {"es_fin_de_semana", type logical},
+				        {"es_dia_cierre", type logical},
+				        {"es_temporada_alta", type logical},
+				        {"es_futuro", type logical}
+				    }, "en-US")
+				in
+				    Tipos
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

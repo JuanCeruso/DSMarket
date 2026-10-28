@@ -16,6 +16,11 @@ algo falla y deja escrito qué pasó.
 Las etapas se detienen ante el primer fallo **bloqueante**. Los contratos de datos corren dos
 veces a propósito: después de construir el almacén y antes de publicar las predicciones. La
 segunda pasada es la que impide que un modelo roto llegue a la API.
+
+Entre entrenar y predecir hay una **puerta de promoción**. El modelo recién entrenado no pasa a
+producción por el hecho de haberse entrenado: tiene que mejorar —o al menos no empeorar— al que
+ya estaba. Si no lo consigue, la etapa no falla: el pipeline continúa y predice con el modelo
+vigente de siempre. Es el único punto del sistema donde «no hacer nada» es el resultado correcto.
 """
 from __future__ import annotations
 import argparse, os, subprocess, sys, time
@@ -36,6 +41,7 @@ ETAPAS = [
     ("oro",        "Modelo dimensional y agregados de consumo",         _pipeline("gold"),   True),
     ("contratos",  "Contratos de datos sobre el almacén construido",    "contratos",         True),
     ("entrenar",   "Entrenamiento de los modelos media y p90",          "entrenar",          True),
+    ("promocion",  "Puerta: ¿el candidato desbanca al vigente?",         "promocion",         True),
     ("predecir",   "Predicción a 28 días y carga en fact_predicciones", "predecir",          True),
     ("reposicion", "Cálculo de niveles objetivo por serie",             "reposicion",        True),
     ("contratos2", "Contratos otra vez, antes de publicar",             "contratos",         True),
@@ -57,6 +63,13 @@ def _ejecutar_interno(nombre, ejecucion_id) -> tuple[bool, str]:
     if nombre == "monitor":
         from monitor import main as monitorizar
         return monitorizar(1.20, 0.15, 0.20), ""
+    if nombre == "promocion":
+        # La puerta devuelve verdadero también cuando rechaza al candidato, siempre que haya un
+        # vigente al que seguir: rechazar no es fallar, es hacer su trabajo. Solo detiene el
+        # pipeline cuando no hay modelo alguno con el que predecir.
+        from promocion import main as puerta
+        from promocion import MARGEN_MAE
+        return puerta(MARGEN_MAE, False, False, "lightgbm_bloques"), ""
     if nombre in ("entrenar", "predecir", "reposicion"):
         guion = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"{nombre}.py")
         if not os.path.exists(guion):

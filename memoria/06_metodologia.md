@@ -16,7 +16,7 @@ atributos de la referencia (identificador, departamento, categoría) y de la tie
 por 10 tiendas: el panel está completo, todas las referencias existen en todas las tiendas.
 
 **`item_prices.csv`** recoge el precio de venta con granularidad semanal por producto y tienda,
-identificando la semana mediante un código `wm_yr_wk`. Es, con 370 MB, el fichero más grande
+identificando la semana mediante un código propio, `yearweek`. Es, con 370 MB, el fichero más grande
 del conjunto pese a ser el de menor cardinalidad conceptual.
 
 **`daily_calendar_with_events.csv`** hace de tabla puente entre ambos: asocia cada día `d_n` con
@@ -39,15 +39,9 @@ decisión de reposición, que es el destino final del análisis.
 ### 6.2.1. El desfase entre precios y ventas
 
 La comprobación de integridad más relevante del trabajo surgió al cruzar los dos ficheros
-principales. El histórico de precios **comienza cinco semanas antes que el de ventas**. Una
-lectura ingenua del cruce interpretaría esas semanas como períodos con precio y sin demanda, es
-decir, como ceros de venta, e introduciría un sesgo a la baja en todas las medias y en todos los
-modelos entrenados sobre ellas.
+principales. El fichero de precios tiene 279 semanas etiquetadas y el calendario de ventas cubre 274, de modo que hay que decidir de qué lado sobran cinco. Alinearlo mal desplazaría cinco semanas todas las variables de precio, un error que no se detecta mirando métricas.
 
-La hipótesis se contrastó de forma directa: se contaron las unidades vendidas en las
-combinaciones producto-tienda-semana **sin** precio registrado y en las que **sí** lo tenían. El
-resultado fue **0 unidades frente a 164.349**. La ausencia de precio no señala una semana sin
-ventas: señala una semana anterior al inicio del registro de ventas. La regla que se derivó —el
+La hipótesis se contrastó de forma directa: un producto no puede venderse en una tienda antes de tener precio en ella, así que se contaron las unidades que quedarían vendidas en días sin precio con cada alineación. Si precios y ventas empezaran a la vez, quedarían 164.349 unidades sin precio, repartidas en 13.731 series; si los precios empiezan cinco semanas antes, no queda ninguna. El histórico de precios comienza, por tanto, cinco semanas antes que el de ventas. La regla que se derivó —el
 histórico de una serie empieza el día de su primer precio, no antes— quedó codificada en la
 capa intermedia del almacén y se acompaña de una comprobación automática que vuelve a
 ejecutarse en cada reconstrucción.
@@ -73,18 +67,29 @@ de reposición aplica métodos distintos según la clase.
 
 ### 6.2.3. Eventos del calendario
 
-El fichero de calendario etiqueta días con eventos de cuatro tipos (deportivos, culturales,
-nacionales y religiosos). Para cada evento se calculó un coeficiente de elevación —el cociente
-entre la venta media de los días con ese evento y la venta media general, controlando por día de
-la semana— y se retuvieron únicamente aquellos con efecto consistente y de magnitud apreciable.
+El fichero de calendario marca cinco eventos (SuperBowl, Ramadan starts, Thanksgiving, NewYear y Easter), a los que se añadieron por regla de fecha Christmas, Labor Day y, como candidato, Black Friday. Para cada evento se compararon sus ventas con las del mismo día de la
+semana de las dos semanas anteriores y las dos posteriores, y se retuvieron únicamente aquellos
+con efecto consistente y de magnitud apreciable.
 
-Tres eventos superaron el criterio con elevaciones de entre el 15% y el 22%: **Labor Day**,
-**SuperBowl** y **Easter**. Un cuarto candidato, incorporado inicialmente por expectativa
-comercial más que por evidencia, fue **Black Friday**; el examen del histórico no mostró pico
-alguno atribuible a esa fecha y se retiró del conjunto de eventos relevantes. La decisión se
-documenta en §7.1 porque ilustra un criterio que el trabajo aplica de forma general: un hallazgo
-que resulta atractivo para la narrativa comercial pero que el dato no sostiene no entra en el
-informe.
+Solo **Labor Day** superó el criterio: vende un **28 % más** que un lunes normal, en los cinco años
+(entre +22 % y +39 %). **SuperBowl** y **Easter** parecían subir entre un 15 % y un 22 % cuando se
+comparaban con la media de todos los días, pero caen siempre en domingo, que ya vende un 20 % más
+que un día medio. Frente a un domingo normal, SuperBowl vende lo mismo y Easter un 12 % menos: la
+subida era del domingo, no del evento. Un cuarto candidato, incorporado inicialmente por expectativa
+comercial más que por evidencia, fue **Black Friday**. El examen del histórico no solo no mostró
+un pico: en los cinco años, Black Friday vende un **24 % menos** que los viernes de alrededor
+(entre −17 % y −29 % según el año). Thanksgiving, la víspera, también vende menos (−28 %), pero
+no es día de cierre, así que estos datos no permiten explicar la caída. Se
+retiró del conjunto de eventos de pico. La decisión ilustra un criterio que el trabajo aplica de
+forma general: un hallazgo que resulta atractivo para la narrativa comercial pero que el dato no
+sostiene no entra en el informe.
+
+Siguiendo la recomendación de la tutoría, los eventos se examinaron también **a nivel semanal**:
+ventas de la semana del evento y de las semanas vecinas frente a las cuatro semanas previas. El
+resultado justifica el cambio de perspectiva: las dos semanas anteriores a Navidad venden un
+4-5 % más, mientras que la semana del día 25 cae un 12 % por el cierre; mirar solo el día exacto
+pierde el efecto real. Por eso el modelo de predicción incorpora variables de evento semanal
+(§6.4.1).
 
 ### 6.2.4. Demanda censurada
 
@@ -107,7 +112,7 @@ Las consecuencias recorren todo el trabajo y conviene enunciarlas juntas:
   adicional a la de endogeneidad ya documentada.
 
 Sin datos de inventario el problema **no es corregible**: no existe información que permita
-determinar qué ceros correspondieron a rotura. Sí es acotable, y así se trata en §7.4.8: un cero
+determinar qué ceros correspondieron a rotura. Sí es acotable, y así se trata en §7.4.7: un cero
 observado en una serie cuya intensidad esperada hace ese cero improbable es incompatible con
 demanda nula, y el conjunto de esos días permite construir cotas para la demanda no observada.
 
@@ -150,8 +155,7 @@ donde se ejecutan las comprobaciones automáticas de integridad.
 91,0 MB —más que plata, porque incorpora tablas derivadas y agregados— y es la única capa que
 leen los consumidores.
 
-> **[FIGURA 6.1]** *Arquitectura del almacén en tres capas.*
-> `Fuente: Diagrama de elaboración propia. Vectorial o 200 ppp.`
+![**Figura 6.1.** Arquitectura del almacén en tres capas. *Fuente: elaboración propia.*](figuras/fig_6_1.png){width=100%}
 
 El despliegue del formato ancho a formato largo, que es la operación más pesada del proceso,
 se resuelve con una sola sentencia `UNPIVOT` sobre las 1.913 columnas diarias: **58.327.370
@@ -166,7 +170,7 @@ La capa oro adopta un **esquema en estrella** con cuatro dimensiones y tres tabl
 |---|---|---|---|
 | `dim_calendario` | dimensión | 1.941 | Fecha, día de la semana, evento, banderas de cierre y temporada |
 | `dim_producto` | dimensión | 3.049 | Categoría, departamento y los grupos de §7.2 |
-| `dim_tienda` | dimensión | 10 | Nombre, ciudad y grupo de comportamiento |
+| `dim_tienda` | dimensión | 10 | Nombre y ciudad |
 | `dim_serie` | dimensión | 30.490 | Estadísticos de la serie y clases ABC/XYZ |
 | `fact_ventas` | hecho | 58.327.370 | Unidades, precio e importe por día |
 | `fact_predicciones` | hecho | 853.720 | Previsión media y percentil 90 a 28 días |
@@ -182,8 +186,7 @@ Se añaden dos tablas agregadas de consumo directo, `mart_ventas_dia` (133.910 f
 `mart_producto_tienda` (30.490 filas), destinadas al cuadro de mando y a las consultas de nivel
 ciudad o departamento, que no necesitan bajar al grano diario.
 
-> **[FIGURA 6.2]** *Modelo dimensional de la capa de consumo (esquema en estrella).*
-> `Fuente: Diagrama de elaboración propia con las cuatro dimensiones y las tres tablas de hechos.`
+![**Figura 6.2.** Modelo dimensional de la capa de consumo (esquema en estrella). *Fuente: elaboración propia.*](figuras/fig_6_2.png){width=100%}
 
 ### 6.3.3. Motor y decisiones de implementación
 
@@ -214,17 +217,18 @@ cuadro de mando como patrón obligatorio.
 
 ### 6.4.1. Variables construidas
 
-El conjunto de variables predictoras se organiza en cuatro bloques:
+El conjunto de variables predictoras se organiza en seis bloques:
 
 - **Retardos.** Valores de la serie en días anteriores, con el retardo mínimo condicionado por
   el horizonte de predicción (§6.4.2).
-- **Medias móviles.** Promedios de la serie sobre ventanas de 7, 28, 91 y 364 días. La ventana
-  anual proporciona la referencia estacional sin necesidad de ampliar el período de
-  entrenamiento.
-- **Calendario.** Día de la semana, mes, semana del año, bandera de fin de semana, evento y
-  banderas derivadas de cierre y temporada alta.
-- **Precio y segmento.** Precio de la semana, variación relativa respecto de la semana anterior,
-  categoría, departamento, tienda, ciudad y los grupos de comportamiento obtenidos en §7.2.
+- **Medias móviles.** Promedios de la serie sobre ventanas de 7, 28, 91 y 364 días.
+- **Dispersión.** Desviación típica y proporción de días sin venta de los últimos 28 días.
+- **Calendario.** Día de la semana, mes, día del mes, semana del año, bandera de fin de semana y evento del día.
+- **Eventos a nivel semanal.** Si la semana (de sábado a viernes, como el calendario original)
+  contiene un evento, cuál, cuántos días faltan para el próximo evento y cuántos han pasado desde
+  el último. Se conocen de antemano por el calendario, de modo que no introducen información
+  futura.
+- **Precio y segmento.** Precio de la semana, precio relativo a la media del producto, variación respecto de cuatro semanas antes, categoría, departamento, tienda y ciudad. El grupo de producto obtenido en §7.2 se probó también como variable y se retiró, porque no mejoraba la predicción (cuaderno 03b).
 
 ### 6.4.2. La restricción de retardo mínimo
 
@@ -274,50 +278,67 @@ pliegues informa sobre la estabilidad del modelo. En este trabajo esa dispersió
 relevante en un caso concreto —el sesgo de la predicción, que no se mantuvo constante entre
 pliegues— y condicionó la decisión de calibrar únicamente con la ventana más reciente (§7.3).
 
-> **[FIGURA 6.3]** *Esquema de la validación temporal por avance.*
-> `Fuente: Diagrama de elaboración propia: tres ventanas de entrenamiento y sus horizontes de 28 días.`
+![**Figura 6.3.** Esquema de la validación temporal por avance. *Fuente: elaboración propia.*](figuras/fig_6_3.png){width=100%}
 
 ### 6.5.2. Ventana de entrenamiento
 
-Se emplean ventanas de 180 días. La decisión se apoya en la existencia de la variable de media
-móvil anual, que aporta la referencia estacional sin necesidad de que el modelo vea físicamente
-el año completo, y en la evidencia de que ampliar la ventana multiplica el coste de cómputo sin
-mejora medible.
+La comparación de modelos de §7.3 se hizo con ventanas de 180 días, con el argumento de que la
+media móvil anual ya aporta la referencia estacional. Ese argumento resultó insuficiente: con 180
+días, el modelo que predice diciembre no ha visto ninguna Navidad, y la media anual no basta para
+que aprenda el cierre del día 25 ni la subida de las semanas previas. Se repitió la validación
+con **400 días**, que incluyen el año anterior completo: el error mejora un 5,3 % en diciembre y
+un 3,2 % en noviembre sin empeorar el resto del año. El **modelo final se entrena con 400 días**;
+el coste es un tiempo de entrenamiento algo más del doble.
 
 ### 6.5.3. Validación de la segmentación
 
-Las particiones de productos y tiendas se validaron con tres procedimientos complementarios.
-Las **métricas internas** —coeficiente de silueta, índice de Davies-Bouldin e índice de
-Calinski-Harabasz— guiaron la elección del número de grupos. La **concordancia entre métodos**
-se midió con el índice de Rand ajustado, comparando la partición obtenida por *k*-medias con la
-del método jerárquico de Ward y con la de un modelo de mezclas gaussianas. Por último, la
-**estabilidad** se evaluó con un procedimiento de exclusión sucesiva: se repitió la
-segmentación de tiendas eliminando una tienda cada vez y se midió con el índice de Jaccard
-cuánto se conservaban los grupos.
+La segmentación de productos se validó en tres pasos. Las **variables** se revisaron con su
+matriz de correlación, para descartar las que repetían información. El **número de grupos** se
+eligió con el método del codo —*k*-medias con *K* de 2 a 14— y el coeficiente de silueta. La
+**estabilidad** se comprobó repitiendo la segmentación con diez semillas aleatorias y midiendo
+con el índice de Rand ajustado la coincidencia con la primera ejecución.
+
+Las tiendas no se segmentaron con un algoritmo: con diez tiendas y unas doce variables de
+perfil, se compararon directamente mediante una tabla de perfil y una matriz de distancias
+(§7.2.4).
 
 ## 6.6. Métricas
 
 ### 6.6.1. Error de predicción
 
-Se emplean cuatro métricas, cada una para un propósito distinto.
+Se emplean varias métricas, cada una para un propósito distinto.
 
 **MAE y RMSE** describen el error en unidades de la variable. Son interpretables pero no
 agregables entre series de escalas muy distintas: el error de una referencia que vende
 doscientas unidades diarias domina cualquier promedio en el que participe una que vende dos.
 
 **RMSSE** (*root mean squared scaled error*) resuelve ese problema escalando el error cuadrático
-medio por el error que cometería una predicción ingenua estacional sobre el propio período de
-entrenamiento:
+medio por el error que cometería, dentro del propio período de entrenamiento, la predicción
+ingenua de un paso: predecir cada día con el valor del día anterior.
 
 $$\text{RMSSE} = \sqrt{\dfrac{\frac{1}{h}\sum_{t=n+1}^{n+h}(y_t-\hat{y}_t)^2}{\frac{1}{n-1}\sum_{t=2}^{n}(y_t-y_{t-1})^2}}$$
 
-El denominador convierte la métrica en adimensional, de modo que un valor inferior a 1 indica
-que el modelo supera a la referencia ingenua y uno superior, que no la supera. Es la métrica
-que permite promediar entre las 30.490 series.
+El denominador convierte la métrica en adimensional y permite promediar entre las 30.490 series.
+Conviene leerlo con cuidado: la referencia predice *un día* vista con el dato de ayer, un
+problema más fácil que predecir a 28 días, de modo que un RMSSE ligeramente superior a 1 no
+significa que el modelo sea peor que una regla ingenua aplicada al mismo horizonte. Lo que
+importa es la comparación entre modelos y referencias con la misma métrica.
 
 **WRMSSE** pondera el RMSSE de cada serie por su participación en la facturación. Es la métrica
 principal del trabajo, porque una mejora del error en una referencia que factura mil dólares
 diarios y otra en una que factura dos no tienen el mismo valor para la compañía.
+
+**WAPE semanal** (*weighted absolute percentage error*) responde a una observación de la
+tutoría: más de la mitad de los días-producto no tienen ninguna venta, y medir el error día a día
+mezcla el error del modelo con el azar de qué día concreto cae cada venta. Se suman predicción y
+venta real de cada serie por semanas y se calcula
+
+$$\text{WAPE} = \frac{\sum |\hat{y} - y|}{\sum y} \times 100$$
+
+que se lee directamente como el porcentaje de las unidades de la semana en que se equivoca el
+modelo. No falla con los ceros, porque divide por el total vendido, y coincide con el horizonte
+de la reposición, que también es semanal. El WRMSSE se mantiene para comparar modelos; el WAPE
+semanal, para explicar el error a negocio.
 
 **Pérdida pinball** evalúa las predicciones cuantílicas. Para un cuantil $\tau$ y un error
 $e = y - \hat{q}_\tau$:
@@ -333,17 +354,18 @@ bien calibrado.
 
 ### 6.6.2. Métricas de segmentación
 
+La **inercia** es la suma de las distancias al cuadrado de cada elemento al centro de su grupo.
+Disminuye siempre al aumentar el número de grupos; el **codo** de su curva señala el punto a
+partir del cual añadir grupos apenas reduce la dispersión. Cuando la curva es suave, el codo se
+localiza como el punto más alejado de la recta que une sus extremos.
+
 El **coeficiente de silueta** compara, para cada elemento, su distancia media al propio grupo
-con la distancia media al grupo vecino más próximo; toma valores en $[-1, 1]$ y desciende de
-forma natural al aumentar el número de grupos, por lo que se interpreta junto con las otras
-dos. El **índice de Davies-Bouldin** mide la razón entre dispersión interna y separación entre
-grupos, y se minimiza. El **índice de Calinski-Harabasz** es un cociente entre varianza
-explicada e intragrupo, y se maximiza.
+con la distancia media al grupo vecino más próximo; toma valores en $[-1, 1]$ y se usa como
+criterio de apoyo dentro de la zona del codo.
 
 El **índice de Rand ajustado** mide la concordancia entre dos particiones del mismo conjunto
-corrigiendo por la coincidencia esperable al azar. El **índice de Jaccard** entre dos conjuntos
-$A$ y $B$ —$|A \cap B| / |A \cup B|$— se emplea para medir cuánto se conserva un grupo entre dos
-ejecuciones distintas de la segmentación.
+corrigiendo por la coincidencia esperable al azar; aquí se emplea para medir la estabilidad de
+la segmentación entre ejecuciones con distinta semilla.
 
 ### 6.6.3. Métricas económicas
 
@@ -359,12 +381,23 @@ El **nivel de servicio** se mide como la proporción de unidades de demanda aten
 demanda total, y no como la proporción de ciclos sin rotura, que es una definición más
 benévola.
 
-## 6.7. Reproducibilidad
+## 6.7. Muestreo y organización del trabajo
+
+El trabajo no utiliza una muestra: se analizan las 30.490 series producto-tienda completas de
+todo el periodo disponible. Las únicas selecciones son intencionales y se declaran donde
+aparecen: las tres ventanas de validación de febrero a abril de 2016 y las dos de temporada alta
+de 2015 (§6.5), y la ventana de cuatro semanas sobre la que se simula la política de reposición
+(§7.4).
+
+El equipo, de tres personas, no se repartió el trabajo por tareas cerradas. Cada integrante
+desarrolló por su cuenta el análisis de todas las fases, y las versiones se pusieron en común y
+se fueron integrando y corrigiendo de forma conjunta sobre un repositorio de código compartido,
+que es la única versión de referencia.
+
+## 6.8. Reproducibilidad
 
 Todo el trabajo se ejecuta desde el almacén analítico y no desde ficheros temporales, de modo
-que borrar cualquier caché no impide reproducir ningún resultado. Los cinco cuadernos se
-generan a partir de guiones de construcción versionados —no se editan a mano—, lo que garantiza
-que el cuaderno entregado y el código que lo produce no puedan divergir. Las semillas
+que borrar cualquier caché no impide reproducir ningún resultado. El código de entrenamiento de los modelos está en módulos versionados que los cuadernos importan, de modo que el cuaderno y el código que produce sus resultados no divergen. Las semillas
 aleatorias están fijadas en todos los procedimientos con componente estocástica.
 
 El entorno de ejecución y los tiempos de referencia de cada etapa se detallan en el anexo, junto

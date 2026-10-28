@@ -35,8 +35,7 @@ $$S = \hat{D}_{R+L} + z_{\tau^{*}} \cdot \sigma_{R+L} \qquad
 ### 7.4.2. Una política híbrida por segmento
 
 La implementación no aplica el mismo método a todas las series. Para las de **clase X** —demanda
-estable— el término de incertidumbre se estima con el desvío histórico, que en esas series es
-fiable. Para las de **clase Y y Z** se toma directamente del modelo cuantílico de §7.3.6.
+estable— el nivel objetivo se toma del percentil de las ventas históricas en ventanas de nueve días, que en esas series es fiable. Para las de **clase Y y Z** se toma directamente del modelo cuantílico de §7.3.6.
 
 Esta separación no es una elección estética: es el resultado del experimento descrito en §7.4.4,
 y llegar a ella exigió contradecir una conclusión propia del capítulo anterior.
@@ -48,42 +47,54 @@ realmente se observó. El primer resultado describe el punto de partida:
 
 | Componente del coste | Importe (28 días) |
 |---|---|
-| Margen perdido por rotura | **161.353 USD** |
-| Coste de mantenimiento de inventario | **11.527 USD** |
+| Margen perdido por rotura | **164.543 USD** |
+| Coste de mantenimiento de inventario | **11.156 USD** |
 
-La proporción es lo relevante: **catorce dólares de venta perdida por cada dólar de inventario
+La proporción es lo relevante: **casi quince dólares de venta perdida por cada dólar de inventario
 inmovilizado**. La política de partida no es cara porque acumule existencias; es cara porque
 deja de vender. Ese diagnóstico, que la métrica de error no puede dar, orienta toda la
 optimización posterior en una única dirección: subir el nivel de servicio.
 
-> **[FIGURA 7.16]** *Descomposición del coste de la política de partida.*
-> `Fuente: Cuaderno 04. La desproporción entre margen perdido y mantenimiento es el mensaje.`
+![**Figura 7.17.** Descomposición del coste de la política de partida. *Fuente: elaboración propia.*](figuras/fig_7_17.png){width=100%}
 
-Aplicando la política con nivel objetivo por segmento, el nivel de servicio pasa del **86,3% al
-96,0%** y el coste total desciende un **61%**.
+Aplicando la política híbrida con un objetivo del 90%, el nivel de servicio pasa del **86,6% al
+96,2%** y el coste total desciende un **62,5%**, de 175.699 a 65.856 dólares. La híbrida mejora
+también a las dos alternativas puras —solo histórico (70.414 USD) y solo modelo (67.595 USD)— con
+cualquier objetivo entre el 85% y el 98%.
+
+Las predicciones que alimentan la simulación son las del modelo final de §7.3 (400 días de
+historia y eventos semanales) sobre la última ventana de validación, del 28 de marzo al 24 de
+abril de 2016.
 
 ### 7.4.4. La simulación refuta la conclusión del capítulo anterior
 
-En §7.3 se concluyó, a partir del error de predicción, que el modelo aportaba valor en las
-series del núcleo estable y poco en la cola larga. La simulación de la política dice lo
+En §7.3 el grupo de producto con menor error de predicción era Alta rotación diaria
+(WAPE semanal del 35 %) y uno de los de mayor error, Venta esporádica con pico en eventos (68 %). Leído así,
+el modelo debería usarse en el primero y no en el segundo. La simulación de la política dice lo
 contrario:
 
 | Segmento | Efecto de usar el modelo frente a la regla histórica |
 |---|---|
-| Cola larga (clases Y y Z) | **+19,3%** de mejora en coste |
-| Núcleo estable (clase X) | **−7,9%**: el modelo empeora el resultado |
+| Clase Z (demanda errática) | **+18,1%** de mejora en coste |
+| Venta esporádica con pico en eventos | **+26,2%** |
+| Clase Y | −0,2% (empate) |
+| Clase X (demanda estable) | **−7,8%**: el modelo empeora el resultado |
+| Alta rotación diaria | **−7,2%** |
 
-La explicación es que en las series estables el desvío histórico es un estimador excelente de la
+La única excepción relevante es Pico de diciembre (−49,9%), que en una ventana de marzo-abril
+está fuera de temporada y pesa poco en dinero (unos 800 de 67.600 dólares); necesita una regla de
+temporada propia.
+
+La explicación es que en las series estables el percentil histórico es un estimador excelente de la
 incertidumbre —hay muchos datos y poca varianza— mientras que el modelo cuantílico introduce
-ruido de estimación sin aportar información nueva. En la cola larga ocurre lo contrario: el
+ruido de estimación sin aportar información nueva. En la demanda errática ocurre lo contrario: el
 histórico es escaso y errático, y el modelo, que aprende de las 30.490 series a la vez, aporta
 la estructura que la serie individual no tiene.
 
-> **[FIGURA 7.17]** *Efecto de usar el modelo frente a la regla histórica, por segmento.*
-> `Fuente: Cuaderno 04. Los signos opuestos deben ser visibles de un vistazo.`
+![**Figura 7.18.** Efecto de usar el modelo frente a la regla histórica, por segmento. *Fuente: elaboración propia.*](figuras/fig_7_18.png){width=100%}
 
-Este es el segundo de los tres momentos en que una prueba refutó una conclusión del trabajo.
-Elegir la política por el RMSSE habría llevado a la decisión opuesta en ambos segmentos.
+Este es el segundo de los cuatro momentos en que una prueba refutó una conclusión del trabajo.
+Elegir la política por el RMSSE habría llevado a la decisión opuesta en ambos extremos.
 
 ### 7.4.5. La función de pérdida correcta
 
@@ -107,8 +118,7 @@ convención.
 **Segunda**, el nivel de servicio del 90% que el trabajo emplea como referencia es un valor
 fijado a mano. El ratio crítico indica cuál debería ser: con un margen del 25% y un coste de
 posesión del 5%, $\tau^{*} \approx 0{,}83$; con un producto perecedero de merma del 20%,
-$\tau^{*} \approx 0{,}50$. La distancia respecto del 0,90 uniforme es considerable, y la
-consecuencia es que hoy el sistema pide de más en unos productos y de menos en otros.
+$\tau^{*} \approx 0{,}50$. La distancia respecto del 0,90 uniforme es considerable, y la consecuencia es que hoy el sistema pide de más en unos productos y de menos en otros. Este ratio no contradice el óptimo del 99 % de §7.4.6, que procede de supuestos distintos: aquel cálculo, como el cuaderno 04, valora el coste de mantener una unidad con un 25 % anual sobre su coste, unos dos céntimos en nueve días, mientras que este experimento lo cobra como un 5 % del precio en cada ciclo. Con un coste de mantenimiento tan bajo, el ratio crítico sube al 98 % y el óptimo de la curva, al 99 %.
 
 **Tercera**, si la función de pérdida cambia, el modelo ganador puede cambiar. Esta última
 afirmación se sometió a prueba de forma directa: se compararon cinco candidatos sobre el mismo
@@ -117,9 +127,9 @@ cada uno.
 
 | Candidato | WRMSSE | Coste (USD) | Nivel de servicio |
 |---|---|---|---|
-| **B · LightGBM + desvío histórico** | **0,837** | **256.451** | 88,9% |
+| **B · LightGBM + desviación histórica** | **0,837** | **256.451** | 88,9% |
 | A · media móvil + normal | 0,867 | 263.907 | 89,0% |
-| C · LightGBM + desvío de residuos | 0,837 | 265.847 | 87,2% |
+| C · LightGBM + desviación de residuos | 0,837 | 265.847 | 87,2% |
 | D · cuantílico entrenado en $\tau^{*}$ | 0,916 | 315.090 | 88,7% |
 | E · cuantílico en 0,90 fijo | 1,395 | **628.935** | 98,6% |
 
@@ -131,12 +141,17 @@ no se confirmó.
 Pero el experimento reveló otra cosa, y de magnitud muy superior. **La fila E es la política que
 el trabajo venía aplicando**, con nivel de servicio fijado en 0,90 para todos los segmentos, y
 resulta ser **2,45 veces más cara** que la mejor alternativa. Compra 9,7 puntos de nivel de
-servicio a un coste de 372.000 dólares en cuatro semanas. Con margen del 25% y coste de exceso
-del 5%, el ratio crítico correcto es **0,714**, no 0,90.
+servicio a un coste de 372.000 dólares en cuatro semanas. Con margen del 25%, coste de posesión del 5% y merma del 5%, el ratio crítico es **0,714**, no 0,90.
 
 Es decir: la pregunta por la función de pérdida no cambió el modelo, cambió **el nivel de
 servicio**, y ahí estaba el error caro. Un parámetro fijado por convención y nunca sometido a
 comprobación resultó ser la decisión más costosa del sistema.
+
+![**Figura 7.19.** Coste total del período por candidato de modelo y nivel de servicio alcanzado. *Fuente: elaboración propia.*](figuras/fig_7_19.png){width=100%}
+
+*Nota:* este experimento, como el resto de los de la carpeta `avanzado/`, se ejecutó con la
+configuración anterior del modelo (180 días de historia); sus conclusiones son comparativas entre
+candidatos y no dependen de esa configuración.
 
 Dos observaciones adicionales de la misma tabla. La primera, que el candidato B gana en ocho de
 los nueve segmentos ABC/XYZ, pero **en CZ gana la media móvil simple**: en la demanda más
@@ -168,11 +183,17 @@ margen. La recomendación operativa que se deriva no es un número de nivel de s
 instrucción de medición: DSMarket necesita medir su tasa de merma por categoría, porque es el
 parámetro del que depende la política y es el único que hoy no conoce.
 
-> **[FIGURA 7.18]** *Coste total por nivel de servicio objetivo y supuesto de merma.*
-> `Fuente: Cuaderno 04. Barras apiladas por componente, con el óptimo marcado en cada escenario.`
+Mientras tanto, la política propuesta fija el nivel por categoría con la propia curva como guía:
+**90% para SUPERMARKET**, que incluye los frescos (óptimo con una merma en torno al 10%), y **95%
+para ACCESORIES y HOME_&_GARDEN**, cuyo sobrante se vende la semana siguiente (óptimo con una
+merma en torno al 5%). Son valores provisionales: el código los lee de una única tabla, de modo
+que medir la merma real basta para ajustarlos. Con la política híbrida, un objetivo del 95% da un
+servicio real del 97,3% y un coste de 55.701 dólares en las cuatro semanas.
+
+![**Figura 7.20.** Coste total por nivel de servicio objetivo y supuesto de merma. *Fuente: elaboración propia.*](figuras/fig_7_20.png){width=100%}
 
 Se documenta también el coste del servicio en términos de inventario: pasar de una cobertura del
-68% —la que da la predicción media— al 90% exige un **127% más de stock**. La curva es
+68% —la que da la predicción media— al 90% exige un **128% más de stock**. La curva es
 fuertemente convexa en su tramo alto, lo que significa que los últimos puntos de servicio son
 desproporcionadamente caros.
 
@@ -202,6 +223,8 @@ independiente:
 Las rachas de tres días o más resultan **doce veces más frecuentes** de lo que produciría la
 distribución independiente. La firma es inequívoca: estos ceros no son demanda nula.
 
+![**Figura 7.21.** Rachas de ceros sospechosos: frecuencia observada frente a la esperable por azar. *Fuente: elaboración propia.*](figuras/fig_7_21.png){width=100%}
+
 **Las cotas.** Se construyen dos. La inferior contabiliza únicamente los ceros sospechosos,
 imputándoles como demanda perdida su intensidad esperada. La superior contabiliza todos los ceros
 ponderados por la probabilidad de que no fueran demanda nula. Sobre el histórico completo, la
@@ -223,11 +246,11 @@ no cambia, de modo que:
 
 | | Margen perdido | Mantenimiento | Proporción |
 |---|---|---|---|
-| Medido en la simulación | 161.353 USD | 11.527 USD | 14 : 1 |
-| Con la cota inferior de censura | 183.678 USD | 11.527 USD | **16 : 1** |
-| Con la cota superior de censura | 335.377 USD | 11.527 USD | **29 : 1** |
+| Medido en la simulación | 164.543 USD | 11.156 USD | 15 : 1 |
+| Con la cota inferior de censura | 186.868 USD | 11.156 USD | **17 : 1** |
+| Con la cota superior de censura | 338.567 USD | 11.156 USD | **30 : 1** |
 
-La proporción de catorce a uno entre venta perdida y capital inmovilizado es, por tanto, un
+La proporción de quince a uno entre venta perdida y capital inmovilizado es, por tanto, un
 mínimo, y en el peor escenario la asimetría se duplica. El diagnóstico del capítulo —que la
 política no es cara por inmovilizar capital sino por dejar de vender— no solo se sostiene: se
 refuerza.
