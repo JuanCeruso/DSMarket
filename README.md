@@ -24,7 +24,6 @@ bruto hasta la cantidad que debe pedirse de cada producto en cada tienda.
 | `api/` | Servicio de reposición (FastAPI) con sus trece comprobaciones |
 | `avanzado/` | Nueve experimentos y sondeos, con sus resultados |
 | `memoria/` | La memoria, una sección por fichero, y el `.docx` generado |
-| `defensa/` | Guion cronometrado de la defensa |
 | `documentacion/` | Manual de ejecución, teoría, arquitectura, explicación de la app |
 | `dashboard/` | Especificación del cuadro de mando en Power BI |
 
